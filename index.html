@@ -286,6 +286,18 @@
 </head>
 <body>
 
+<!-- Netlify Form Detection (Stores submissions automatically in Netlify without server or Google Sheets) -->
+<form name="devops-scores" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="stdId" />
+  <input type="text" name="stdName" />
+  <input type="number" name="totalScore" />
+  <input type="number" name="g1Score" />
+  <input type="number" name="g2Score" />
+  <input type="number" name="g1TimeVal" />
+  <input type="text" name="stdReflect" />
+  <input type="text" name="verifyHash" />
+</form>
+
 <!-- Top Navigation Bar -->
 <nav class="navbar">
   <div class="brand">🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)</div>
@@ -293,6 +305,7 @@
     <button class="tab-btn active" id="tabBtn1" onclick="switchGame(1)">🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก</button>
     <button class="tab-btn" id="tabBtn2" onclick="switchGame(2)">🛠️ เกมที่ 2: ซ่อมสายพานมรณะ</button>
     <button class="tab-btn cert-tab" id="tabBtn3" onclick="switchGame(3)">🎓 สรุปผลคะแนนท้ายคาบ</button>
+    <button class="tab-btn" id="tabBtn4" onclick="switchGame(4)" style="background:#f1f5f9; border-color:#cbd5e1; color:#475569;">🔐 สำหรับผู้สอน (Admin)</button>
   </div>
 </nav>
 
@@ -567,6 +580,63 @@
     </div>
   </section>
 
+  <!-- ==================== SECTION 4: ADMIN DASHBOARD ==================== -->
+  <section id="game4" class="game-section">
+    <div class="header-card">
+      <div>
+        <h2 style="color:var(--text);">🔐 แผงควบคุมผู้สอน (Admin Dashboard)</h2>
+        <p>ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที</p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-success" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
+        <button class="btn btn-secondary" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างข้อมูล</button>
+      </div>
+    </div>
+
+    <!-- Login Box -->
+    <div class="panel" id="adminLoginBox" style="text-align:center; padding:36px 20px;">
+      <div style="font-size:38px; margin-bottom:10px;">🔒</div>
+      <h3 style="margin:0 0 8px; font-size:18px;">กรุณากรอกรหัสผ่านผู้สอน</h3>
+      <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">เพื่อความปลอดภัยของข้อมูลคะแนนนิสิต (รหัสผ่านเริ่มต้น: <b>admin1234</b>)</p>
+      <div style="max-width:320px; margin:0 auto; display:flex; gap:8px;">
+        <input type="password" id="adminPin" class="form-input" placeholder="กรอกรหัสผ่าน..." onkeyup="if(event.key==='Enter') verifyAdminPin()">
+        <button class="btn btn-primary" onclick="verifyAdminPin()">เข้าสู่ระบบ</button>
+      </div>
+      <div id="adminPinError" style="color:var(--danger); font-size:13px; margin-top:8px; display:none; font-weight:700;">❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+    </div>
+
+    <!-- Data Table Box -->
+    <div class="panel" id="adminDataBox" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div style="font-weight:800; font-size:16px;">
+          📋 รายชื่อผู้ส่งงานทั้งหมด: <span id="adminCount" style="color:var(--primary); font-size:18px;">0</span> คน
+        </div>
+        <input type="text" id="adminSearch" class="form-input" style="max-width:260px; padding:7px 12px; font-size:13.5px;" placeholder="🔍 ค้นหาชื่อ หรือ รหัสนิสิต..." oninput="renderAdminTable()">
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:#f1f5f9; border-bottom:2px solid var(--border);">
+              <th style="padding:10px 8px;">#</th>
+              <th style="padding:10px 8px;">วัน-เวลา</th>
+              <th style="padding:10px 8px;">รหัสนิสิต</th>
+              <th style="padding:10px 8px;">ชื่อ-นามสกุล</th>
+              <th style="padding:10px 8px; text-align:center;">คะแนนรวม</th>
+              <th style="padding:10px 8px; text-align:center;">เกม 1</th>
+              <th style="padding:10px 8px; text-align:center;">เกม 2</th>
+              <th style="padding:10px 8px;">สิ่งที่สะท้อนคิด (Exit Ticket)</th>
+              <th style="padding:10px 8px;">Hash ยืนยัน</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -578,9 +648,11 @@
     document.getElementById('game1').classList.toggle('active', num === 1);
     document.getElementById('game2').classList.toggle('active', num === 2);
     document.getElementById('game3').classList.toggle('active', num === 3);
+    document.getElementById('game4').classList.toggle('active', num === 4);
     document.getElementById('tabBtn1').classList.toggle('active', num === 1);
     document.getElementById('tabBtn2').classList.toggle('active', num === 2);
     document.getElementById('tabBtn3').classList.toggle('active', num === 3);
+    document.getElementById('tabBtn4').classList.toggle('active', num === 4);
 
     if (num !== 1) {
       clearInterval(g1TimerId);
@@ -590,6 +662,9 @@
       if (fbBox && fbBox.style.display !== 'block' && sumBox && sumBox.style.display !== 'block') {
         g1StartTimer();
       }
+    }
+    if (num === 4 && isAdminLoggedIn) {
+      renderAdminTable();
     }
     updateLockGateUI();
   }
@@ -1287,6 +1362,39 @@
     const certCard = document.getElementById('certCard');
     certCard.style.display = 'block';
 
+    // Store record locally for Admin Dashboard
+    const submissionRecord = {
+      time: timeStr,
+      stdId: stdId,
+      stdName: stdName,
+      totalScore: totalScore,
+      g1Score: g1Score,
+      g2Score: g2Score,
+      g1TimeVal: g1TimeVal,
+      stdReflect: stdReflect,
+      verifyHash: cleanHash
+    };
+    saveSubmissionLocally(submissionRecord);
+
+    // Send to Netlify Forms (automatic background collection on Netlify)
+    try {
+      const netlifyParams = new URLSearchParams();
+      netlifyParams.append('form-name', 'devops-scores');
+      netlifyParams.append('stdId', stdId);
+      netlifyParams.append('stdName', stdName);
+      netlifyParams.append('totalScore', totalScore);
+      netlifyParams.append('g1Score', g1Score);
+      netlifyParams.append('g2Score', g2Score);
+      netlifyParams.append('g1TimeVal', g1TimeVal);
+      netlifyParams.append('stdReflect', stdReflect);
+      netlifyParams.append('verifyHash', cleanHash);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: netlifyParams.toString()
+      }).catch(() => {});
+    } catch (e) {}
+
     const btn = document.getElementById('btnSubmitCard');
     if (typeof GOOGLE_SCRIPT_URL === 'string' && GOOGLE_SCRIPT_URL.startsWith('http') && !isSubmitted) {
       btn.disabled = true;
@@ -1329,6 +1437,137 @@
 
     updateLockGateUI();
     certCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ==================== ADMIN DASHBOARD LOGIC ====================
+  let isAdminLoggedIn = false;
+  const ADMIN_DEFAULT_PIN = "admin1234";
+
+  function getStoredSubmissions() {
+    try {
+      return JSON.parse(localStorage.getItem('devops_submissions') || '[]');
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveSubmissionLocally(record) {
+    const list = getStoredSubmissions();
+    if (!list.some(item => item.verifyHash === record.verifyHash)) {
+      list.unshift(record);
+      localStorage.setItem('devops_submissions', JSON.stringify(list));
+    }
+  }
+
+  function verifyAdminPin() {
+    const pin = document.getElementById('adminPin').value.trim();
+    const err = document.getElementById('adminPinError');
+    if (pin === ADMIN_DEFAULT_PIN) {
+      isAdminLoggedIn = true;
+      document.getElementById('adminLoginBox').style.display = 'none';
+      document.getElementById('adminDataBox').style.display = 'block';
+      err.style.display = 'none';
+      renderAdminTable();
+    } else {
+      err.style.display = 'block';
+    }
+  }
+
+  function renderAdminTable() {
+    const list = getStoredSubmissions();
+    const query = (document.getElementById('adminSearch')?.value || '').toLowerCase().trim();
+    const filtered = list.filter(item => {
+      if (!query) return true;
+      return (item.stdId || '').toLowerCase().includes(query) ||
+             (item.stdName || '').toLowerCase().includes(query) ||
+             (item.verifyHash || '').toLowerCase().includes(query);
+    });
+
+    const countEl = document.getElementById('adminCount');
+    if (countEl) countEl.innerText = filtered.length;
+    const tbody = document.getElementById('adminTableBody');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align:center; padding:24px; color:var(--muted);">
+            ${list.length === 0 ? 'ยังไม่มีข้อมูลการส่งงานในระบบ' : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา'}
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((item, idx) => `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:10px 8px; color:var(--muted);">${idx + 1}</td>
+        <td style="padding:10px 8px; white-space:nowrap;">${item.time}</td>
+        <td style="padding:10px 8px; font-weight:800; color:var(--primary);">${item.stdId}</td>
+        <td style="padding:10px 8px; font-weight:700;">${item.stdName}</td>
+        <td style="padding:10px 8px; text-align:center; font-weight:900; color:${item.totalScore >= 90 ? 'var(--purple)' : 'var(--success)'};">${item.totalScore}</td>
+        <td style="padding:10px 8px; text-align:center;">${item.g1Score}</td>
+        <td style="padding:10px 8px; text-align:center;">${item.g2Score}</td>
+        <td style="padding:10px 8px; max-width:240px; font-size:12.5px; color:#334155;">"${item.stdReflect}"</td>
+        <td style="padding:10px 8px; font-family:monospace; font-size:12px; color:var(--muted);">${item.verifyHash}</td>
+      </tr>
+    `).join('');
+  }
+
+  function exportToExcel() {
+    const list = getStoredSubmissions();
+    if (!list || list.length === 0) {
+      alert('⚠️ ยังไม่มีข้อมูลการส่งงานให้นำออกครับ');
+      return;
+    }
+
+    const headers = [
+      "วัน-เวลาที่ส่ง",
+      "รหัสนิสิต",
+      "ชื่อ-นามสกุล",
+      "คะแนนรวม (เต็ม 100)",
+      "คะแนนเกม 1",
+      "คะแนนเกม 2",
+      "เวลาเกม 1 (นาที)",
+      "คำตอบท้ายคาบ (Exit Ticket)",
+      "รหัสยืนยัน (Hash)"
+    ];
+
+    let csvContent = "\uFEFF"; // UTF-8 BOM for Microsoft Excel Thai font support
+    csvContent += headers.map(h => `"${h}"`).join(",") + "\r\n";
+
+    list.forEach(item => {
+      const row = [
+        item.time,
+        item.stdId,
+        item.stdName,
+        item.totalScore,
+        item.g1Score,
+        item.g2Score,
+        item.g1TimeVal,
+        item.stdReflect,
+        item.verifyHash
+      ];
+      csvContent += row.map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(",") + "\r\n";
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const dateStr = new Date().toISOString().slice(0, 10);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `DevOps_Lab1_Scores_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function clearLocalSubmissions() {
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลการส่งงานทั้งหมดในเครื่องนี้? (การล้างนี้ไม่สามารถย้อนคืนได้)')) {
+      localStorage.removeItem('devops_submissions');
+      renderAdminTable();
+      alert('ล้างข้อมูลเรียบร้อยแล้ว');
+    }
   }
 
   // Initialize
