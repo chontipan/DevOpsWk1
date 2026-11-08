@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Interactive Learning Lab - คาบที่ 1</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #475569;
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --success: #059669;
+    --success-light: #ecfdf5;
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+  }
+  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-size: 14.5px; line-height: 1.55;
+  }
+
+  /* Top Navigation */
+  .navbar {
+    background: #ffffff; border-bottom: 2px solid var(--border);
+    padding: 12px 24px; position: sticky; top: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+  .brand { font-size: 17px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+  .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 9px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: #f1f5f9; color: var(--muted); cursor: pointer;
+    font-weight: 700; font-size: 13.5px; transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); background: #e2e8f0; }
+  .tab-btn.active {
+    background: var(--primary); color: white; border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  }
+  .tab-btn.cert-tab.active {
+    background: var(--purple); border-color: var(--purple);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  }
+
+  .container { max-width: 980px; margin: 24px auto; padding: 0 16px 48px; }
+  .game-section { display: none; flex-direction: column; gap: 18px; }
+  .game-section.active { display: flex; }
+
+  /* Common Cards & Layouts */
+  .header-card {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    background: var(--card); padding: 18px 22px; border-radius: 14px; border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+  .header-card h2 { margin: 0; font-size: 19px; color: var(--primary); }
+  .header-card p { margin: 4px 0 0; color: var(--muted); font-size: 13.5px; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .metrics-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 768px) {
+    .metrics-grid, .metrics-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .metric-box {
+    background: var(--card); padding: 14px; border-radius: 12px;
+    border: 1px solid var(--border); text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  .metric-label { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+  .metric-val { font-size: 22px; font-weight: 800; }
+  .progress-bar-bg {
+    width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 8px; overflow: hidden;
+  }
+  .progress-bar-fill { height: 100%; transition: width 0.4s ease, background 0.4s ease; }
+
+  .panel {
+    background: var(--card); padding: 20px; border-radius: 14px; border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+  .panel-title {
+    font-weight: 800; font-size: 16px; margin-bottom: 14px; color: var(--text);
+    border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 11px 18px; border: none; border-radius: 8px;
+    font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover:not(:disabled) { background: #047857; }
+  .btn-purple { background: var(--purple); color: white; }
+  .btn-purple:hover:not(:disabled) { background: #6d28d9; }
+  .btn-purple:disabled { background: #94a3b8; color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
+  .btn-secondary { background: #e2e8f0; color: #1e293b; }
+  .btn-secondary:hover { background: #cbd5e1; }
+
+  /* Game 1 Specific */
+  .stage-dots { display: flex; gap: 8px; margin-bottom: 16px; }
+  .dot { flex: 1; height: 8px; border-radius: 4px; background: #e2e8f0; transition: 0.3s; }
+  .dot.current { background: var(--primary); }
+  .dot.done { background: var(--success); }
+  .scenario-box {
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .scenario-tag {
+    display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px;
+    font-weight: 700; background: var(--primary-light); color: var(--primary); margin-bottom: 8px;
+  }
+  .scenario-title { font-size: 18px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
+  .scenario-desc { font-size: 15px; color: #334155; margin: 0; }
+  .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .choices-grid { grid-template-columns: 1fr; } }
+  .choice-card {
+    background: #ffffff; border: 2px solid var(--border); border-radius: 12px;
+    padding: 16px; cursor: pointer; text-align: left; color: var(--text);
+    transition: all 0.2s; display: flex; flex-direction: column; gap: 8px;
+  }
+  .choice-card:hover:not(:disabled) { border-color: var(--primary); background: var(--primary-light); transform: translateY(-2px); }
+  .choice-card:disabled { opacity: 0.65; cursor: default; }
+  .choice-badge { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 6px; width: fit-content; background: #e2e8f0; color: #334155; }
+  .feedback-box {
+    margin-top: 16px; padding: 16px; border-radius: 10px; display: none;
+    border-left: 5px solid var(--primary); background: #f8fafc;
+  }
+  .history-item {
+    padding: 12px; border-radius: 8px; background: #f8fafc; border: 1px solid var(--border); margin-bottom: 8px;
+  }
+
+  /* Game 2 Specific */
+  .mission-banner {
+    background: var(--primary-light); border: 2px solid #bfdbfe; border-radius: 12px;
+    padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .mission-step-badge {
+    background: var(--primary); color: white; font-weight: 800; font-size: 12px;
+    padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 4px;
+  }
+  .pipeline-stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+  @media (max-width: 640px) { .pipeline-stages { grid-template-columns: repeat(2, 1fr); } }
+  .stage {
+    background: #f8fafc; border: 2px solid var(--border); border-radius: 12px;
+    padding: 14px 10px; text-align: center; transition: all 0.3s;
+  }
+  .stage.running { border-color: var(--warning); background: var(--warning-light); transform: scale(1.02); }
+  .stage.passed { border-color: var(--success); background: var(--success-light); }
+  .stage.failed { border-color: var(--danger); background: var(--danger-light); }
+  .stage-icon { font-size: 26px; margin-bottom: 6px; }
+  .stage-name { font-weight: 800; font-size: 13.5px; color: var(--text); }
+  .stage-status { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; min-height: 18px; }
+
+  .problem-solution-box {
+    background: #ffffff; border: 2px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 14px;
+  }
+  .problem-alert {
+    background: var(--danger-light); border-left: 5px solid var(--danger);
+    padding: 12px 16px; border-radius: 8px; margin-bottom: 14px; color: #991b1b;
+  }
+  .solution-card {
+    background: var(--success-light); border: 2px solid #a7f3d0;
+    padding: 14px 16px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .calms-checklist {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px;
+  }
+  @media (max-width: 768px) { .calms-checklist { grid-template-columns: repeat(2, 1fr); } }
+  .calms-badge {
+    padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #f8fafc;
+    font-size: 12.5px; text-align: center; color: var(--muted); font-weight: 600;
+  }
+  .calms-badge.unlocked {
+    background: var(--success-light); border-color: var(--success); color: var(--success); font-weight: 800;
+  }
+
+  /* Section 3: Lock Gate & Certificate */
+  .req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 640px) { .req-grid { grid-template-columns: 1fr; } }
+  .req-card {
+    padding: 14px 16px; border-radius: 10px; border: 2px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: #f8fafc;
+  }
+  .req-card.done { border-color: var(--success); background: var(--success-light); }
+  .req-card.pending { border-color: #cbd5e1; background: #fffbeb; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group label { display: block; font-weight: 700; font-size: 13.5px; margin-bottom: 6px; color: var(--text); }
+  .form-input {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1.5px solid var(--border);
+    font-size: 14.5px; background: #f8fafc; color: var(--text); outline: none; transition: 0.2s;
+  }
+  .form-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+  .form-input:disabled { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
+
+  /* Printable / Screenshot Card */
+  .cert-wrapper {
+    display: none; margin-top: 16px;
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #ecfdf5 100%);
+    border: 3px solid var(--primary); border-radius: 18px; padding: 26px;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.12); position: relative;
+  }
+  .cert-header {
+    display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;
+    border-bottom: 2px dashed #cbd5e1; padding-bottom: 16px; margin-bottom: 18px;
+  }
+  .cert-badge {
+    background: var(--primary); color: white; padding: 6px 14px; border-radius: 20px;
+    font-weight: 800; font-size: 12.5px; letter-spacing: 0.5px;
+  }
+  .student-info-box {
+    background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .cert-score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  @media (max-width: 640px) { .cert-score-grid { grid-template-columns: 1fr; } }
+  .cert-score-card {
+    background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 18px;
+  }
+  .cert-quote {
+    background: #f8fafc; border-left: 4px solid var(--purple); padding: 12px 16px;
+    border-radius: 8px; font-size: 14px; margin-bottom: 16px;
+  }
+  .cert-footer {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    font-size: 12px; color: var(--muted); padding-top: 12px; border-top: 1px solid var(--border);
+  }
+  .verify-code {
+    font-family: monospace; font-weight: 800; font-size: 13px; color: var(--primary);
+    background: var(--primary-light); padding: 4px 10px; border-radius: 6px; border: 1px solid #bfdbfe;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav class="navbar">
+  <div class="brand">🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)</div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tabBtn1" onclick="switchGame(1)">🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก</button>
+    <button class="tab-btn" id="tabBtn2" onclick="switchGame(2)">🛠️ เกมที่ 2: ซ่อมสายพานมรณะ</button>
+    <button class="tab-btn cert-tab" id="tabBtn3" onclick="switchGame(3)">🎓 ส่งงานท้ายคาบ (รับการ์ดคะแนน)</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ==================== GAME 1: CRISIS SIMULATOR ==================== -->
+  <section id="game1" class="game-section active">
+    <div class="header-card">
+      <div>
+        <h2>🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก (Crisis Simulator)</h2>
+        <p>เลือกแนวทางการตัดสินใจในแต่ละสถานการณ์วิกฤต เพื่อดูผลลัพธ์ที่จะเกิดขึ้นกับระบบและทีมงาน</p>
+      </div>
+      <button class="btn btn-secondary" onclick="g1Reset()">🔄 เริ่มเล่นใหม่</button>
+    </div>
+
+    <div class="metrics-grid-3">
+      <div class="metric-box">
+        <div class="metric-label">⏱️ เวลาที่เสียไปสะสม (ยิ่งน้อยยิ่งดี)</div>
+        <div class="metric-val" id="g1Time" style="color:var(--primary)">0 นาที</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">🛡️ ความเสถียรของระบบ (System Stability)</div>
+        <div class="metric-val" id="g1Stability" style="color:var(--success)">100%</div>
+        <div class="progress-bar-bg"><div id="g1StabBar" class="progress-bar-fill" style="width:100%; background:var(--success);"></div></div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">😊 ขวัญกำลังใจทีม (Team Morale)</div>
+        <div class="metric-val" id="g1Morale" style="color:var(--success)">100%</div>
+        <div class="progress-bar-bg"><div id="g1MoraleBar" class="progress-bar-fill" style="width:100%; background:var(--success);"></div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="g1PlayArea">
+      <div class="stage-dots" id="g1Dots"></div>
+      
+      <div class="scenario-box">
+        <span class="scenario-tag" id="g1Tag">ด่านที่ 1 / 4</span>
+        <h3 class="scenario-title" id="g1Title"></h3>
+        <p class="scenario-desc" id="g1Desc"></p>
+      </div>
+
+      <div class="choices-grid">
+        <button class="choice-card" id="g1BtnA" onclick="g1Choose('A')">
+          <span class="choice-badge">ทางเลือกที่ 1</span>
+          <div id="g1TxtA" style="font-size:14.5px; font-weight:600;"></div>
+        </button>
+        <button class="choice-card" id="g1BtnB" onclick="g1Choose('B')">
+          <span class="choice-badge">ทางเลือกที่ 2</span>
+          <div id="g1TxtB" style="font-size:14.5px; font-weight:600;"></div>
+        </button>
+      </div>
+
+      <div class="feedback-box" id="g1Feedback">
+        <div id="g1FbText" style="margin-bottom:12px; font-size:14.5px;"></div>
+        <button class="btn btn-primary" onclick="g1NextStage()" id="g1NextBtn">ไปด่านถัดไป ➡️</button>
+      </div>
+    </div>
+
+    <div class="panel" id="g1Summary" style="display:none;">
+      <div class="panel-title">🏁 สรุปผลการตัดสินใจของคุณในเกมที่ 1</div>
+      <div id="g1Verdict" style="padding:16px; border-radius:10px; background:#f8fafc; border:1px solid var(--border); margin-bottom:14px; font-size:15px;"></div>
+      <div style="font-weight:800; margin-bottom:8px;">ประวัติการตัดสินใจทั้ง 4 ด่าน:</div>
+      <div id="g1History"></div>
+      <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="switchGame(2)">ไปเล่นเกมที่ 2 ต่อ (ซ่อมสายพานมรณะ) ➡️</button>
+        <button class="btn btn-secondary" onclick="g1Reset()">🔄 เล่นเกมที่ 1 ซ้ำอีกครั้ง</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== GAME 2: STEP-BY-STEP PIPELINE FIXER ==================== -->
+  <section id="game2" class="game-section">
+    <div class="header-card">
+      <div>
+        <h2>🛠️ เกมที่ 2: ภารกิจซ่อมสายพานมรณะ (Step-by-Step Pipeline Fixer)</h2>
+        <p>วิธีเล่น: กดปุ่ม <b>"ทดลองปล่อยฟีเจอร์"</b> เพื่อดูว่าสายพานพังตรงไหน แล้วกดปุ่ม <b>"อัปเกรดวิธีทำงาน"</b> เพื่อแก้ปัญหาทีละด่านจนสำเร็จ!</p>
+      </div>
+      <button class="btn btn-secondary" onclick="g2Reset()">🔄 เริ่มภารกิจใหม่</button>
+    </div>
+
+    <div class="mission-banner">
+      <div>
+        <span class="mission-step-badge" id="g2StepBadge">ภารกิจด่านที่ 1 / 5</span>
+        <div style="font-size:16px; font-weight:800; color:var(--text);" id="g2MissionTitle">ลองปล่อยฟีเจอร์ด้วยระบบมือแบบดั้งเดิม (Manual Silo)</div>
+        <div style="font-size:13.5px; color:var(--muted);" id="g2MissionSub">กดปุ่มสีน้ำเงินด้านล่างเพื่อดูว่าจะเกิดอะไรขึ้นเมื่อทีมดองโค้ดไว้รวมกันวันศุกร์</div>
+      </div>
+      <div>
+        <button class="btn btn-primary" id="g2RunBtn" onclick="g2RunPipeline()" style="font-size:15px; padding:12px 22px;">
+          ▶️ กดทดลองปล่อยฟีเจอร์ขึ้นระบบ
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🚀 สถานะสายพานส่งมอบงาน (Deployment Pipeline)</div>
+      <div class="pipeline-stages">
+        <div class="stage" id="st_1">
+          <div class="stage-icon">💻</div>
+          <div class="stage-name">ด่าน 1: รวมโค้ด (Merge)</div>
+          <div class="stage-status" id="st_1_txt">รอเดินเครื่อง</div>
+        </div>
+        <div class="stage" id="st_2">
+          <div class="stage-icon">🧪</div>
+          <div class="stage-name">ด่าน 2: ทดสอบ (Test)</div>
+          <div class="stage-status" id="st_2_txt">รอเดินเครื่อง</div>
+        </div>
+        <div class="stage" id="st_3">
+          <div class="stage-icon">📦</div>
+          <div class="stage-name">ด่าน 3: ติดตั้ง (Deploy)</div>
+          <div class="stage-status" id="st_3_txt">รอเดินเครื่อง</div>
+        </div>
+        <div class="stage" id="st_4">
+          <div class="stage-icon">🌐</div>
+          <div class="stage-name">ด่าน 4: ใช้งานจริง (Prod)</div>
+          <div class="stage-status" id="st_4_txt">รอเดินเครื่อง</div>
+        </div>
+      </div>
+
+      <div class="problem-solution-box" id="g2ActionBox">
+        <div style="text-align:center; color:var(--muted); padding:10px;">
+          👆 กดปุ่ม <b>"กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบนเพื่อเริ่มตรวจสอบสายพานได้เลยครับ
+        </div>
+      </div>
+
+      <div style="margin-top:18px; font-weight:800; font-size:13.5px; color:var(--muted);">
+        🏅 ทักษะ DevOps (CALMS) ที่ทีมของคุณปลดล็อกแล้ว:
+      </div>
+      <div class="calms-checklist">
+        <div class="calms-badge" id="badge_1">🔒 1. Lean (ซอยงานเล็ก)</div>
+        <div class="calms-badge" id="badge_2">🔒 2. CI (บอทเทสต์อัตโนมัติ)</div>
+        <div class="calms-badge" id="badge_3">🔒 3. CD & Container</div>
+        <div class="calms-badge" id="badge_4">🔒 4. Monitoring & Culture</div>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-label">เวลาส่งมอบงาน (Lead Time)</div>
+        <div class="metric-val" id="g2Lead" style="color:var(--warning)">14 วัน</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">โอกาสพังเมื่อขึ้นระบบจริง</div>
+        <div class="metric-val" id="g2Fail" style="color:var(--danger)">75%</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">เวลากู้คืนเมื่อระบบล่ม (MTTR)</div>
+        <div class="metric-val" id="g2Mttr" style="color:var(--danger)">360 นาที</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">สถานะความพร้อมของทีม</div>
+        <div class="metric-val" id="g2Level" style="color:var(--primary)">0 / 4</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== SECTION 3: STUDENT SCORE CARD ==================== -->
+  <section id="game3" class="game-section">
+    <div class="header-card">
+      <div>
+        <h2 style="color:var(--purple);">🎓 สร้างการ์ดสรุปคะแนนและส่งงานเข้า Google Sheets</h2>
+        <p>ระบบจะปลดล็อกให้กรอกชื่อและส่งคะแนนได้เมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น</p>
+      </div>
+    </div>
+
+    <!-- Pre-requisite Gate Checklist -->
+    <div class="panel">
+      <div class="panel-title">🔍 ตรวจสอบเงื่อนไขก่อนส่งงาน (Mission Checklist)</div>
+      <div class="req-grid">
+        <div class="req-card pending" id="reqBox1">
+          <div>
+            <div style="font-weight:800; font-size:14.5px;" id="reqTitle1">🔒 เกมที่ 1: คืนวันศุกร์สุดระทึก</div>
+            <div style="font-size:13px; color:var(--muted);" id="reqSub1">ยังเล่นไม่จบ (0 / 4 ด่าน)</div>
+          </div>
+          <button class="btn btn-secondary" id="reqBtn1" onclick="switchGame(1)" style="font-size:12.5px; padding:8px 12px;">ไปเล่นเกมที่ 1</button>
+        </div>
+
+        <div class="req-card pending" id="reqBox2">
+          <div>
+            <div style="font-weight:800; font-size:14.5px;" id="reqTitle2">🔒 เกมที่ 2: ซ่อมสายพานมรณะ</div>
+            <div style="font-size:13px; color:var(--muted);" id="reqSub2">ยังซ่อมสายพานไม่จบ (ปลดล็อก 0 / 4 ขั้น)</div>
+          </div>
+          <button class="btn btn-secondary" id="reqBtn2" onclick="switchGame(2)" style="font-size:12.5px; padding:8px 12px;">ไปเล่นเกมที่ 2</button>
+        </div>
+      </div>
+
+      <div class="panel-title" style="margin-top:8px;">📝 กรอกข้อมูลนิสิตและคำถามท้ายคาบ (Exit Ticket)</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="stdId">รหัสนิสิต (Student ID) *</label>
+          <input type="text" id="stdId" class="form-input" placeholder="เช่น 6602xxxx">
+        </div>
+        <div class="form-group">
+          <label for="stdName">ชื่อ - นามสกุล (Full Name) *</label>
+          <input type="text" id="stdName" class="form-input" placeholder="เช่น นายสมชาย สายเดฟออปส์">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label for="stdReflect">💡 คำถามท้ายคาบ: ถ้านำแนวคิด DevOps ไปใช้ในโปรเจกต์กลุ่มของคุณ สิ่งแรกที่จะเปลี่ยนคืออะไร? (ตอบสั้นๆ 1 ประโยค) *</label>
+        <input type="text" id="stdReflect" class="form-input" placeholder="เช่น เลิกดองโค้ดไว้รวมกันวันสุดท้าย และตั้งระบบตรวจจับบั๊กอัตโนมัติ">
+      </div>
+      <button class="btn btn-purple" id="btnSubmitCard" onclick="generateCard()" disabled style="width:100%; font-size:15px; padding:13px;">
+        🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน
+      </button>
+    </div>
+
+    <!-- The Generated Certificate Card for Screenshot -->
+    <div class="cert-wrapper" id="certCard">
+      <div class="cert-header">
+        <div>
+          <span class="cert-badge">DEVOPS MINDSET & CALMS LAB</span>
+          <h2 style="margin:8px 0 2px; font-size:22px; color:var(--text);">ใบรับรองผลการเรียนรู้วิชา DevOps (คาบที่ 1)</h2>
+          <div style="font-size:13px; color:var(--muted);">สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">สถานะการส่งข้อมูล</div>
+          <div id="certOverallBadge" style="font-size:18px; font-weight:900; color:var(--success);">PASSED ✅</div>
+        </div>
+      </div>
+
+      <div class="student-info-box">
+        <div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">ชื่อ-นามสกุลนิสิต</div>
+          <div id="outName" style="font-size:19px; font-weight:800; color:var(--text);">-</div>
+        </div>
+        <div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">รหัสนิสิต</div>
+          <div id="outId" style="font-size:19px; font-weight:800; color:var(--primary);">-</div>
+        </div>
+        <div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">คะแนนรวม (Total Score)</div>
+          <div id="outTotalScore" style="font-size:22px; font-weight:900; color:var(--purple);">100 / 100</div>
+        </div>
+      </div>
+
+      <div class="cert-score-grid">
+        <div class="cert-score-card">
+          <div style="font-weight:800; font-size:14px; color:var(--primary); margin-bottom:6px;">🎮 ผลลัพธ์เกมที่ 1: คืนวันศุกร์สุดระทึก</div>
+          <div id="outG1Detail" style="font-size:13.5px; color:var(--text); line-height:1.6;"></div>
+        </div>
+        <div class="cert-score-card">
+          <div style="font-weight:800; font-size:14px; color:var(--success); margin-bottom:6px;">🛠️ ผลลัพธ์เกมที่ 2: ซ่อมสายพานมรณะ</div>
+          <div id="outG2Detail" style="font-size:13.5px; color:var(--text); line-height:1.6;"></div>
+        </div>
+      </div>
+
+      <div class="cert-quote">
+        <div style="font-weight:800; font-size:12.5px; color:var(--purple); margin-bottom:4px;">💬 สิ่งที่จะนำไปปรับใช้ในโปรเจกต์กลุ่ม (Exit Ticket):</div>
+        <div id="outReflect" style="font-style:italic; color:var(--text); font-weight:600;">"-"</div>
+      </div>
+
+      <div class="cert-footer">
+        <div>📅 เวลาที่บันทึกผล: <span id="outTime" style="font-weight:700;">-</span></div>
+        <div>รหัสยืนยัน (Verification Hash): <span class="verify-code" id="outHash">-</span></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // 📌 นำลิงก์ Web App URL ที่ได้จาก Google Apps Script (หรือ n8n Webhook) มาวางที่นี่
+  const GOOGLE_SCRIPT_URL = "วาง_URL_ที่ได้จาก_Apps_Script_ที่นี่";
+
+  // ==================== TAB SWITCHER ====================
+  function switchGame(num) {
+    document.getElementById('game1').classList.toggle('active', num === 1);
+    document.getElementById('game2').classList.toggle('active', num === 2);
+    document.getElementById('game3').classList.toggle('active', num === 3);
+    document.getElementById('tabBtn1').classList.toggle('active', num === 1);
+    document.getElementById('tabBtn2').classList.toggle('active', num === 2);
+    document.getElementById('tabBtn3').classList.toggle('active', num === 3);
+    updateLockGateUI();
+  }
+
+  // ==================== GAME 1 LOGIC (WITHOUT BIAS LABELS) ====================
+  const g1Stages = [
+    {
+      title: "ด่านที่ 1: การรวมโค้ด (Code Integration)",
+      desc: "นักพัฒนา 3 คนเขียนฟีเจอร์ของตัวเองเสร็จแล้ว ถึงเวลานำโค้ดมารวมกันเพื่อเตรียมขึ้นระบบในวันศุกร์ คุณจะเลือกแนวทางใด?",
+      A: {
+        txt: "รอรวมโค้ดทั้งหมดทีเดียววันศุกร์เย็น แล้วค่อยนั่งแก้โค้ดที่ทับกันด้วยมือ",
+        time: 180, stab: -25, morale: -20,
+        fb: "❌ <b>โค้ดตีกันเละ!</b> กว่าจะแก้โค้ดที่ทับกันเสร็จก็ปาไป 3 ชั่วโมง แถมเผลอลบโค้ดเพื่อนหายไปบางส่วนโดยไม่รู้ตัว"
+      },
+      B: {
+        txt: "ส่งโค้ดขึ้น Git ย่อยๆ ทุกวัน ให้ระบบ Automated Test ตรวจจับจุดพังทันที",
+        time: 10, stab: 0, morale: 5,
+        fb: "✅ <b>ราบรื่น!</b> บอทตรวจเจอจุดผิดพลาดตั้งแต่เมื่อวานและแก้เสร็จใน 10 นาที วันศุกร์โค้ดพร้อมใช้งานทันที!"
+      }
+    },
+    {
+      title: "ด่านที่ 2: การนำระบบขึ้นเซิร์ฟเวอร์ (Deployment)",
+      desc: "โค้ดพร้อมแล้ว! ต้องส่งต่อให้ทีม Ops นำไปติดตั้งบนเซิร์ฟเวอร์จริง (Production) คุณจะเลือกแนวทางใด?",
+      A: {
+        txt: "ซิปไฟล์ส่งอีเมลพร้อมคู่มือติดตั้ง 10 หน้า ให้ Ops ไปนั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
+        time: 120, stab: -30, morale: -25,
+        fb: "🔥 <b>รันบนเครื่อง Dev ได้ แต่พังบนเซิร์ฟเวอร์!</b> เพราะเวอร์ชันโปรแกรมไม่ตรงกัน Dev กับ Ops เถียงกันเกือบ 2 ชั่วโมง"
+      },
+      B: {
+        txt: "แพ็กสภาพแวดล้อมใส่ Container และกดรัน Deployment Pipeline อัตโนมัติ",
+        time: 5, stab: 0, morale: 5,
+        fb: "✅ <b>แม่นยำ 100%!</b> สภาพแวดล้อมเหมือนเครื่อง Dev ทุกประการ ระบบติดตั้งเสร็จอัตโนมัติใน 5 นาทีโดยไม่ต้องพิมพ์คำสั่งเอง"
+      }
+    },
+    {
+      title: "ด่านที่ 3: เหตุฉุกเฉินหลังปล่อยระบบ (Incident Response)",
+      desc: "เวลา 21:00 น. ลูกค้าเริ่มใช้งานจริงแล้วเกิดบั๊กหน้าชำระเงินค้าง! ทีมของคุณจะรับมือด้วยวิธีใด?",
+      A: {
+        txt: "รอจนลูกค้าโทรโวยวายกับ Call Center เช้าวันเสาร์ แล้วค่อยปลุก Ops มาเปิดหาไฟล์ Log ทีละเครื่อง",
+        time: 360, stab: -35, morale: -30,
+        fb: "🚨 <b>ระบบล่มยาวข้ามคืน!</b> ลูกค้าหนีหาย กว่าจะหาเจอว่าพังที่ไฟล์ไหนก็เสียเวลาไปอีก 6 ชั่วโมงเต็ม"
+      },
+      B: {
+        txt: "ระบบ Monitoring แจ้งเตือนเข้าแชตกลุ่มทันทีที่ Error พุ่งเกิน 1% และกด Rollback ย้อนเวอร์ชันเดิมในคลิกเดียว",
+        time: 5, stab: -5, morale: 0,
+        fb: "🛡️ <b>กู้ชีพทันเวลา!</b> ทีมเห็นแจ้งเตือนทันทีและกดย้อนกลับสู่เวอร์ชันที่ปลอดภัยภายใน 5 นาที ลูกค้าแทบไม่รู้สึกถึงความผิดพลาด"
+      }
+    },
+    {
+      title: "ด่านที่ 4: การสรุปบทเรียนเช้าวันจันทร์ (Post-Mortem Culture)",
+      desc: "หลังเหตุการณ์สงบลงในเช้าวันจันทร์ คุณจะเลือกแนวทางจัดการปัญหาอย่างไร?",
+      A: {
+        txt: "หาตัวคนเขียนโค้ดผิดมาตักเตือน และออกกฎว่าต่อไปนี้จะขึ้นระบบต้องให้หัวหน้าเซ็นอนุมัติ 5 ขั้นตอน",
+        time: 240, stab: -5, morale: -20,
+        fb: "😰 <b>บรรยากาศตึงเครียด!</b> ไม่มีใครกล้าเขียนโค้ดใหม่ ทุกคนปกปิดความผิดพลาด และการปล่อยฟีเจอร์ครั้งต่อไปช้าลงอีก 4 ชั่วโมง"
+      },
+      B: {
+        txt: "ประชุมร่วมกันโดยไม่หาคนผิด (Blameless) แต่ช่วยกันเขียนชุดทดสอบอัตโนมัติเพิ่มเพื่อดักบั๊กนี้ในอนาคต",
+        time: 15, stab: 5, morale: 10,
+        fb: "🌟 <b>วัฒนธรรมองค์กรแข็งแกร่ง!</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น และบั๊กเดิมจะไม่มีวันหลุดรอดไปได้อีก"
+      }
+    }
+  ];
+
+  let g1Idx = 0, g1TimeVal = 0, g1StabVal = 100, g1MoraleVal = 100, g1Hist = [];
+  let g1Order = ['A', 'B'];
+
+  function g1Render() {
+    g1Order = Math.random() < 0.5 ? ['A', 'B'] : ['B', 'A'];
+    document.getElementById('g1Dots').innerHTML = g1Stages.map((_, i) => `<div class="dot ${i < g1Idx ? 'done' : (i === g1Idx ? 'current' : '')}"></div>`).join('');
+    const st = g1Stages[g1Idx];
+    document.getElementById('g1Tag').innerText = `ด่านที่ ${g1Idx + 1} จาก 4`;
+    document.getElementById('g1Title').innerText = st.title;
+    document.getElementById('g1Desc').innerText = st.desc;
+    document.getElementById('g1TxtA').innerText = st[g1Order[0]].txt;
+    document.getElementById('g1TxtB').innerText = st[g1Order[1]].txt;
+    document.getElementById('g1BtnA').onclick = () => g1Choose(g1Order[0]);
+    document.getElementById('g1BtnB').onclick = () => g1Choose(g1Order[1]);
+    document.getElementById('g1BtnA').disabled = false;
+    document.getElementById('g1BtnB').disabled = false;
+    document.getElementById('g1Feedback').style.display = 'none';
+  }
+
+  function g1UpdateMetrics() {
+    document.getElementById('g1Time').innerText = g1TimeVal + ' นาที';
+    document.getElementById('g1Stability').innerText = g1StabVal + '%';
+    document.getElementById('g1Morale').innerText = g1MoraleVal + '%';
+
+    const stabBar = document.getElementById('g1StabBar');
+    stabBar.style.width = g1StabVal + '%';
+    stabBar.style.background = g1StabVal > 70 ? 'var(--success)' : (g1StabVal > 40 ? 'var(--warning)' : 'var(--danger)');
+
+    const morBar = document.getElementById('g1MoraleBar');
+    morBar.style.width = g1MoraleVal + '%';
+    morBar.style.background = g1MoraleVal > 70 ? 'var(--success)' : (g1MoraleVal > 40 ? 'var(--warning)' : 'var(--danger)');
+  }
+
+  function g1Choose(opt) {
+    const st = g1Stages[g1Idx][opt];
+    g1TimeVal += st.time;
+    g1StabVal = Math.max(5, Math.min(100, g1StabVal + st.stab));
+    g1MoraleVal = Math.max(5, Math.min(100, g1MoraleVal + st.morale));
+    g1UpdateMetrics();
+    g1Hist.push({ stage: g1Stages[g1Idx].title, opt, slot: g1Order.indexOf(opt) + 1, fb: st.fb, time: st.time });
+
+    document.getElementById('g1BtnA').disabled = true;
+    document.getElementById('g1BtnB').disabled = true;
+    const fbBox = document.getElementById('g1Feedback');
+    fbBox.style.display = 'block';
+    fbBox.style.borderLeftColor = opt === 'B' ? 'var(--success)' : 'var(--danger)';
+    document.getElementById('g1FbText').innerHTML = st.fb;
+    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนน 🏆';
+    updateLockGateUI();
+  }
+
+  function g1NextStage() {
+    if (g1Idx < 3) {
+      g1Idx++; g1Render();
+    } else {
+      document.getElementById('g1PlayArea').style.display = 'none';
+      document.getElementById('g1Summary').style.display = 'block';
+      const devopsCount = g1Hist.filter(h => h.opt === 'B').length;
+      const vBox = document.getElementById('g1Verdict');
+      if (devopsCount === 4) {
+        vBox.innerHTML = `🏆 <b>ยอดเยี่ยม! คุณเลือกแนวทางการทำงานที่มีประสิทธิภาพสูงสุดทุกด่าน!</b> คุณใช้เวลารวมเพียง <b>${g1TimeVal} นาที</b> ระบบเสถียรและทีมไม่ต้องอดนอน!`;
+      } else if (devopsCount >= 2) {
+        vBox.innerHTML = `⚡ <b>ระดับปานกลาง (${devopsCount}/4 ด่านที่เลือกแนวทางสากล)</b> คุณใช้เวลารวม <b>${g1TimeVal} นาที</b> ลองเล่นใหม่เพื่อวิเคราะห์หาแนวทางที่ดีที่สุด!`;
+      } else {
+        vBox.innerHTML = `🔥 <b>เกิดคอขวดหนักมาก!</b> คุณเสียเวลารวมถึง <b>${g1TimeVal} นาที (15 ชั่วโมง!)</b> กดเริ่มใหม่แล้วลองวิเคราะห์เลือกแนวทางแก้ปัญหาใหม่อีกครั้ง`;
+      }
+      document.getElementById('g1History').innerHTML = g1Hist.map(h => `
+        <div class="history-item">
+          <b>${h.stage}</b> — เลือกทางเลือกที่ ${h.slot} (เสียเวลา +${h.time} นาที)<br>
+          <span style="color:var(--muted); font-size:13.5px;">${h.fb}</span>
+        </div>
+      `).join('');
+      updateLockGateUI();
+    }
+  }
+
+  function g1Reset() {
+    g1Idx = 0; g1TimeVal = 0; g1StabVal = 100; g1MoraleVal = 100; g1Hist = [];
+    g1UpdateMetrics();
+    document.getElementById('g1PlayArea').style.display = 'block';
+    document.getElementById('g1Summary').style.display = 'none';
+    g1Render();
+    updateLockGateUI();
+  }
+
+  // ==================== GAME 2 LOGIC ====================
+  let g2Level = 0;
+  let g2Completed = false;
+  let g2Busy = false;
+
+  const g2Missions = [
+    {
+      badge: "ภารกิจด่านที่ 1 / 5",
+      title: "ลองปล่อยฟีเจอร์ด้วยระบบมือแบบดั้งเดิม",
+      sub: "กดปุ่ม 'ทดลองปล่อยฟีเจอร์' เพื่อดูปัญหาจุดที่ 1 ที่ทีมมักเจอเวลาส่งมอบงานก้อนใหญ่",
+      lead: "14 วัน", fail: "75%", mttr: "360 นาที"
+    },
+    {
+      badge: "ภารกิจด่านที่ 2 / 5",
+      title: "แก้ปัญหาการรวมโค้ดแล้ว! ลองกดปล่อยฟีเจอร์ต่อ",
+      sub: "เราปรับวิธีซอยงานเป็นชิ้นเล็กแล้ว มาดูกันว่าถ้าตรวจโค้ดด้วยตาเปล่าจะเกิดอะไรขึ้น",
+      lead: "7 วัน", fail: "55%", mttr: "360 นาที"
+    },
+    {
+      badge: "ภารกิจด่านที่ 3 / 5",
+      title: "มีระบบตรวจโค้ดอัตโนมัติแล้ว! กดปล่อยฟีเจอร์เพื่อไปด่านติดตั้ง",
+      sub: "โค้ดไร้บั๊กแล้ว แต่ตอนส่งต่อให้ทีม Ops เอาขึ้นเซิร์ฟเวอร์จริงจะเกิดปัญหาอะไรไหม",
+      lead: "3 วัน", fail: "35%", mttr: "240 นาที"
+    },
+    {
+      badge: "ภารกิจด่านที่ 4 / 5",
+      title: "ติดตั้งผ่าน Container แล้ว! กดปล่อยฟีเจอร์เพื่อดูด่านใช้งานจริง",
+      sub: "ขึ้นเซิร์ฟเวอร์ผ่านฉลุย แต่ถ้ามีเคสฉุกเฉินตอนดึก ทีมจะรู้ตัวเร็วแค่ไหน",
+      lead: "1 ชั่วโมง", fail: "15%", mttr: "180 นาที"
+    },
+    {
+      badge: "ภารกิจด่านสุดท้าย (5 / 5)",
+      title: "ปรับปรุงระบบครบทุกขั้นตอนแล้ว! กดเดินเครื่องสายพาน",
+      sub: "มาดูความเร็วและความเสถียรของสายพานการส่งมอบงานที่สมบูรณ์กัน",
+      lead: "10 นาที", fail: "2%", mttr: "5 นาที"
+    }
+  ];
+
+  function g2ResetStages() {
+    [1,2,3,4].forEach(i => {
+      document.getElementById('st_' + i).className = 'stage';
+      document.getElementById('st_' + i + '_txt').innerText = 'รอดำเนินการ';
+    });
+  }
+
+  function g2SetStage(num, state, txt) {
+    document.getElementById('st_' + num).className = 'stage ' + state;
+    document.getElementById('st_' + num + '_txt').innerText = txt;
+  }
+
+  function g2UpdateHeader() {
+    const m = g2Missions[g2Level];
+    document.getElementById('g2StepBadge').innerText = m.badge;
+    document.getElementById('g2MissionTitle').innerText = m.title;
+    document.getElementById('g2MissionSub').innerText = m.sub;
+    document.getElementById('g2Lead').innerText = m.lead;
+    document.getElementById('g2Fail').innerText = m.fail;
+    document.getElementById('g2Mttr').innerText = m.mttr;
+    document.getElementById('g2Level').innerText = g2Level + ' / 4';
+
+    const labels = [
+      "1. Lean (ซอยงานเล็ก)",
+      "2. CI (บอทเทสต์อัตโนมัติ)",
+      "3. CD & Container",
+      "4. Monitoring & Culture"
+    ];
+    for (let i = 1; i <= 4; i++) {
+      const b = document.getElementById('badge_' + i);
+      if (i <= g2Level) {
+        b.className = 'calms-badge unlocked';
+        b.innerText = '✅ ' + labels[i-1];
+      } else {
+        b.className = 'calms-badge';
+        b.innerText = '🔒 ' + labels[i-1];
+      }
+    }
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function g2RunPipeline() {
+    if (g2Busy) return;
+    g2Busy = true;
+    document.getElementById('g2RunBtn').disabled = true;
+    g2ResetStages();
+    const box = document.getElementById('g2ActionBox');
+    box.innerHTML = `<div style="text-align:center; color:var(--primary); font-weight:700; padding:10px;">⏳ กำลังเดินเครื่องสายพาน...</div>`;
+
+    g2SetStage(1, 'running', 'กำลังรวมโค้ด...');
+    await sleep(550);
+    if (g2Level === 0) {
+      g2SetStage(1, 'failed', '❌ โค้ดตีกันพัง!');
+      box.innerHTML = `
+        <div class="problem-alert">
+          <b>💥 พังที่ด่าน 1 (Code Conflict):</b> เพราะต่างคนต่างดองโค้ดไว้นาน พอเอามารวมกันทีเดียว โค้ดเลยทับกันเละเทะ!
+        </div>
+        <div class="solution-card">
+          <div>
+            <b style="color:var(--success); font-size:15px;">💡 แนวทางแก้ไข (ซอยงานเป็นชิ้นเล็ก):</b>
+            <div style="font-size:13.5px; color:var(--text);">เปลี่ยนมาทยอยส่งโค้ดชิ้นเล็กๆ เข้ามารวมกันบ่อยๆ แทนการดองงานก้อนใหญ่</div>
+          </div>
+          <button class="btn btn-success" onclick="g2Unlock(1)">🛠️ อัปเกรดวิธีทำงาน: ซอยงานเป็นชิ้นเล็ก</button>
+        </div>
+      `;
+      g2Busy = false; return;
+    }
+    g2SetStage(1, 'passed', '✅ รวมโค้ดชิ้นเล็กผ่านฉลุย');
+
+    g2SetStage(2, 'running', 'กำลังตรวจสอบโค้ด...');
+    await sleep(550);
+    if (g2Level === 1) {
+      g2SetStage(2, 'failed', '❌ ตรวจด้วยตาไม่เจอบั๊ก!');
+      box.innerHTML = `
+        <div class="problem-alert">
+          <b>💥 พังที่ด่าน 2 (Manual Testing ช้าและหลุดรอด):</b> การใช้คนมานั่งคลิกตรวจทีละจุดทำให้ช้า และยังมีบั๊กเล็ดลอดไปได้!
+        </div>
+        <div class="solution-card">
+          <div>
+            <b style="color:var(--success); font-size:15px;">💡 แนวทางแก้ไข (ระบบตรวจโค้ดอัตโนมัติ):</b>
+            <div style="font-size:13.5px; color:var(--text);">ตั้งค่าให้มีระบบรันชุดทดสอบอัตโนมัติทันทีทุกครั้งที่มีการส่งโค้ดเข้ามา</div>
+          </div>
+          <button class="btn btn-success" onclick="g2Unlock(2)">🛠️ อัปเกรดวิธีทำงาน: ใช้ระบบทดสอบอัตโนมัติ</button>
+        </div>
+      `;
+      g2Busy = false; return;
+    }
+    g2SetStage(2, 'passed', '✅ ระบบทดสอบอัตโนมัติผ่าน 100%');
+
+    g2SetStage(3, 'running', 'กำลังติดตั้งขึ้นเซิร์ฟเวอร์...');
+    await sleep(550);
+    if (g2Level === 2) {
+      g2SetStage(3, 'failed', '❌ รันบนเซิร์ฟเวอร์ไม่ผ่าน!');
+      box.innerHTML = `
+        <div class="problem-alert">
+          <b>💥 พังที่ด่าน 3 (สภาวะแวดล้อมไม่ตรงกัน):</b> เพราะทีมพัฒนาแยกการทำงานกับทีมดูแลระบบ ทำให้การติดตั้งบนเซิร์ฟเวอร์จริงเกิดปัญหาเวอร์ชันไม่ตรงกัน!
+        </div>
+        <div class="solution-card">
+          <div>
+            <b style="color:var(--success); font-size:15px;">💡 แนวทางแก้ไข (แพ็กสภาพแวดล้อมและติดตั้งอัตโนมัติ):</b>
+            <div style="font-size:13.5px; color:var(--text);">รวมโค้ดและสภาพแวดล้อมไว้ในแพ็กเกจเดียวกัน พร้อมใช้สคริปต์ติดตั้งอัตโนมัติ</div>
+          </div>
+          <button class="btn btn-success" onclick="g2Unlock(3)">🛠️ อัปเกรดวิธีทำงาน: ใช้แพ็กเกจ Container และติดตั้งอัตโนมัติ</button>
+        </div>
+      `;
+      g2Busy = false; return;
+    }
+    g2SetStage(3, 'passed', '✅ ติดตั้งผ่านระบบอัตโนมัติสำเร็จ');
+
+    g2SetStage(4, 'running', 'เปิดให้ใช้งานจริง...');
+    await sleep(550);
+    if (g2Level === 3) {
+      g2SetStage(4, 'failed', '⚠️ กู้ระบบช้าเมื่อเกิดเหตุฉุกเฉิน!');
+      box.innerHTML = `
+        <div class="problem-alert">
+          <b>💥 ปัญหาด่านสุดท้าย (ขาดระบบแจ้งเตือนและวัฒนธรรมการแก้ปัญหาร่วมกัน):</b> เมื่อระบบมีปัญหา ทีมไม่รู้ตัวทันทีแถมมัวแต่โทษกันไปมา
+        </div>
+        <div class="solution-card">
+          <div>
+            <b style="color:var(--success); font-size:15px;">💡 แนวทางแก้ไข (ระบบเฝ้าระวังและวัฒนธรรมความร่วมมือ):</b>
+            <div style="font-size:13.5px; color:var(--text);">ติดตั้งระบบแจ้งเตือนเรียลไทม์, รองรับการย้อนกลับเวอร์ชันได้ทันที และร่วมมือแก้ปัญหาโดยไม่หาคนผิด</div>
+          </div>
+          <button class="btn btn-success" onclick="g2Unlock(4)">🛠️ อัปเกรดวิธีทำงาน: ติดตั้งระบบเฝ้าระวังและวัฒนธรรมร่วมมือ</button>
+        </div>
+      `;
+      g2Busy = false; return;
+    }
+
+    g2Completed = true;
+    g2SetStage(4, 'passed', '🌟 ระบบทำงานได้อย่างราบรื่น!');
+    box.innerHTML = `
+      <div style="background:var(--success-light); border:2px solid var(--success); padding:18px; border-radius:12px; text-align:center;">
+        <h3 style="margin:0 0 8px; color:var(--success); font-size:20px;">🏆 ภารกิจสำเร็จ! สายพานการส่งมอบงานมีประสิทธิภาพสูงสุด</h3>
+        <p style="margin:0 0 14px; color:var(--text); font-size:14.5px;">
+          คุณได้ปรับปรุงกระบวนการทำงานจากเดิมที่ใช้เวลา <b>14 วัน</b> ให้สามารถส่งมอบงานได้รวดเร็วและปลอดภัย พร้อมกู้คืนระบบได้อย่างรวดเร็ว!
+        </p>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-purple" onclick="switchGame(3)">🎓 ไปหน้าสร้างการ์ดคะแนนส่งอาจารย์ ➡️</button>
+          <button class="btn btn-secondary" onclick="g2Reset()">🔄 ลองเล่นทบทวนอีกครั้ง</button>
+        </div>
+      </div>
+    `;
+    g2Busy = false;
+    document.getElementById('g2RunBtn').disabled = false;
+    updateLockGateUI();
+  }
+
+  function g2Unlock(lvl) {
+    g2Level = lvl;
+    g2UpdateHeader();
+    g2ResetStages();
+    document.getElementById('g2RunBtn').disabled = false;
+    document.getElementById('g2ActionBox').innerHTML = `
+      <div style="text-align:center; color:var(--success); font-weight:700; padding:12px;">
+        ✅ อัปเกรดวิธีทำงานขั้นที่ ${lvl} เรียบร้อยแล้ว! กดปุ่ม <b>"▶️ กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบนเพื่อเดินเครื่องต่อได้เลย!
+      </div>
+    `;
+    updateLockGateUI();
+  }
+
+  function g2Reset() {
+    g2Level = 0;
+    g2Completed = false;
+    g2Busy = false;
+    g2UpdateHeader();
+    g2ResetStages();
+    document.getElementById('g2RunBtn').disabled = false;
+    document.getElementById('g2ActionBox').innerHTML = `
+      <div style="text-align:center; color:var(--muted); padding:10px;">
+        👆 กดปุ่ม <b>"กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบนเพื่อเริ่มตรวจสอบสายพานได้เลยครับ
+      </div>
+    `;
+    updateLockGateUI();
+  }
+
+  // ==================== LOCK GATE & GOOGLE SHEETS SENDER ====================
+  let isSubmitted = false;
+
+  function updateLockGateUI() {
+    const g1Done = g1Hist.length === 4;
+    const g2Done = g2Completed === true;
+    const allDone = g1Done && g2Done;
+
+    const box1 = document.getElementById('reqBox1');
+    box1.className = 'req-card ' + (g1Done ? 'done' : 'pending');
+    document.getElementById('reqTitle1').innerText = (g1Done ? '✅ ' : '🔒 ') + 'เกมที่ 1: คืนวันศุกร์สุดระทึก';
+    document.getElementById('reqSub1').innerText = g1Done
+      ? `ผ่านครบ 4 ด่านแล้ว`
+      : `ยังเล่นไม่จบ (${g1Hist.length} / 4 ด่าน)`;
+    document.getElementById('reqBtn1').style.display = g1Done ? 'none' : 'inline-block';
+
+    const box2 = document.getElementById('reqBox2');
+    box2.className = 'req-card ' + (g2Done ? 'done' : 'pending');
+    document.getElementById('reqTitle2').innerText = (g2Done ? '✅ ' : '🔒 ') + 'เกมที่ 2: ซ่อมสายพานมรณะ';
+    document.getElementById('reqSub2').innerText = g2Done
+      ? 'ซ่อมสายพานและเดินเครื่อง Production สำเร็จ 100%!'
+      : `ยังซ่อมสายพานไม่จบ (ปลดล็อก ${g2Level} / 4 ขั้น)`;
+    document.getElementById('reqBtn2').style.display = g2Done ? 'none' : 'inline-block';
+
+    const btn = document.getElementById('btnSubmitCard');
+    if (isSubmitted) {
+      btn.disabled = true;
+      btn.innerText = '✅ ส่งข้อมูลเข้า Google Sheets เรียบร้อยแล้ว (แคปหน้าจอการ์ดด้านล่างได้เลย)';
+    } else if (allDone) {
+      btn.disabled = false;
+      btn.innerText = '✨ สร้างการ์ดสรุปคะแนนและส่งเข้า Google Sheets ทันที';
+    } else {
+      btn.disabled = true;
+      btn.innerText = '🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน';
+    }
+  }
+
+  async function generateCard() {
+    const g1Played = g1Hist.length === 4;
+    if (!g1Played || !g2Completed) {
+      alert('⚠️ ระบบล็อกการส่งงาน: กรุณาเล่นเกมที่ 1 ให้ครบ 4 ด่าน และซ่อมสายพานในเกมที่ 2 จนขึ้นสถานะภารกิจสำเร็จก่อนครับ!');
+      updateLockGateUI();
+      return;
+    }
+
+    const stdId = document.getElementById('stdId').value.trim();
+    const stdName = document.getElementById('stdName').value.trim();
+    const stdReflect = document.getElementById('stdReflect').value.trim();
+
+    if (!stdId || !stdName || !stdReflect) {
+      alert('กรุณากรอก รหัสนิสิต, ชื่อ-นามสกุล และคำตอบท้ายคาบให้ครบก่อนกดส่งคะแนนครับ');
+      return;
+    }
+
+    const g1BestChoices = g1Hist.filter(h => h.opt === 'B').length;
+    const g1Score = 10 + (g1BestChoices * 10);
+    const g2Score = 50;
+    const totalScore = g1Score + g2Score;
+
+    document.getElementById('outName').innerText = stdName;
+    document.getElementById('outId').innerText = stdId;
+    document.getElementById('outTotalScore').innerText = `${totalScore} / 100`;
+    document.getElementById('outReflect').innerText = `"${stdReflect}"`;
+
+    const badgeEl = document.getElementById('certOverallBadge');
+    badgeEl.innerText = totalScore >= 90 ? 'MASTER 🏆' : 'COMPLETED ✅';
+    badgeEl.style.color = 'var(--success)';
+
+    document.getElementById('outG1Detail').innerHTML =
+      `• วิเคราะห์เลือกแนวทางที่เหมาะสม: <b>${g1BestChoices} / 4 ด่าน</b><br>` +
+      `• เวลาส่งมอบรวม: <b>${g1TimeVal} นาที</b> | ความเสถียร: <b>${g1StabVal}%</b><br>` +
+      `• คะแนนที่ได้: <b>${g1Score} / 50 คะแนน</b>`;
+
+    document.getElementById('outG2Detail').innerHTML =
+      `• ปลดล็อกกระบวนการทำงานครบ: <b>4 / 4 ขั้นตอน</b><br>` +
+      `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที)<br>` +
+      `• คะแนนที่ได้: <b>50 / 50 คะแนน</b>`;
+
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('outTime').innerText = timeStr;
+
+    const rawStr = `${stdId}-${totalScore}-${g1TimeVal}-${g2Level}`;
+    let hash = 0;
+    for (let i = 0; i < rawStr.length; i++) {
+      hash = ((hash << 5) - hash) + rawStr.charCodeAt(i);
+      hash |= 0;
+    }
+    const cleanHash = 'UP-SE-' + Math.abs(hash).toString(16).toUpperCase().padStart(6, '0');
+    document.getElementById('outHash').innerText = cleanHash;
+
+    const certCard = document.getElementById('certCard');
+    certCard.style.display = 'block';
+
+    const btn = document.getElementById('btnSubmitCard');
+    if (GOOGLE_SCRIPT_URL.startsWith('http') && !isSubmitted) {
+      btn.disabled = true;
+      btn.innerText = '⏳ กำลังบันทึกคะแนนเข้า Google Sheets...';
+
+      const payload = {
+        stdId: stdId,
+        stdName: stdName,
+        totalScore: totalScore,
+        g1Score: g1Score,
+        g2Score: g2Score,
+        g1TimeVal: g1TimeVal,
+        stdReflect: stdReflect,
+        verifyHash: cleanHash
+      };
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        isSubmitted = true;
+        document.getElementById('stdId').disabled = true;
+        document.getElementById('stdName').disabled = true;
+        document.getElementById('stdReflect').disabled = true;
+        badgeEl.innerText += ' (บันทึกเข้า Sheets แล้ว ☁️)';
+      } catch (err) {
+        console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', err);
+        btn.disabled = false;
+      }
+    } else if (!GOOGLE_SCRIPT_URL.startsWith('http')) {
+      isSubmitted = true;
+    }
+
+    updateLockGateUI();
+    certCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Initialize
+  g1Render();
+  g2UpdateHeader();
+  updateLockGateUI();
+</script>
+</body>
+</html>
