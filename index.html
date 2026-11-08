@@ -597,7 +597,7 @@
     <div class="panel" id="adminLoginBox" style="text-align:center; padding:36px 20px;">
       <div style="font-size:38px; margin-bottom:10px;">🔒</div>
       <h3 style="margin:0 0 8px; font-size:18px;">กรุณากรอกรหัสผ่านผู้สอน</h3>
-      <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">เพื่อความปลอดภัยของข้อมูลคะแนนนิสิต (รหัสผ่านเริ่มต้น: <b>admin1234</b>)</p>
+      <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">เฉพาะอาจารย์ผู้สอนประจำรายวิชาเท่านั้น</p>
       <div style="max-width:320px; margin:0 auto; display:flex; gap:8px;">
         <input type="password" id="adminPin" class="form-input" placeholder="กรอกรหัสผ่าน..." onkeyup="if(event.key==='Enter') verifyAdminPin()">
         <button class="btn btn-primary" onclick="verifyAdminPin()">เข้าสู่ระบบ</button>
@@ -1441,7 +1441,7 @@
 
   // ==================== ADMIN DASHBOARD LOGIC ====================
   let isAdminLoggedIn = false;
-  const ADMIN_DEFAULT_PIN = "admin1234";
+  const ADMIN_DEFAULT_PIN = "227302";
 
   function getStoredSubmissions() {
     try {
