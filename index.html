@@ -124,7 +124,8 @@
   .scenario-title { font-size: 18px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
   .scenario-desc { font-size: 15px; color: #334155; margin: 0; }
   .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 640px) { .choices-grid { grid-template-columns: 1fr; } }
+  .choices-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 768px) { .choices-grid, .choices-grid-3 { grid-template-columns: 1fr; } }
   .choice-card {
     background: #ffffff; border: 2px solid var(--border); border-radius: 12px;
     padding: 16px; cursor: pointer; text-align: left; color: var(--text);
@@ -355,15 +356,8 @@
         <p class="scenario-desc" id="g1Desc"></p>
       </div>
 
-      <div class="choices-grid">
-        <button class="choice-card" id="g1BtnA" onclick="g1Choose('A')">
-          <span class="choice-badge">ทางเลือกที่ 1</span>
-          <div id="g1TxtA" style="font-size:14.5px; font-weight:600;"></div>
-        </button>
-        <button class="choice-card" id="g1BtnB" onclick="g1Choose('B')">
-          <span class="choice-badge">ทางเลือกที่ 2</span>
-          <div id="g1TxtB" style="font-size:14.5px; font-weight:600;"></div>
-        </button>
+      <div class="choices-grid-3" id="g1ChoicesArea">
+        <!-- 3 choices dynamically rendered -->
       </div>
 
       <div class="feedback-box" id="g1Feedback">
@@ -661,66 +655,153 @@
   // ==================== GAME 1 LOGIC (WITHOUT BIAS LABELS) ====================
   const g1Stages = [
     {
-      title: "ด่านที่ 1: การรวมโค้ด (Code Integration)",
-      desc: "นักพัฒนา 3 คนเขียนฟีเจอร์ของตัวเองเสร็จแล้ว ถึงเวลานำโค้ดมารวมกันเพื่อเตรียมขึ้นระบบในวันศุกร์ คุณจะเลือกแนวทางใด?",
-      A: {
-        txt: "รอรวมโค้ดทั้งหมดทีเดียววันศุกร์เย็น แล้วค่อยนั่งแก้โค้ดที่ทับกันด้วยมือ",
-        time: 180, stab: -25, morale: -20,
-        fb: "❌ <b>โค้ดตีกันเละ!</b> กว่าจะแก้โค้ดที่ทับกันเสร็จก็ปาไป 3 ชั่วโมง แถมเผลอลบโค้ดเพื่อนหายไปบางส่วนโดยไม่รู้ตัว"
-      },
-      B: {
-        txt: "ส่งโค้ดขึ้น Git ย่อยๆ ทุกวัน ให้ระบบ Automated Test ตรวจจับจุดพังทันที",
-        time: 10, stab: 0, morale: 5,
-        fb: "✅ <b>ราบรื่น!</b> บอทตรวจเจอจุดผิดพลาดตั้งแต่เมื่อวานและแก้เสร็จใน 10 นาที วันศุกร์โค้ดพร้อมใช้งานทันที!"
-      }
+      title: "ด่านที่ 1: รวมโค้ดก่อนกลับบ้าน (17:00 น. วันศุกร์)",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #2563eb; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>บอส (Product Owner):</b> <i>"คืนนี้ต้องรวม 4 ฟีเจอร์ขึ้นเซิร์ฟเวอร์ให้ทันเที่ยงคืนนะ ไม่งั้นแคมเปญวันเสาร์เจ๊งแน่!"</i><br>
+          💬 <b>พี่เดฟ Senior:</b> <i>"ต่างคนต่างเขียนเสร็จในเครื่องตัวเองแล้ว ถึงเวลารวมโค้ดเข้า Branch กลาง... เอาไงดีน้อง?"</i>
+        </div>
+        นักพัฒนา 4 คนดองโค้ดไว้ในเครื่องตัวเองทั้งสัปดาห์ คุณจะเลือกแนวทางจัดการอย่างไร?
+      `,
+      options: [
+        {
+          badge: "ทางเลือก ก",
+          icon: "🔥",
+          title: "สายดันทุรังแก้มือ",
+          txt: "รวมโค้ดทั้งหมดตอนเย็นวันศุกร์ แล้วนั่งแก้โค้ดที่ทับกัน (Conflict) ด้วยมือทีละบรรทัด",
+          time: 180, stab: -30, morale: -25, isDevops: false,
+          fb: "❌ <b>โค้ดตีกันเละเทะ!</b> นั่งแก้งานมือหงิก 3 ชั่วโมง เผลอลบโค้ดเพื่อนทิ้งไปบางส่วนโดยไม่รู้ตัว เกิดบั๊กใหม่เพียบ!"
+        },
+        {
+          badge: "ทางเลือก ข",
+          icon: "📜",
+          title: "สายระบบราชการ",
+          txt: "สั่งล็อกระบบ Git ห้ามใครแตะ แล้วส่งไฟล์ซิปให้หัวหน้าทีมไล่ตรวจทีละบรรทัด",
+          time: 300, stab: -10, morale: -35, isDevops: false,
+          fb: "🐢 <b>คอขวดมหาศาล!</b> หัวหน้าตรวจงานไม่ทัน ทุกคนต้องนั่งรอตาค้าง ฟีเจอร์ปล่อยช้าไป 5 ชั่วโมง ทีมเซ็งหมดไฟ!"
+        },
+        {
+          badge: "ทางเลือก ค",
+          icon: "⚡",
+          title: "สาย DevOps ตัวจริง",
+          txt: "ใช้ Trunk-based ซอยงานเล็ก และให้ Automated CI Test ตรวจจับจุดพังอัตโนมัติตลอดสัปดาห์",
+          time: 10, stab: 0, morale: 15, isDevops: true,
+          fb: "✅ <b>ราบรื่นยอดเยี่ยม!</b> บอทเทสต์ตรวจเจอจุดพังตั้งแต่บ่ายและแก้จบใน 10 นาที 5 โมงเย็นโค้ดพร้อมปล่อยได้ทันที!"
+        }
+      ]
     },
     {
-      title: "ด่านที่ 2: การนำระบบขึ้นเซิร์ฟเวอร์ (Deployment)",
-      desc: "โค้ดพร้อมแล้ว! ต้องส่งต่อให้ทีม Ops นำไปติดตั้งบนเซิร์ฟเวอร์จริง (Production) คุณจะเลือกแนวทางใด?",
-      A: {
-        txt: "ซิปไฟล์ส่งอีเมลพร้อมคู่มือติดตั้ง 10 หน้า ให้ Ops ไปนั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
-        time: 120, stab: -30, morale: -25,
-        fb: "🔥 <b>รันบนเครื่อง Dev ได้ แต่พังบนเซิร์ฟเวอร์!</b> เพราะเวอร์ชันโปรแกรมไม่ตรงกัน Dev กับ Ops เถียงกันเกือบ 2 ชั่วโมง"
-      },
-      B: {
-        txt: "แพ็กสภาพแวดล้อมใส่ Container และกดรัน Deployment Pipeline อัตโนมัติ",
-        time: 5, stab: 0, morale: 5,
-        fb: "✅ <b>แม่นยำ 100%!</b> สภาพแวดล้อมเหมือนเครื่อง Dev ทุกประการ ระบบติดตั้งเสร็จอัตโนมัติใน 5 นาทีโดยไม่ต้องพิมพ์คำสั่งเอง"
-      }
+      title: "ด่านที่ 2: ส่งมอบให้ทีม Ops นำขึ้นเซิร์ฟเวอร์จริง (19:30 น.)",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #d97706; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>พี่ Ops ตาดำคล้ำ:</b> <i>"ไอ้น้อง โค้ดเอ็งรันบนเครื่อง Dev ผ่าน แต่ Server จริงเป็น Ubuntu คนละเวอร์ชันกับเครื่องเอ็งนะ! จะเอามันขึ้นยังไง?"</i><br>
+          💬 <b>พี่เดฟ Senior:</b> <i>"ก็เครื่องผมมันรันได้อะพี่! รีบเอาขึ้นหน่อย ผมจะไปกินหมูกระทะแล้ว!"</i>
+        </div>
+        คุณจะเลือกแนวทางนำระบบขึ้น Production อย่างไร?
+      `,
+      options: [
+        {
+          badge: "ทางเลือก ก",
+          icon: "📦",
+          title: "สายโยนข้ามกำแพง",
+          txt: "ซิปไฟล์ส่งอีเมลพร้อมเขียนคู่มือติดตั้ง 10 หน้าให้ Ops ไปนั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
+          time: 150, stab: -35, morale: -30, isDevops: false,
+          fb: "🔥 <b>Works on my machine ในตำนาน!</b> Ops พิมพ์คำสั่งตกหล่นไปบรรทัดเดียว ระบบพัง Dev กับ Ops ยืนเถียงกันข้ามคืน 2 ชั่วโมงเต็ม"
+        },
+        {
+          badge: "ทางเลือก ข",
+          icon: "🤠",
+          title: "สายลักไก่แก้สด",
+          txt: "SSH รีโมตเข้าไปแก้โค้ดและพิมพ์คำสั่งสดๆ บน Production Server เพื่อความรวดเร็ว",
+          time: 240, stab: -45, morale: -40, isDevops: false,
+          fb: "💥 <b>บาปสูงสุดของระบบ!</b> สบายใจได้แค่ 10 นาที เซิร์ฟเวอร์หลักพังทั้งคลัสเตอร์ ไม่มีใครรู้ว่าแก้บรรทัดไหนไปบ้าง กู้คืนยากมาก!"
+        },
+        {
+          badge: "ทางเลือก ค",
+          icon: "🐳",
+          title: "สาย DevOps ตัวจริง",
+          txt: "แพ็กสภาพแวดล้อมใส่ Container (Docker) และกดรัน CD Pipeline อัตโนมัติ",
+          time: 5, stab: 0, morale: 15, isDevops: true,
+          fb: "✅ <b>แม่นยำ 100%!</b> สภาพแวดล้อมเหมือนกันทุกระดับ รันคำสั่งเดียวระบบติดตั้งเสร็จใน 5 นาที ไร้ข้อผิดพลาด!"
+        }
+      ]
     },
     {
-      title: "ด่านที่ 3: เหตุฉุกเฉินหลังปล่อยระบบ (Incident Response)",
-      desc: "เวลา 21:00 น. ลูกค้าเริ่มใช้งานจริงแล้วเกิดบั๊กหน้าชำระเงินค้าง! ทีมของคุณจะรับมือด้วยวิธีใด?",
-      A: {
-        txt: "รอจนลูกค้าโทรโวยวายกับ Call Center เช้าวันเสาร์ แล้วค่อยปลุก Ops มาเปิดหาไฟล์ Log ทีละเครื่อง",
-        time: 360, stab: -35, morale: -30,
-        fb: "🚨 <b>ระบบล่มยาวข้ามคืน!</b> ลูกค้าหนีหาย กว่าจะหาเจอว่าพังที่ไฟล์ไหนก็เสียเวลาไปอีก 6 ชั่วโมงเต็ม"
-      },
-      B: {
-        txt: "ระบบ Monitoring แจ้งเตือนเข้าแชตกลุ่มทันทีที่ Error พุ่งเกิน 1% และกด Rollback ย้อนเวอร์ชันเดิมในคลิกเดียว",
-        time: 5, stab: -5, morale: 0,
-        fb: "🛡️ <b>กู้ชีพทันเวลา!</b> ทีมเห็นแจ้งเตือนทันทีและกดย้อนกลับสู่เวอร์ชันที่ปลอดภัยภายใน 5 นาที ลูกค้าแทบไม่รู้สึกถึงความผิดพลาด"
-      }
+      title: "ด่านที่ 3: เหตุฉุกเฉินตอน 21:00 น. หน้าจ่ายเงินพัง!",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #dc2626; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>บอสโทรมาสายไหม้:</b> <i>"ระบบขึ้นไปแล้ว แต่ลูกค้าโวยวายเต็มเพจว่ากดจ่ายเงินแล้วเงินตัด แต่หน้าเว็บค้าง!! ด่วนเลย!!"</i><br>
+          💬 <b>พี่ Ops:</b> <i>"ล็อกไฟล์มหาศาลเป็นล้านบรรทัด ไม่รู้พังที่จุดไหนเลยเว้ย!!"</i>
+        </div>
+        ทีมของคุณจะรับมือกับสถานการณ์วิกฤตนี้อย่างไร?
+      `,
+      options: [
+        {
+          badge: "ทางเลือก ก",
+          icon: "🙈",
+          title: "สายปล่อยเบลอ",
+          txt: "ปิดหน้าชำระเงินชั่วคราว รอเช้าวันเสาร์ค่อยให้ทุกคนมาช่วยกันเปิดหาไฟล์ Log ทีละเครื่อง",
+          time: 360, stab: -45, morale: -35, isDevops: false,
+          fb: "🚨 <b>ระบบล่มยาวข้ามคืน!</b> ลูกค้าหนีหาย เสียรายได้หลายแสน กว่าจะหาจุดพังเจอก็เสียเวลาไป 6 ชั่วโมงเต็ม"
+        },
+        {
+          badge: "ทางเลือก ข",
+          icon: "🎲",
+          title: "สายแก้ร้อนรน",
+          txt: "ให้โปรแกรมเมอร์ทุกคนเปิดโค้ดแล้วเดาสุ่มจุดผิด รีบแก้แล้วส่งทับขึ้นไปใหม่ทันที",
+          time: 210, stab: -35, morale: -30, isDevops: false,
+          fb: "😰 <b>ไฟลามทุ่ง!</b> ยิ่งแก้รีบยิ่งสร้างบั๊กใหม่ คราวนี้ระบบล็อกอินพังตามไปด้วย ต้องนั่งแก้ลูกโซ่ข้ามคืนจนสว่าง"
+        },
+        {
+          badge: "ทางเลือก ค",
+          icon: "🛡️",
+          title: "สาย DevOps ตัวจริง",
+          txt: "ระบบ Monitoring แจ้งเตือนจุดพังทันที และกดปุ่ม 1-Click Rollback ย้อนเวอร์ชันเดิมใน 3 นาที",
+          time: 5, stab: -5, morale: 10, isDevops: true,
+          fb: "🛡️ <b>กู้ชีพทันเวลา!</b> ระบบย้อนกลับสู่เวอร์ชันปลอดภัยใน 5 นาที ลูกค้าไม่สะดุด ทีมค่อยๆ วิเคราะห์ปัญหาจาก Dashboard อย่างสงบ"
+        }
+      ]
     },
     {
       title: "ด่านที่ 4: การสรุปบทเรียนเช้าวันจันทร์ (Post-Mortem Culture)",
-      desc: "หลังเหตุการณ์สงบลงในเช้าวันจันทร์ คุณจะเลือกแนวทางจัดการปัญหาอย่างไร?",
-      A: {
-        txt: "หาตัวคนเขียนโค้ดผิดมาตักเตือน และออกกฎว่าต่อไปนี้จะขึ้นระบบต้องให้หัวหน้าเซ็นอนุมัติ 5 ขั้นตอน",
-        time: 240, stab: -5, morale: -20,
-        fb: "😰 <b>บรรยากาศตึงเครียด!</b> ไม่มีใครกล้าเขียนโค้ดใหม่ ทุกคนปกปิดความผิดพลาด และการปล่อยฟีเจอร์ครั้งต่อไปช้าลงอีก 4 ชั่วโมง"
-      },
-      B: {
-        txt: "ประชุมร่วมกันโดยไม่หาคนผิด (Blameless) แต่ช่วยกันเขียนชุดทดสอบอัตโนมัติเพิ่มเพื่อดักบั๊กนี้ในอนาคต",
-        time: 15, stab: 5, morale: 10,
-        fb: "🌟 <b>วัฒนธรรมองค์กรแข็งแกร่ง!</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น และบั๊กเดิมจะไม่มีวันหลุดรอดไปได้อีก"
-      }
+      desc: `
+        <div style="background:#fff; border-left:4px solid #7c3aed; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>บอสเรียกประชุม 9 โมงเช้า:</b> <i>"จากเหตุการณ์คืนวันศุกร์ บริษัทเราเกือบเสียหายหนัก เช้าวันนี้เราจะต้องจัดการเรื่องนี้ยังไงดี?"</i>
+        </div>
+        คุณจะเลือกแนวทางจัดการปัญหาและวัฒนธรรมองค์กรอย่างไร?
+      `,
+      options: [
+        {
+          badge: "ทางเลือก ก",
+          icon: "🧙",
+          title: "สายล่าแม่มด",
+          txt: "เปิด Git Blame หาตัวคนเขียนโค้ดบรรทัดที่พังมาตัดเงินเดือน และออกกฎลงโทษทางวินัย",
+          time: 240, stab: -10, morale: -45, isDevops: false,
+          fb: "😱 <b>วัฒนธรรมเป็นพิษ!</b> ทุกคนกลัวความผิด ไม่กล้าแตะโค้ดใหม่ ปกปิดบั๊ก และการส่งงานครั้งต่อไปช้าลงเป็นเต่าคลาน"
+        },
+        {
+          badge: "ทางเลือก ข",
+          icon: "📑",
+          title: "สายเอกสารหนาเตอะ",
+          txt: "ออกกฎว่าต่อไปนี้จะปล่อยงาน ต้องพิมพ์เอกสาร 15 หน้า ให้ผู้บริหาร 5 ฝ่ายเซ็นอนุมัติ",
+          time: 300, stab: -5, morale: -30, isDevops: false,
+          fb: "🐢 <b>องค์กรเป็นอัมพาต!</b> งานล่าช้าไป 3 สัปดาห์ เสียโอกาสทางธุรกิจ แต่สุดท้ายก็ยังมีบั๊กหลุดรอดได้เหมือนเดิม"
+        },
+        {
+          badge: "ทางเลือก ค",
+          icon: "🌟",
+          title: "สาย DevOps ตัวจริง",
+          txt: "ประชุมแบบไม่หาคนผิด (Blameless Post-Mortem) และช่วยกันเขียน Automated Regression Test ดักจับ",
+          time: 15, stab: 15, morale: 20, isDevops: true,
+          fb: "🌟 <b>วัฒนธรรมแข็งแกร่ง!</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น ได้ชุดทดสอบดักบั๊กเพิ่ม และบั๊กเดิมจะไม่หลุดรอดอีก!"
+        }
+      ]
     }
   ];
 
   let g1Idx = 0, g1TimeVal = 0, g1StabVal = 100, g1MoraleVal = 100, g1Hist = [];
   let g1TimerId = null;
-  let g1TimeRemaining = 7.0;
+  let g1TimeRemaining = 60.0;
 
   function g1StartTimer() {
     clearInterval(g1TimerId);
@@ -786,15 +867,16 @@
     g1UpdateMetrics();
 
     const fbText = `⏰ <b>หมดเวลา 60 วินาที! คุณลังเลไม่กล้าตัดสินใจในภาวะวิกฤต</b><br>ในเหตุการณ์จริง การปล่อยให้เวลาล่วงเลยไปโดยไม่ทำอะไรคือสิ่งที่อันตรายที่สุด ปัญหาลุกลามจนเซิร์ฟเวอร์ค้าง ระบบหยุดชะงัก (เสียเวลาสะสม +${penaltyTime} นาที, ความเสถียรลดลง ${penaltyStab}%)`;
-    g1Hist.push({ stage: g1Stages[g1Idx].title, opt: 'TIMEOUT', fb: fbText, time: penaltyTime });
+    g1Hist.push({ stage: g1Stages[g1Idx].title, optBadge: "TIMEOUT", optTitle: "⏰ หมดเวลาตัดสินใจ", fb: fbText, time: penaltyTime, isDevops: false });
 
-    document.getElementById('g1BtnA').disabled = true;
-    document.getElementById('g1BtnB').disabled = true;
+    const buttons = document.querySelectorAll('.g1-opt-card');
+    buttons.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+
     const fbBox = document.getElementById('g1Feedback');
     fbBox.style.display = 'block';
     fbBox.style.borderLeftColor = 'var(--danger)';
     document.getElementById('g1FbText').innerHTML = fbText;
-    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนน 🏆';
+    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนนและฉายา 🏆';
     updateLockGateUI();
   }
 
@@ -803,11 +885,20 @@
     const st = g1Stages[g1Idx];
     document.getElementById('g1Tag').innerText = `ด่านที่ ${g1Idx + 1} จาก 4`;
     document.getElementById('g1Title').innerText = st.title;
-    document.getElementById('g1Desc').innerText = st.desc;
-    document.getElementById('g1TxtA').innerText = st.A.txt;
-    document.getElementById('g1TxtB').innerText = st.B.txt;
-    document.getElementById('g1BtnA').disabled = false;
-    document.getElementById('g1BtnB').disabled = false;
+    document.getElementById('g1Desc').innerHTML = st.desc;
+
+    const area = document.getElementById('g1ChoicesArea');
+    area.innerHTML = st.options.map((opt, i) => `
+      <button class="choice-card g1-opt-card" id="g1Btn_${i}" onclick="g1Choose(${i})">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="choice-badge">${opt.badge}</span>
+          <span style="font-size:22px;">${opt.icon}</span>
+        </div>
+        <div style="font-size:15px; font-weight:800; color:var(--text);">${opt.title}</div>
+        <div style="font-size:13px; color:#475569; line-height:1.45;">${opt.txt}</div>
+      </button>
+    `).join('');
+
     document.getElementById('g1Feedback').style.display = 'none';
     g1StartTimer();
   }
@@ -826,22 +917,32 @@
     morBar.style.background = g1MoraleVal > 70 ? 'var(--success)' : (g1MoraleVal > 40 ? 'var(--warning)' : 'var(--danger)');
   }
 
-  function g1Choose(opt) {
+  function g1Choose(optIdx) {
     clearInterval(g1TimerId);
-    const st = g1Stages[g1Idx][opt];
-    g1TimeVal += st.time;
-    g1StabVal = Math.max(5, Math.min(100, g1StabVal + st.stab));
-    g1MoraleVal = Math.max(5, Math.min(100, g1MoraleVal + st.morale));
+    const st = g1Stages[g1Idx];
+    const opt = st.options[optIdx];
+    g1TimeVal += opt.time;
+    g1StabVal = Math.max(5, Math.min(100, g1StabVal + opt.stab));
+    g1MoraleVal = Math.max(5, Math.min(100, g1MoraleVal + opt.morale));
     g1UpdateMetrics();
-    g1Hist.push({ stage: g1Stages[g1Idx].title, opt, fb: st.fb, time: st.time });
+    g1Hist.push({ stage: st.title, optBadge: opt.badge, optTitle: opt.title, fb: opt.fb, time: opt.time, isDevops: opt.isDevops });
 
-    document.getElementById('g1BtnA').disabled = true;
-    document.getElementById('g1BtnB').disabled = true;
+    const buttons = document.querySelectorAll('.g1-opt-card');
+    buttons.forEach((b, i) => {
+      b.disabled = true;
+      if (i === optIdx) {
+        b.style.borderColor = opt.isDevops ? 'var(--success)' : (opt.time > 200 ? 'var(--danger)' : 'var(--warning)');
+        b.style.background = opt.isDevops ? 'var(--success-light)' : (opt.time > 200 ? 'var(--danger-light)' : 'var(--warning-light)');
+      } else {
+        b.style.opacity = '0.5';
+      }
+    });
+
     const fbBox = document.getElementById('g1Feedback');
     fbBox.style.display = 'block';
-    fbBox.style.borderLeftColor = opt === 'B' ? 'var(--success)' : 'var(--danger)';
-    document.getElementById('g1FbText').innerHTML = st.fb;
-    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนน 🏆';
+    fbBox.style.borderLeftColor = opt.isDevops ? 'var(--success)' : (opt.time > 200 ? 'var(--danger)' : 'var(--warning)');
+    document.getElementById('g1FbText').innerHTML = opt.fb;
+    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนนและฉายา 🏆';
     updateLockGateUI();
   }
 
@@ -852,23 +953,59 @@
     } else {
       document.getElementById('g1PlayArea').style.display = 'none';
       document.getElementById('g1Summary').style.display = 'block';
-      const devopsCount = g1Hist.filter(h => h.opt === 'B').length;
+      const devopsCount = g1Hist.filter(h => h.isDevops).length;
       const vBox = document.getElementById('g1Verdict');
+
+      let endingBadge = "";
+      let endingColor = "";
+      let endingDesc = "";
+
       if (devopsCount === 4) {
-        vBox.innerHTML = `🏆 <b>ยอดเยี่ยม! คุณตัดสินใจได้เฉียบคมและทันเวลาทุกด่าน!</b> คุณใช้เวลารวมเพียง <b>${g1TimeVal} นาที</b> ระบบเสถียรและทีมไม่ต้องอดนอน!`;
-      } else if (devopsCount >= 2) {
-        vBox.innerHTML = `⚡ <b>ระดับปานกลาง (${devopsCount}/4 ด่านที่เลือกแนวทางสากล)</b> คุณใช้เวลารวม <b>${g1TimeVal} นาที</b> ลองเล่นใหม่เพื่อฝึกการตัดสินใจที่รวดเร็วและแม่นยำยิ่งขึ้น!`;
+        endingBadge = "👑 DevOps เทพเจ้าสายพาน (DevOps Legend)";
+        endingColor = "var(--purple)";
+        endingDesc = `คุณเลือกแนวทางตามหลักการ DevOps ได้เฉียบขาดครบทุกด่าน! ใช้เวลารวมเพียง <b>${g1TimeVal} นาที</b> ขวัญกำลังใจทีมเต็มเปี่ยม ปล่อยระบบเสร็จตั้งแต่เย็นวันศุกร์ ได้ไปกินหมูกระทะฉลองอย่างสงบสุข ไร้กังวล!`;
+      } else if (devopsCount >= 2 && g1TimeVal < 400) {
+        endingBadge = "🚒 นักดับเพลิงประจำออฟฟิศ (Hero Firefighter)";
+        endingColor = "var(--warning)";
+        endingDesc = `ระบบเกิดคอขวดและไฟไหม้เป็นระยะ แต่คุณยังวิ่งไล่ดับเพลิงและพาทีมรอดพ้นวิกฤตคืนวันศุกร์มาได้! ใช้เวลารวม <b>${g1TimeVal} นาที</b> (ลองเล่นใหม่แล้วค้นหาแนวทาง DevOps ทุกด่านเพื่อลดเวลาให้เหลือไม่กี่นาที)`;
+      } else if (g1MoraleVal < 40 || g1TimeVal >= 400) {
+        endingBadge = "🧟 วิศวกรซอมบี้ (Zombie Engineer)";
+        endingColor = "var(--danger)";
+        endingDesc = `สภาพทีมร่อแร่ใกล้ตาย! นั่งแก้ปัญหาและประสานงานข้ามคืนจนถึงเช้าวันจันทร์ เสียเวลาสะสมถึง <b>${g1TimeVal} นาที</b> ขอบตาดำสนิท กินกาแฟแทนน้ำเปล่า!`;
       } else {
-        vBox.innerHTML = `🔥 <b>เกิดคอขวดหนักมาก!</b> คุณเสียเวลารวมถึง <b>${g1TimeVal} นาที</b> กดเริ่มใหม่แล้วลองวิเคราะห์เลือกแนวทางแก้ปัญหาใหม่อีกครั้ง`;
+        endingBadge = "🏃 สายชิ่งหนีกลับบ้าน (Stealth Escaper)";
+        endingColor = "var(--danger)";
+        endingDesc = `ระบบระเบิดตูมตาม ความเสถียรลดฮวบเหลือ <b>${g1StabVal}%</b> ทิ้งให้ทีม Ops นั่งร้องไห้กู้เซิร์ฟเวอร์คนเดียว!`;
       }
+
+      vBox.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+          <span style="font-size:18px; font-weight:900; color:${endingColor};">${endingBadge}</span>
+          <span style="font-size:13px; font-weight:700; background:#fff; padding:4px 10px; border-radius:20px; border:1px solid var(--border);">เลือกแนวทาง DevOps: ${devopsCount} / 4 ด่าน</span>
+        </div>
+        <div style="font-size:14.5px; color:var(--text); line-height:1.6;">
+          ${endingDesc}
+        </div>
+      `;
+
       document.getElementById('g1History').innerHTML = g1Hist.map(h => `
         <div class="history-item">
-          <b>${h.stage}</b> — ${h.opt === 'TIMEOUT' ? '<span style="color:var(--danger); font-weight:800;">⏰ ตัดสินใจไม่ทัน (หมดเวลา 7 วินาที)</span>' : 'เลือกทางเลือกที่ ' + (h.opt === 'A' ? '1' : '2')} (เสียเวลา +${h.time} นาที)<br>
+          <b>${h.stage}</b> — ${h.optBadge === 'TIMEOUT' ? '<span style="color:var(--danger); font-weight:800;">⏰ ตัดสินใจไม่ทัน (หมดเวลา 60 วินาที)</span>' : 'เลือก: <b>' + h.optBadge + ' (' + h.optTitle + ')</b>'} (เสียเวลา +${h.time} นาที)<br>
           <span style="color:var(--muted); font-size:13.5px;">${h.fb}</span>
         </div>
       `).join('');
       updateLockGateUI();
     }
+  }
+
+  function g1Reset() {
+    clearInterval(g1TimerId);
+    g1Idx = 0; g1TimeVal = 0; g1StabVal = 100; g1MoraleVal = 100; g1Hist = [];
+    g1UpdateMetrics();
+    document.getElementById('g1PlayArea').style.display = 'block';
+    document.getElementById('g1Summary').style.display = 'none';
+    g1Render();
+    updateLockGateUI();
   }
 
   function g1Reset() {
@@ -1310,7 +1447,7 @@
       return;
     }
 
-    const g1BestChoices = g1Hist.filter(h => h.opt === 'B').length;
+    const g1BestChoices = g1Hist.filter(h => h.isDevops).length;
     const g1Score = 10 + (g1BestChoices * 10);
     const g2Score = 50;
     const totalScore = g1Score + g2Score;
