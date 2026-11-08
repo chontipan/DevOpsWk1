@@ -292,9 +292,11 @@
   <input type="text" name="stdId" />
   <input type="text" name="stdName" />
   <input type="number" name="totalScore" />
+  <input type="text" name="rankGrade" />
   <input type="number" name="g1Score" />
   <input type="number" name="g2Score" />
   <input type="number" name="g1TimeVal" />
+  <input type="number" name="g2Errors" />
   <input type="text" name="verifyHash" />
 </form>
 
@@ -529,8 +531,11 @@
           <div id="outId" style="font-size:19px; font-weight:800; color:var(--primary);">-</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); font-weight:700;">คะแนนรวม (Total Score)</div>
-          <div id="outTotalScore" style="font-size:22px; font-weight:900; color:var(--purple);">100 / 100</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;">คะแนนและระดับทักษะ</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span id="outTotalScore" style="font-size:22px; font-weight:900; color:var(--purple);">100 / 100</span>
+            <span id="outRankBadge" style="font-size:13px; font-weight:800; padding:3px 10px; border-radius:12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a;">Rank S</span>
+          </div>
         </div>
       </div>
 
@@ -547,7 +552,10 @@
 
       <div class="cert-footer">
         <div>📅 เวลาที่บันทึกผล: <span id="outTime" style="font-weight:700;">-</span></div>
-        <div>รหัสยืนยัน (Verification Hash): <span class="verify-code" id="outHash">-</span></div>
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <span>รหัสยืนยัน (Verification Hash): <span class="verify-code" id="outHash">-</span></span>
+          <button type="button" class="btn btn-secondary no-print" onclick="copyVerificationHash()" id="copyHashBtn" style="font-size:12px; padding:3px 9px;">📋 คัดลอกรหัส</button>
+        </div>
       </div>
 
       <div style="margin-top:16px; text-align:center;" class="no-print">
@@ -585,24 +593,45 @@
 
     <!-- Data Table Box -->
     <div class="panel" id="adminDataBox" style="display:none;">
+      <!-- Class Analytics Summary Cards -->
+      <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom:16px;">
+        <div class="metric-box" style="padding:12px 14px;">
+          <div class="metric-label">👥 ผู้ส่งงานทั้งหมด</div>
+          <div class="metric-val" id="statSubmissions" style="color:var(--primary); font-size:22px;">0 คน</div>
+        </div>
+        <div class="metric-box" style="padding:12px 14px;">
+          <div class="metric-label">🏆 ได้ Rank S & A</div>
+          <div class="metric-val" id="statRankSA" style="color:var(--success); font-size:22px;">0%</div>
+        </div>
+        <div class="metric-box" style="padding:12px 14px;">
+          <div class="metric-label">⏱️ เวลาเฉลี่ย (เกม 1)</div>
+          <div class="metric-val" id="statAvgTime" style="color:var(--purple); font-size:22px;">0 นาที</div>
+        </div>
+        <div class="metric-box" style="padding:12px 14px;">
+          <div class="metric-label">🩺 ข้อผิดพลาดเฉลี่ย (เกม 2)</div>
+          <div class="metric-val" id="statAvgErrors" style="color:var(--warning); font-size:22px;">0.0 ครั้ง</div>
+        </div>
+      </div>
+
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
-        <div style="font-weight:800; font-size:16px;">
-          📋 รายชื่อผู้ส่งงานทั้งหมด: <span id="adminCount" style="color:var(--primary); font-size:18px;">0</span> คน
+        <div style="font-weight:800; font-size:15px;">
+          📋 รายชื่อผู้ส่งงาน: <span id="adminCount" style="color:var(--primary); font-size:17px;">0</span> คน
         </div>
         <input type="text" id="adminSearch" class="form-input" style="max-width:260px; padding:7px 12px; font-size:13.5px;" placeholder="🔍 ค้นหาชื่อ หรือ รหัสนิสิต..." oninput="renderAdminTable()">
       </div>
 
       <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
           <thead>
             <tr style="background:#f1f5f9; border-bottom:2px solid var(--border);">
               <th style="padding:10px 8px;">#</th>
               <th style="padding:10px 8px;">วัน-เวลา</th>
               <th style="padding:10px 8px;">รหัสนิสิต</th>
               <th style="padding:10px 8px;">ชื่อ-นามสกุล</th>
-              <th style="padding:10px 8px; text-align:center;">คะแนนรวม</th>
+              <th style="padding:10px 8px; text-align:center;">คะแนน</th>
+              <th style="padding:10px 8px; text-align:center;">Rank</th>
               <th style="padding:10px 8px; text-align:center;">เกม 1</th>
-              <th style="padding:10px 8px; text-align:center;">เกม 2</th>
+              <th style="padding:10px 8px; text-align:center;">เกม 2 (ผิด)</th>
               <th style="padding:10px 8px;">Hash ยืนยัน</th>
             </tr>
           </thead>
@@ -758,19 +787,19 @@
           badge: "ทางเลือก ก",
           txt: "รวมโค้ดทั้งหมดตอนเย็นวันศุกร์ แล้วนั่งแก้โค้ดที่ทับกัน (Conflict) ด้วยมือทีละบรรทัด",
           time: 180, stab: -30, morale: -25, isDevops: false,
-          fb: "❌ <b>โค้ดตีกันเละเทะ!</b> นั่งแก้งานมือหงิก 3 ชั่วโมง เผลอลบโค้ดเพื่อนทิ้งไปบางส่วนโดยไม่รู้ตัว เกิดบั๊กใหม่เพียบ!"
+          fb: "❌ <b>โค้ดตีกันเละเทะ! [ขาด L - Lean & CI]</b> นั่งแก้งานมือหงิก 3 ชั่วโมง เผลอลบโค้ดเพื่อนทิ้งไปบางส่วนโดยไม่รู้ตัว เกิดบั๊กใหม่เพียบ!"
         },
         {
           badge: "ทางเลือก ข",
           txt: "สั่งล็อกระบบ Git ห้ามใครแตะ แล้วส่งไฟล์ซิปให้หัวหน้าทีมไล่ตรวจทีละบรรทัด",
           time: 300, stab: -10, morale: -35, isDevops: false,
-          fb: "🐢 <b>คอขวดมหาศาล!</b> หัวหน้าตรวจงานไม่ทัน ทุกคนต้องนั่งรอตาค้าง ฟีเจอร์ปล่อยช้าไป 5 ชั่วโมง ทีมเซ็งหมดไฟ!"
+          fb: "🐢 <b>คอขวดมหาศาล! [ขาด L - Lean]</b> หัวหน้าตรวจงานไม่ทัน ทุกคนต้องนั่งรอตาค้าง ฟีเจอร์ปล่อยช้าไป 5 ชั่วโมง ทีมเซ็งหมดไฟ!"
         },
         {
           badge: "ทางเลือก ค",
           txt: "ใช้ Trunk-based ซอยงานเล็ก และให้ Automated CI Test ตรวจจับจุดพังอัตโนมัติตลอดสัปดาห์",
           time: 10, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>ราบรื่นยอดเยี่ยม!</b> บอทเทสต์ตรวจเจอจุดพังตั้งแต่บ่ายและแก้จบใน 10 นาที 5 โมงเย็นโค้ดพร้อมปล่อยได้ทันที!"
+          fb: "✅ <b>ราบรื่นยอดเยี่ยม! [L - Lean & Automation]</b> บอทเทสต์ตรวจเจอจุดพังตั้งแต่บ่ายและแก้จบใน 10 นาที 5 โมงเย็นโค้ดพร้อมปล่อยได้ทันที!"
         }
       ]
     },
@@ -788,19 +817,19 @@
           badge: "ทางเลือก ก",
           txt: "ซิปไฟล์ส่งอีเมลพร้อมเขียนคู่มือติดตั้ง 10 หน้าให้ Ops ไปนั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
           time: 150, stab: -35, morale: -30, isDevops: false,
-          fb: "🔥 <b>Works on my machine ในตำนาน!</b> Ops พิมพ์คำสั่งตกหล่นไปบรรทัดเดียว ระบบพัง Dev กับ Ops ยืนเถียงกันข้ามคืน 2 ชั่วโมงเต็ม"
+          fb: "🔥 <b>Works on my machine ในตำนาน! [ขาด A - Automation]</b> Ops พิมพ์คำสั่งตกหล่นไปบรรทัดเดียว ระบบพัง Dev กับ Ops ยืนเถียงกันข้ามคืน 2 ชั่วโมงเต็ม"
         },
         {
           badge: "ทางเลือก ข",
           txt: "SSH รีโมตเข้าไปแก้โค้ดและพิมพ์คำสั่งสดๆ บน Production Server เพื่อความรวดเร็ว",
           time: 240, stab: -45, morale: -40, isDevops: false,
-          fb: "💥 <b>บาปสูงสุดของระบบ!</b> สบายใจได้แค่ 10 นาที เซิร์ฟเวอร์หลักพังทั้งคลัสเตอร์ ไม่มีใครรู้ว่าแก้บรรทัดไหนไปบ้าง กู้คืนยากมาก!"
+          fb: "💥 <b>บาปสูงสุดของระบบ! [ขาด Infrastructure as Code]</b> สบายใจได้แค่ 10 นาที เซิร์ฟเวอร์หลักพังทั้งคลัสเตอร์ ไม่มีใครรู้ว่าแก้บรรทัดไหนไปบ้าง กู้คืนยากมาก!"
         },
         {
           badge: "ทางเลือก ค",
           txt: "แพ็กสภาพแวดล้อมใส่ Container (Docker) และกดรัน CD Pipeline อัตโนมัติ",
           time: 5, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>แม่นยำ 100%!</b> สภาพแวดล้อมเหมือนกันทุกระดับ รันคำสั่งเดียวระบบติดตั้งเสร็จใน 5 นาที ไร้ข้อผิดพลาด!"
+          fb: "✅ <b>แม่นยำ 100%! [A - Automation & CD]</b> สภาพแวดล้อมเหมือนกันทุกระดับ รันคำสั่งเดียวระบบติดตั้งเสร็จใน 5 นาที ไร้ข้อผิดพลาด!"
         }
       ]
     },
@@ -818,19 +847,19 @@
           badge: "ทางเลือก ก",
           txt: "ปิดหน้าชำระเงินชั่วคราว รอเช้าวันเสาร์ค่อยให้ทุกคนมาช่วยกันเปิดหาไฟล์ Log ทีละเครื่อง",
           time: 360, stab: -45, morale: -35, isDevops: false,
-          fb: "🚨 <b>ระบบล่มยาวข้ามคืน!</b> ลูกค้าหนีหาย เสียรายได้หลายแสน กว่าจะหาจุดพังเจอก็เสียเวลาไป 6 ชั่วโมงเต็ม"
+          fb: "🚨 <b>ระบบล่มยาวข้ามคืน! [ขาด M - Measurement]</b> ลูกค้าหนีหาย เสียรายได้หลายแสน กว่าจะหาจุดพังเจอก็เสียเวลาไป 6 ชั่วโมงเต็ม"
         },
         {
           badge: "ทางเลือก ข",
           txt: "ให้โปรแกรมเมอร์ทุกคนเปิดโค้ดแล้วเดาสุ่มจุดผิด รีบแก้แล้วส่งทับขึ้นไปใหม่ทันที",
           time: 210, stab: -35, morale: -30, isDevops: false,
-          fb: "😰 <b>ไฟลามทุ่ง!</b> ยิ่งแก้รีบยิ่งสร้างบั๊กใหม่ คราวนี้ระบบล็อกอินพังตามไปด้วย ต้องนั่งแก้ลูกโซ่ข้ามคืนจนสว่าง"
+          fb: "😰 <b>ไฟลามทุ่ง! [ขาด Observability]</b> ยิ่งแก้รีบยิ่งสร้างบั๊กใหม่ คราวนี้ระบบล็อกอินพังตามไปด้วย ต้องนั่งแก้ลูกโซ่ข้ามคืนจนสว่าง"
         },
         {
           badge: "ทางเลือก ค",
           txt: "ระบบ Monitoring แจ้งเตือนจุดพังทันที และกดปุ่ม 1-Click Rollback ย้อนเวอร์ชันเดิมใน 3 นาที",
           time: 5, stab: -5, morale: 10, isDevops: true,
-          fb: "🛡️ <b>กู้ชีพทันเวลา!</b> ระบบย้อนกลับสู่เวอร์ชันปลอดภัยใน 5 นาที ลูกค้าไม่สะดุด ทีมค่อยๆ วิเคราะห์ปัญหาจาก Dashboard อย่างสงบ"
+          fb: "🛡️ <b>กู้ชีพทันเวลา! [M - Measurement & Telemetry]</b> ระบบย้อนกลับสู่เวอร์ชันปลอดภัยใน 5 นาที ลูกค้าไม่สะดุด ทีมค่อยๆ วิเคราะห์ปัญหาจาก Dashboard อย่างสงบ"
         }
       ]
     },
@@ -847,19 +876,19 @@
           badge: "ทางเลือก ก",
           txt: "เปิด Git Blame หาตัวคนเขียนโค้ดบรรทัดที่พังมาตัดเงินเดือน และออกกฎลงโทษทางวินัย",
           time: 240, stab: -10, morale: -45, isDevops: false,
-          fb: "😱 <b>วัฒนธรรมเป็นพิษ!</b> ทุกคนกลัวความผิด ไม่กล้าแตะโค้ดใหม่ ปกปิดบั๊ก และการส่งงานครั้งต่อไปช้าลงเป็นเต่าคลาน"
+          fb: "😱 <b>วัฒนธรรมเป็นพิษ! [ขาด C - Culture & Psychological Safety]</b> ทุกคนกลัวความผิด ไม่กล้าแตะโค้ดใหม่ ปกปิดบั๊ก และการส่งงานครั้งต่อไปช้าลงเป็นเต่าคลาน"
         },
         {
           badge: "ทางเลือก ข",
           txt: "ออกกฎว่าต่อไปนี้จะปล่อยงาน ต้องพิมพ์เอกสาร 15 หน้า ให้ผู้บริหาร 5 ฝ่ายเซ็นอนุมัติ",
           time: 300, stab: -5, morale: -30, isDevops: false,
-          fb: "🐢 <b>องค์กรเป็นอัมพาต!</b> งานล่าช้าไป 3 สัปดาห์ เสียโอกาสทางธุรกิจ แต่สุดท้ายก็ยังมีบั๊กหลุดรอดได้เหมือนเดิม"
+          fb: "🐢 <b>องค์กรเป็นอัมพาต! [ขาด Lean Governance]</b> งานล่าช้าไป 3 สัปดาห์ เสียโอกาสทางธุรกิจ แต่สุดท้ายก็ยังมีบั๊กหลุดรอดได้เหมือนเดิม"
         },
         {
           badge: "ทางเลือก ค",
           txt: "ประชุมแบบไม่หาคนผิด (Blameless Post-Mortem) และช่วยกันเขียน Automated Regression Test ดักจับ",
           time: 15, stab: 15, morale: 20, isDevops: true,
-          fb: "🌟 <b>วัฒนธรรมแข็งแกร่ง!</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น ได้ชุดทดสอบดักบั๊กเพิ่ม และบั๊กเดิมจะไม่หลุดรอดอีก!"
+          fb: "🌟 <b>วัฒนธรรมแข็งแกร่ง! [C - Culture & S - Sharing]</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น ได้ชุดทดสอบดักบั๊กเพิ่ม และบั๊กเดิมจะไม่หลุดรอดอีก!"
         }
       ]
     }
@@ -1013,6 +1042,7 @@
   let g2Level = 0;
   let g2Completed = false;
   let g2Busy = false;
+  let g2Errors = 0;
 
   const g2Problems = [
     {
@@ -1283,6 +1313,7 @@
         </div>
       `;
     } else {
+      g2Errors++;
       playSound('error');
       const card = document.getElementById('g2Opt_' + optIdx);
       card.className = 'g2-card selected-wrong';
@@ -1414,6 +1445,7 @@
     g2Level = 0;
     g2Completed = false;
     g2Busy = false;
+    g2Errors = 0;
     g2UpdateHeader();
     g2ResetStages();
     document.getElementById('g2RunBtn').disabled = false;
@@ -1487,9 +1519,39 @@
     const g2Score = 50;
     const totalScore = g1Score + g2Score;
 
+    // Calculate Rank Badge
+    let rankGrade = 'Rank C';
+    let rankColor = '#b91c1c';
+    let rankBg = '#fee2e2';
+    let rankBorder = '#fca5a5';
+    if (totalScore >= 90) {
+      rankGrade = 'Rank S 🏆';
+      rankColor = '#7c2d12';
+      rankBg = '#fef3c7';
+      rankBorder = '#fde68a';
+    } else if (totalScore >= 80) {
+      rankGrade = 'Rank A 🌟';
+      rankColor = '#15803d';
+      rankBg = '#dcfce7';
+      rankBorder = '#86efac';
+    } else if (totalScore >= 70) {
+      rankGrade = 'Rank B 👍';
+      rankColor = '#1d4ed8';
+      rankBg = '#dbeafe';
+      rankBorder = '#93c5fd';
+    }
+
     document.getElementById('outName').innerText = stdName;
     document.getElementById('outId').innerText = stdId;
     document.getElementById('outTotalScore').innerText = `${totalScore} / 100`;
+
+    const rankBadgeEl = document.getElementById('outRankBadge');
+    if (rankBadgeEl) {
+      rankBadgeEl.innerText = rankGrade;
+      rankBadgeEl.style.color = rankColor;
+      rankBadgeEl.style.backgroundColor = rankBg;
+      rankBadgeEl.style.borderColor = rankBorder;
+    }
 
     const badgeEl = document.getElementById('certOverallBadge');
     badgeEl.innerText = totalScore >= 90 ? 'MASTER 🏆' : 'COMPLETED ✅';
@@ -1502,8 +1564,8 @@
 
     document.getElementById('outG2Detail').innerHTML =
       `• ปลดล็อกกระบวนการทำงานครบ: <b>4 / 4 ขั้นตอน</b><br>` +
-      `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที)<br>` +
-      `• คะแนนที่ได้: <b>50 / 50 คะแนน</b>`;
+      `• ข้อผิดพลาด/ลองผิดลองถูก: <b>${g2Errors} ครั้ง</b><br>` +
+      `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที) | คะแนน: <b>50 / 50</b>`;
 
     const now = new Date();
     const timeStr = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
@@ -1527,8 +1589,11 @@
       stdId: stdId,
       stdName: stdName,
       totalScore: totalScore,
+      rankGrade: rankGrade,
       g1Score: g1Score,
+      g1BestChoices: g1BestChoices,
       g2Score: g2Score,
+      g2Errors: g2Errors,
       g1TimeVal: g1TimeVal,
       verifyHash: cleanHash
     };
@@ -1541,8 +1606,10 @@
       netlifyParams.append('stdId', stdId);
       netlifyParams.append('stdName', stdName);
       netlifyParams.append('totalScore', totalScore);
+      netlifyParams.append('rankGrade', rankGrade);
       netlifyParams.append('g1Score', g1Score);
       netlifyParams.append('g2Score', g2Score);
+      netlifyParams.append('g2Errors', g2Errors);
       netlifyParams.append('g1TimeVal', g1TimeVal);
       netlifyParams.append('verifyHash', cleanHash);
       fetch('/', {
@@ -1561,8 +1628,11 @@
         stdId: stdId,
         stdName: stdName,
         totalScore: totalScore,
+        rankGrade: rankGrade,
         g1Score: g1Score,
+        g1BestChoices: g1BestChoices,
         g2Score: g2Score,
+        g2Errors: g2Errors,
         g1TimeVal: g1TimeVal,
         verifyHash: cleanHash
       };
@@ -1591,6 +1661,21 @@
 
     updateLockGateUI();
     certCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyVerificationHash() {
+    const hash = document.getElementById('outHash')?.innerText || '';
+    if (!hash || hash === '-') return;
+    navigator.clipboard.writeText(hash).then(() => {
+      const btn = document.getElementById('copyHashBtn');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ คัดลอกแล้ว!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      }
+    }).catch(() => {
+      alert('รหัสยืนยัน: ' + hash);
+    });
   }
 
   // ==================== ADMIN DASHBOARD LOGIC ====================
@@ -1629,6 +1714,21 @@
 
   function renderAdminTable() {
     const list = getStoredSubmissions();
+
+    // Calculate Class Analytics Summary
+    const totalSubmissions = list.length;
+    const countRankSA = list.filter(item => item.totalScore >= 80).length;
+    const pctRankSA = totalSubmissions > 0 ? Math.round((countRankSA / totalSubmissions) * 100) : 0;
+    const sumTime = list.reduce((acc, cur) => acc + (cur.g1TimeVal || 0), 0);
+    const avgTime = totalSubmissions > 0 ? Math.round(sumTime / totalSubmissions) : 0;
+    const sumErrors = list.reduce((acc, cur) => acc + (cur.g2Errors || 0), 0);
+    const avgErrors = totalSubmissions > 0 ? (sumErrors / totalSubmissions).toFixed(1) : '0.0';
+
+    if (document.getElementById('statSubmissions')) document.getElementById('statSubmissions').innerText = totalSubmissions + ' คน';
+    if (document.getElementById('statRankSA')) document.getElementById('statRankSA').innerText = pctRankSA + '%';
+    if (document.getElementById('statAvgTime')) document.getElementById('statAvgTime').innerText = avgTime + ' นาที';
+    if (document.getElementById('statAvgErrors')) document.getElementById('statAvgErrors').innerText = avgErrors + ' ครั้ง';
+
     const query = (document.getElementById('adminSearch')?.value || '').toLowerCase().trim();
     const filtered = list.filter(item => {
       if (!query) return true;
@@ -1645,7 +1745,7 @@
     if (filtered.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="8" style="text-align:center; padding:24px; color:var(--muted);">
+          <td colspan="9" style="text-align:center; padding:24px; color:var(--muted);">
             ${list.length === 0 ? 'ยังไม่มีข้อมูลการส่งงานในระบบ' : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา'}
           </td>
         </tr>
@@ -1653,18 +1753,29 @@
       return;
     }
 
-    tbody.innerHTML = filtered.map((item, idx) => `
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:10px 8px; color:var(--muted);">${idx + 1}</td>
-        <td style="padding:10px 8px; white-space:nowrap;">${item.time}</td>
-        <td style="padding:10px 8px; font-weight:800; color:var(--primary);">${item.stdId}</td>
-        <td style="padding:10px 8px; font-weight:700;">${item.stdName}</td>
-        <td style="padding:10px 8px; text-align:center; font-weight:900; color:${item.totalScore >= 90 ? 'var(--purple)' : 'var(--success)'};">${item.totalScore}</td>
-        <td style="padding:10px 8px; text-align:center;">${item.g1Score}</td>
-        <td style="padding:10px 8px; text-align:center;">${item.g2Score}</td>
-        <td style="padding:10px 8px; font-family:monospace; font-size:12px; color:var(--muted);">${item.verifyHash}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = filtered.map((item, idx) => {
+      const rank = item.rankGrade || (item.totalScore >= 90 ? 'Rank S' : (item.totalScore >= 80 ? 'Rank A' : (item.totalScore >= 70 ? 'Rank B' : 'Rank C')));
+      const isS = rank.includes('S');
+      const isA = rank.includes('A');
+      const badgeBg = isS ? '#fef3c7' : (isA ? '#dcfce7' : '#f1f5f9');
+      const badgeColor = isS ? '#92400e' : (isA ? '#15803d' : '#475569');
+
+      return `
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 8px; color:var(--muted);">${idx + 1}</td>
+          <td style="padding:10px 8px; white-space:nowrap;">${item.time}</td>
+          <td style="padding:10px 8px; font-weight:800; color:var(--primary);">${item.stdId}</td>
+          <td style="padding:10px 8px; font-weight:700;">${item.stdName}</td>
+          <td style="padding:10px 8px; text-align:center; font-weight:900; color:${item.totalScore >= 90 ? 'var(--purple)' : 'var(--success)'};">${item.totalScore}</td>
+          <td style="padding:10px 8px; text-align:center;">
+            <span style="font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:10px; background:${badgeBg}; color:${badgeColor};">${rank}</span>
+          </td>
+          <td style="padding:10px 8px; text-align:center;">${item.g1Score} <span style="font-size:11px; color:var(--muted);">(${item.g1TimeVal}น.)</span></td>
+          <td style="padding:10px 8px; text-align:center; color:${(item.g2Errors || 0) > 0 ? 'var(--warning)' : 'var(--success)'}; font-weight:700;">${item.g2Score} <span style="font-size:11px; color:var(--muted);">(${item.g2Errors ?? 0} ผิด)</span></td>
+          <td style="padding:10px 8px; font-family:monospace; font-size:12px; color:var(--muted);">${item.verifyHash}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   function exportToExcel() {
@@ -1679,9 +1790,12 @@
       "รหัสนิสิต",
       "ชื่อ-นามสกุล",
       "คะแนนรวม (เต็ม 100)",
+      "DevOps Rank",
       "คะแนนเกม 1",
-      "คะแนนเกม 2",
+      "ตัวเลือก DevOps (เกม 1)",
       "เวลาเกม 1 (นาที)",
+      "คะแนนเกม 2",
+      "ข้อผิดพลาดเกม 2 (ครั้ง)",
       "รหัสยืนยัน (Hash)"
     ];
 
@@ -1689,14 +1803,18 @@
     csvContent += headers.map(h => `"${h}"`).join(",") + "\r\n";
 
     list.forEach(item => {
+      const rank = item.rankGrade || (item.totalScore >= 90 ? 'Rank S' : (item.totalScore >= 80 ? 'Rank A' : (item.totalScore >= 70 ? 'Rank B' : 'Rank C')));
       const row = [
         item.time,
         item.stdId,
         item.stdName,
         item.totalScore,
+        rank,
         item.g1Score,
-        item.g2Score,
+        item.g1BestChoices ?? '-',
         item.g1TimeVal,
+        item.g2Score,
+        item.g2Errors ?? 0,
         item.verifyHash
       ];
       csvContent += row.map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(",") + "\r\n";
