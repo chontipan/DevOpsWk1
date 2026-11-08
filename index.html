@@ -310,6 +310,7 @@
     <button class="tab-btn cert-tab" id="tabBtn3" onclick="switchGame(3)">🎓 สรุปผลคะแนนท้ายคาบ</button>
     <button class="tab-btn" id="tabBtn4" onclick="switchGame(4)" style="background:#f1f5f9; border-color:#cbd5e1; color:#475569;">🔐 สำหรับผู้สอน (Admin)</button>
     <button class="tab-btn" id="soundToggleBtn" onclick="toggleSound()" style="background:#fff; border-color:#cbd5e1; font-weight:700;">🔊 เสียง: เปิด</button>
+    <button class="tab-btn" id="langToggleBtn" onclick="toggleLanguage()" style="background:#2563eb; color:#fff; border-color:#1d4ed8; font-weight:800;">🌐 EN</button>
   </div>
 </nav>
 
@@ -319,24 +320,24 @@
   <section id="game1" class="game-section active">
     <div class="header-card">
       <div>
-        <h2>🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก (Crisis Simulator)</h2>
-        <p>เลือกแนวทางการตัดสินใจที่เหมาะสมที่สุดเพื่อพาทีมและระบบรอดพ้นวิกฤต</p>
+        <h2 id="g1HeaderTitle">🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก (Crisis Simulator)</h2>
+        <p id="g1HeaderSub">เลือกแนวทางการตัดสินใจที่เหมาะสมที่สุดเพื่อพาทีมและระบบรอดพ้นวิกฤต</p>
       </div>
-      <button class="btn btn-secondary" onclick="g1Reset()">🔄 เริ่มเล่นใหม่</button>
+      <button class="btn btn-secondary" id="g1ResetBtn" onclick="g1Reset()">🔄 เริ่มเล่นใหม่</button>
     </div>
 
     <div class="metrics-grid-3">
       <div class="metric-box">
-        <div class="metric-label">⏱️ เวลาที่เสียไปสะสม (ยิ่งน้อยยิ่งดี)</div>
+        <div class="metric-label" id="lblG1Time">⏱️ เวลาที่เสียไปสะสม (ยิ่งน้อยยิ่งดี)</div>
         <div class="metric-val" id="g1Time" style="color:var(--primary)">0 นาที</div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">🛡️ ความเสถียรของระบบ (System Stability)</div>
+        <div class="metric-label" id="lblG1Stab">🛡️ ความเสถียรของระบบ (System Stability)</div>
         <div class="metric-val" id="g1Stability" style="color:var(--success)">100%</div>
         <div class="progress-bar-bg"><div id="g1StabBar" class="progress-bar-fill" style="width:100%; background:var(--success);"></div></div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">😊 ขวัญกำลังใจทีม (Team Morale)</div>
+        <div class="metric-label" id="lblG1Morale">😊 ขวัญกำลังใจทีม (Team Morale)</div>
         <div class="metric-val" id="g1Morale" style="color:var(--success)">100%</div>
         <div class="progress-bar-bg"><div id="g1MoraleBar" class="progress-bar-fill" style="width:100%; background:var(--success);"></div></div>
       </div>
@@ -364,13 +365,13 @@
     </div>
 
     <div class="panel" id="g1Summary" style="display:none;">
-      <div class="panel-title">🏁 สรุปผลการตัดสินใจของคุณในเกมที่ 1</div>
+      <div class="panel-title" id="g1SummaryTitle">🏁 สรุปผลการตัดสินใจของคุณในเกมที่ 1</div>
       <div id="g1Verdict" style="padding:16px; border-radius:10px; background:#f8fafc; border:1px solid var(--border); margin-bottom:14px; font-size:15px;"></div>
-      <div style="font-weight:800; margin-bottom:8px;">ประวัติการตัดสินใจทั้ง 4 ด่าน:</div>
+      <div style="font-weight:800; margin-bottom:8px;" id="g1HistLabel">ประวัติการตัดสินใจทั้ง 4 ด่าน:</div>
       <div id="g1History"></div>
       <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="switchGame(2)">ไปเล่นเกมที่ 2 ต่อ (ซ่อมสายพานมรณะ) ➡️</button>
-        <button class="btn btn-secondary" onclick="g1Reset()">🔄 เล่นเกมที่ 1 ซ้ำอีกครั้ง</button>
+        <button class="btn btn-primary" id="btnG1ToG2" onclick="switchGame(2)">ไปเล่นเกมที่ 2 ต่อ (ซ่อมสายพานมรณะ) ➡️</button>
+        <button class="btn btn-secondary" id="btnG1Replay" onclick="g1Reset()">🔄 เล่นเกมที่ 1 ซ้ำอีกครั้ง</button>
       </div>
     </div>
   </section>
@@ -380,10 +381,10 @@
   <section id="game2" class="game-section">
     <div class="header-card">
       <div>
-        <h2>🛠️ เกมที่ 2: ภารกิจหมอสายพานกู้ชีพ (DevOps Incident Doctor)</h2>
-        <p>วิธีเล่น: กดปุ่ม <b>"ทดลองปล่อยฟีเจอร์"</b> เมื่อสายพานพัง ให้เลือก <b>"แนวทางกู้ชีพที่ถูกต้อง"</b> จาก 3 ตัวเลือกเพื่อซ่อมสายพานให้สำเร็จ!</p>
+        <h2 id="g2HeaderTitle">🛠️ เกมที่ 2: ภารกิจหมอสายพานกู้ชีพ (DevOps Incident Doctor)</h2>
+        <p id="g2HeaderSub">วิธีเล่น: กดปุ่ม <b>"ทดลองปล่อยฟีเจอร์"</b> เมื่อสายพานพัง ให้เลือก <b>"แนวทางกู้ชีพที่ถูกต้อง"</b> จาก 3 ตัวเลือกเพื่อซ่อมสายพานให้สำเร็จ!</p>
       </div>
-      <button class="btn btn-secondary" onclick="g2Reset()">🔄 เริ่มภารกิจใหม่</button>
+      <button class="btn btn-secondary" id="g2ResetBtn" onclick="g2Reset()">🔄 เริ่มภารกิจใหม่</button>
     </div>
 
     <div class="mission-banner">
@@ -400,26 +401,26 @@
     </div>
 
     <div class="panel">
-      <div class="panel-title">🚀 สถานะสายพานส่งมอบงาน (Deployment Pipeline)</div>
+      <div class="panel-title" id="g2PipelineTitle">🚀 สถานะสายพานส่งมอบงาน (Deployment Pipeline)</div>
       <div class="pipeline-stages">
         <div class="stage" id="st_1">
           <div class="stage-icon">💻</div>
-          <div class="stage-name">ด่าน 1: รวมโค้ด (Merge)</div>
+          <div class="stage-name" id="st_1_name">ด่าน 1: รวมโค้ด (Merge)</div>
           <div class="stage-status" id="st_1_txt">รอเดินเครื่อง</div>
         </div>
         <div class="stage" id="st_2">
           <div class="stage-icon">🧪</div>
-          <div class="stage-name">ด่าน 2: ทดสอบ (Test)</div>
+          <div class="stage-name" id="st_2_name">ด่าน 2: ทดสอบ (Test)</div>
           <div class="stage-status" id="st_2_txt">รอเดินเครื่อง</div>
         </div>
         <div class="stage" id="st_3">
           <div class="stage-icon">📦</div>
-          <div class="stage-name">ด่าน 3: ติดตั้ง (Deploy)</div>
+          <div class="stage-name" id="st_3_name">ด่าน 3: ติดตั้ง (Deploy)</div>
           <div class="stage-status" id="st_3_txt">รอเดินเครื่อง</div>
         </div>
         <div class="stage" id="st_4">
           <div class="stage-icon">🌐</div>
-          <div class="stage-name">ด่าน 4: ใช้งานจริง (Prod)</div>
+          <div class="stage-name" id="st_4_name">ด่าน 4: ใช้งานจริง (Prod)</div>
           <div class="stage-status" id="st_4_txt">รอเดินเครื่อง</div>
         </div>
       </div>
@@ -430,7 +431,7 @@
         </div>
       </div>
 
-      <div style="margin-top:18px; font-weight:800; font-size:13.5px; color:var(--muted);">
+      <div style="margin-top:18px; font-weight:800; font-size:13.5px; color:var(--muted);" id="lblG2CalmsTitle">
         🏅 ทักษะ DevOps (CALMS) ที่ทีมของคุณปลดล็อกแล้ว:
       </div>
       <div class="calms-checklist">
@@ -443,19 +444,19 @@
 
     <div class="metrics-grid">
       <div class="metric-box">
-        <div class="metric-label">เวลาส่งมอบงาน (Lead Time)</div>
+        <div class="metric-label" id="lblG2Lead">เวลาส่งมอบงาน (Lead Time)</div>
         <div class="metric-val" id="g2Lead" style="color:var(--warning)">14 วัน</div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">โอกาสพังเมื่อขึ้นระบบจริง</div>
+        <div class="metric-label" id="lblG2Fail">โอกาสพังเมื่อขึ้นระบบจริง</div>
         <div class="metric-val" id="g2Fail" style="color:var(--danger)">75%</div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">เวลากู้คืนเมื่อระบบล่ม (MTTR)</div>
+        <div class="metric-label" id="lblG2Mttr">เวลากู้คืนเมื่อระบบล่ม (MTTR)</div>
         <div class="metric-val" id="g2Mttr" style="color:var(--danger)">360 นาที</div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">สถานะความพร้อมของทีม</div>
+        <div class="metric-label" id="lblG2Level">สถานะความพร้อมของทีม</div>
         <div class="metric-val" id="g2Level" style="color:var(--primary)">0 / 4</div>
       </div>
     </div>
@@ -466,14 +467,14 @@
   <section id="game3" class="game-section">
     <div class="header-card">
       <div>
-        <h2 style="color:var(--purple);">🎓 สร้างการ์ดสรุปคะแนนและผลการเรียนรู้</h2>
-        <p>ระบบจะปลดล็อกให้กรอกชื่อและสร้างการ์ดคะแนนเมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น</p>
+        <h2 style="color:var(--purple);" id="g3HeaderTitle">🎓 สร้างการ์ดสรุปคะแนนและผลการเรียนรู้</h2>
+        <p id="g3HeaderSub">ระบบจะปลดล็อกให้กรอกชื่อและสร้างการ์ดคะแนนเมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น</p>
       </div>
     </div>
 
     <!-- Pre-requisite Gate Checklist -->
     <div class="panel">
-      <div class="panel-title">🔍 ตรวจสอบเงื่อนไขก่อนสร้างการ์ดคะแนน (Mission Checklist)</div>
+      <div class="panel-title" id="g3ChecklistTitle">🔍 ตรวจสอบเงื่อนไขก่อนสร้างการ์ดคะแนน (Mission Checklist)</div>
       <div class="req-grid">
         <div class="req-card pending" id="reqBox1">
           <div>
@@ -495,11 +496,11 @@
       <div class="panel-title" style="margin-top:8px;">📝 กรอกข้อมูลนิสิตเพื่อสร้างการ์ดคะแนน</div>
       <div class="form-grid" style="margin-bottom:16px;">
         <div class="form-group">
-          <label for="stdId">รหัสนิสิต (Student ID) *</label>
+          <label for="stdId" id="lblStdId">รหัสนิสิต (Student ID) *</label>
           <input type="text" id="stdId" class="form-input" placeholder="เช่น 6602xxxx">
         </div>
         <div class="form-group">
-          <label for="stdName">ชื่อ - นามสกุล (Full Name) *</label>
+          <label for="stdName" id="lblStdName">ชื่อ - นามสกุล (Full Name) *</label>
           <input type="text" id="stdName" class="form-input" placeholder="เช่น นายสมชาย สายเดฟออปส์">
         </div>
       </div>
@@ -513,26 +514,26 @@
       <div class="cert-header">
         <div>
           <span class="cert-badge">DEVOPS MINDSET & CALMS LAB</span>
-          <h2 style="margin:8px 0 2px; font-size:22px; color:var(--text);">ใบรับรองผลการเรียนรู้วิชา DevOps (คาบที่ 1)</h2>
-          <div style="font-size:13px; color:var(--muted);">สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา</div>
+          <h2 style="margin:8px 0 2px; font-size:22px; color:var(--text);" id="certTitle">ใบรับรองผลการเรียนรู้วิชา DevOps (คาบที่ 1)</h2>
+          <div style="font-size:13px; color:var(--muted);" id="certUni">สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:12px; color:var(--muted); font-weight:700;">สถานะผลการประเมิน</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertStatus">สถานะผลการประเมิน</div>
           <div id="certOverallBadge" style="font-size:18px; font-weight:900; color:var(--success);">PASSED ✅</div>
         </div>
       </div>
 
       <div class="student-info-box">
         <div>
-          <div style="font-size:12px; color:var(--muted); font-weight:700;">ชื่อ-นามสกุลนิสิต</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertName">ชื่อ-นามสกุลนิสิต</div>
           <div id="outName" style="font-size:19px; font-weight:800; color:var(--text);">-</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); font-weight:700;">รหัสนิสิต</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertId">รหัสนิสิต</div>
           <div id="outId" style="font-size:19px; font-weight:800; color:var(--primary);">-</div>
         </div>
         <div>
-          <div style="font-size:12px; color:var(--muted); font-weight:700;">คะแนนและระดับทักษะ</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertScore">คะแนนและระดับทักษะ</div>
           <div style="display:flex; align-items:center; gap:8px;">
             <span id="outTotalScore" style="font-size:22px; font-weight:900; color:var(--purple);">100 / 100</span>
             <span id="outRankBadge" style="font-size:13px; font-weight:800; padding:3px 10px; border-radius:12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a;">Rank S</span>
@@ -542,19 +543,19 @@
 
       <div class="cert-score-grid">
         <div class="cert-score-card">
-          <div style="font-weight:800; font-size:14px; color:var(--primary); margin-bottom:6px;">🎮 ผลลัพธ์เกมที่ 1: คืนวันศุกร์สุดระทึก</div>
+          <div style="font-weight:800; font-size:14px; color:var(--primary); margin-bottom:6px;" id="lblCertG1">🎮 ผลลัพธ์เกมที่ 1: คืนวันศุกร์สุดระทึก</div>
           <div id="outG1Detail" style="font-size:13.5px; color:var(--text); line-height:1.6;"></div>
         </div>
         <div class="cert-score-card">
-          <div style="font-weight:800; font-size:14px; color:var(--success); margin-bottom:6px;">🛠️ ผลลัพธ์เกมที่ 2: ซ่อมสายพานมรณะ</div>
+          <div style="font-weight:800; font-size:14px; color:var(--success); margin-bottom:6px;" id="lblCertG2">🛠️ ผลลัพธ์เกมที่ 2: ซ่อมสายพานมรณะ</div>
           <div id="outG2Detail" style="font-size:13.5px; color:var(--text); line-height:1.6;"></div>
         </div>
       </div>
 
       <div class="cert-footer">
-        <div>📅 เวลาที่บันทึกผล: <span id="outTime" style="font-weight:700;">-</span></div>
+        <div><span id="lblCertTime">📅 เวลาที่บันทึกผล:</span> <span id="outTime" style="font-weight:700;">-</span></div>
         <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-          <span>รหัสยืนยัน (Verification Hash): <span class="verify-code" id="outHash">-</span></span>
+          <span><span id="lblCertHash">รหัสยืนยัน (Verification Hash):</span> <span class="verify-code" id="outHash">-</span></span>
           <button type="button" class="btn btn-secondary no-print" onclick="copyVerificationHash()" id="copyHashBtn" style="font-size:12px; padding:3px 9px;">📋 คัดลอกรหัส</button>
         </div>
       </div>
@@ -563,7 +564,7 @@
         <button type="button" class="btn btn-primary" id="btnDownloadImg" onclick="downloadCertImage()" style="font-size:13.5px; padding:9px 18px; font-weight:700;">
           🖼️ บันทึกเป็นรูปภาพ (Save as PNG)
         </button>
-        <button type="button" class="btn btn-secondary" onclick="window.print()" style="font-size:13.5px; padding:9px 18px;">
+        <button type="button" class="btn btn-secondary" id="btnPrintPdf" onclick="window.print()" style="font-size:13.5px; padding:9px 18px;">
           🖨️ พิมพ์หรือบันทึก PDF (Print)
         </button>
       </div>
@@ -574,23 +575,23 @@
   <section id="game4" class="game-section">
     <div class="header-card">
       <div>
-        <h2 style="color:var(--text);">🔐 แผงควบคุมผู้สอน (Admin Dashboard)</h2>
-        <p>ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที</p>
+        <h2 style="color:var(--text);" id="adminTitle">🔐 แผงควบคุมผู้สอน (Admin Dashboard)</h2>
+        <p id="adminSub">ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที</p>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-success" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
-        <button class="btn btn-secondary" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างข้อมูล</button>
+        <button class="btn btn-success" id="btnExportExcel" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
+        <button class="btn btn-secondary" id="btnClearData" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างข้อมูล</button>
       </div>
     </div>
 
     <!-- Login Box -->
     <div class="panel" id="adminLoginBox" style="text-align:center; padding:36px 20px;">
       <div style="font-size:38px; margin-bottom:10px;">🔒</div>
-      <h3 style="margin:0 0 8px; font-size:18px;">กรุณากรอกรหัสผ่านผู้สอน</h3>
-      <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">เฉพาะอาจารย์ผู้สอนประจำรายวิชาเท่านั้น</p>
+      <h3 style="margin:0 0 8px; font-size:18px;" id="lblAdminPrompt">กรุณากรอกรหัสผ่านผู้สอน</h3>
+      <p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;" id="lblAdminPromptSub">เฉพาะอาจารย์ผู้สอนประจำรายวิชาเท่านั้น</p>
       <div style="max-width:320px; margin:0 auto; display:flex; gap:8px;">
         <input type="password" id="adminPin" class="form-input" placeholder="กรอกรหัสผ่าน..." onkeyup="if(event.key==='Enter') verifyAdminPin()">
-        <button class="btn btn-primary" onclick="verifyAdminPin()">เข้าสู่ระบบ</button>
+        <button class="btn btn-primary" id="btnAdminLogin" onclick="verifyAdminPin()">เข้าสู่ระบบ</button>
       </div>
       <div id="adminPinError" style="color:var(--danger); font-size:13px; margin-top:8px; display:none; font-weight:700;">❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
     </div>
@@ -600,26 +601,26 @@
       <!-- Class Analytics Summary Cards -->
       <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom:16px;">
         <div class="metric-box" style="padding:12px 14px;">
-          <div class="metric-label">👥 ผู้ส่งงานทั้งหมด</div>
+          <div class="metric-label" id="lblStatSubmissions">👥 ผู้ส่งงานทั้งหมด</div>
           <div class="metric-val" id="statSubmissions" style="color:var(--primary); font-size:22px;">0 คน</div>
         </div>
         <div class="metric-box" style="padding:12px 14px;">
-          <div class="metric-label">🏆 ได้ Rank S & A</div>
+          <div class="metric-label" id="lblStatRankSA">🏆 ได้ Rank S & A</div>
           <div class="metric-val" id="statRankSA" style="color:var(--success); font-size:22px;">0%</div>
         </div>
         <div class="metric-box" style="padding:12px 14px;">
-          <div class="metric-label">⏱️ เวลาเฉลี่ย (เกม 1)</div>
+          <div class="metric-label" id="lblStatAvgTime">⏱️ เวลาเฉลี่ย (เกม 1)</div>
           <div class="metric-val" id="statAvgTime" style="color:var(--purple); font-size:22px;">0 นาที</div>
         </div>
         <div class="metric-box" style="padding:12px 14px;">
-          <div class="metric-label">🩺 ข้อผิดพลาดเฉลี่ย (เกม 2)</div>
+          <div class="metric-label" id="lblStatAvgErrors">🩺 ข้อผิดพลาดเฉลี่ย (เกม 2)</div>
           <div class="metric-val" id="statAvgErrors" style="color:var(--warning); font-size:22px;">0.0 ครั้ง</div>
         </div>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
         <div style="font-weight:800; font-size:15px;">
-          📋 รายชื่อผู้ส่งงาน: <span id="adminCount" style="color:var(--primary); font-size:17px;">0</span> คน
+          <span id="lblAdminListTitle">📋 รายชื่อผู้ส่งงาน:</span> <span id="adminCount" style="color:var(--primary); font-size:17px;">0</span> คน
         </div>
         <input type="text" id="adminSearch" class="form-input" style="max-width:260px; padding:7px 12px; font-size:13.5px;" placeholder="🔍 ค้นหาชื่อ หรือ รหัสนิสิต..." oninput="renderAdminTable()">
       </div>
@@ -775,8 +776,558 @@
     updateLockGateUI();
   }
 
+  // ==================== BILINGUAL (THAI & ENGLISH) SYSTEM ====================
+  let currentLang = localStorage.getItem('devops_lang') || 'th';
+
+  const translations = {
+    th: {
+      brand: "🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)",
+      tab1: "🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก",
+      tab2: "🛠️ เกมที่ 2: ซ่อมสายพานมรณะ",
+      tab3: "🎓 สรุปผลคะแนนท้ายคาบ",
+      tab4: "🔐 สำหรับผู้สอน (Admin)",
+      soundOn: "🔊 เสียง: เปิด",
+      soundOff: "🔇 เสียง: ปิด",
+      langBtn: "🌐 EN",
+      g1HeaderTitle: "🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก (Crisis Simulator)",
+      g1HeaderSub: "เลือกแนวทางการตัดสินใจที่เหมาะสมที่สุดเพื่อพาทีมและระบบรอดพ้นวิกฤต",
+      btnReset: "🔄 เริ่มเล่นใหม่",
+      lblG1Time: "⏱️ เวลาที่เสียไปสะสม (ยิ่งน้อยยิ่งดี)",
+      lblG1Stab: "🛡️ ความเสถียรของระบบ (System Stability)",
+      lblG1Morale: "😊 ขวัญกำลังใจทีม (Team Morale)",
+      unitMins: "นาที",
+      stageTag: (cur, tot) => `ด่านที่ ${cur} จาก ${tot}`,
+      btnNextStage: "ไปด่านถัดไป ➡️",
+      btnVerdict: "ดูผลสรุปคะแนนและฉายา 🏆",
+      g1SummaryTitle: "🏁 สรุปผลการตัดสินใจของคุณในเกมที่ 1",
+      g1HistLabel: "ประวัติการตัดสินใจทั้ง 4 ด่าน:",
+      btnG1ToG2: "ไปเล่นเกมที่ 2 ต่อ (ซ่อมสายพานมรณะ) ➡️",
+      btnG1Replay: "🔄 เล่นเกมที่ 1 ซ้ำอีกครั้ง",
+      g2HeaderTitle: "🛠️ เกมที่ 2: ภารกิจหมอสายพานกู้ชีพ (DevOps Incident Doctor)",
+      g2HeaderSub: 'วิธีเล่น: กดปุ่ม <b>"ทดลองปล่อยฟีเจอร์"</b> เมื่อสายพานพัง ให้เลือก <b>"แนวทางกู้ชีพที่ถูกต้อง"</b> จาก 3 ตัวเลือกเพื่อซ่อมสายพานให้สำเร็จ!',
+      g2BtnReset: "🔄 เริ่มภารกิจใหม่",
+      g2BtnRun: "▶️ กดทดลองปล่อยฟีเจอร์ขึ้นระบบ",
+      g2PipelineTitle: "🚀 สถานะสายพานส่งมอบงาน (Deployment Pipeline)",
+      st_1_name: "ด่าน 1: รวมโค้ด (Merge)",
+      st_2_name: "ด่าน 2: ทดสอบ (Test)",
+      st_3_name: "ด่าน 3: ติดตั้ง (Deploy)",
+      st_4_name: "ด่าน 4: ใช้งานจริง (Prod)",
+      stageWaiting: "รอเดินเครื่อง",
+      stageRunningMerge: "กำลังรวมโค้ด...",
+      stageRunningTest: "กำลังตรวจสอบโค้ด...",
+      stageRunningDeploy: "กำลังติดตั้งขึ้นเซิร์ฟเวอร์...",
+      stageRunningProd: "เปิดให้ใช้งานจริง...",
+      stagePassMerge: "✅ รวมโค้ดชิ้นเล็กผ่านฉลุย",
+      stagePassTest: "✅ ระบบทดสอบอัตโนมัติผ่าน 100%",
+      stagePassDeploy: "✅ ติดตั้งผ่านระบบอัตโนมัติสำเร็จ",
+      stagePassProd: "🌟 ระบบทำงานได้อย่างราบรื่น!",
+      stageFail1: "❌ โค้ดตีกันพัง!",
+      stageFail2: "❌ บั๊กหลุดรอด!",
+      stageFail3: "❌ สภาพแวดล้อมไม่ตรงกัน!",
+      stageFail4: "⚠️ ระบบล่มตอนดึกและมัวแต่โทษกัน!",
+      g2InitialActionBox: '👆 กดปุ่ม <b>"กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบนเพื่อเริ่มตรวจสอบสายพานได้เลยครับ',
+      lblG2CalmsTitle: "🏅 ทักษะ DevOps (CALMS) ที่ทีมของคุณปลดล็อกแล้ว:",
+      lblG2Lead: "เวลาส่งมอบงาน (Lead Time)",
+      lblG2Fail: "โอกาสพังเมื่อขึ้นระบบจริง",
+      lblG2Mttr: "เวลากู้คืนเมื่อระบบล่ม (MTTR)",
+      lblG2Level: "สถานะความพร้อมของทีม",
+      // Section 3: Certificate
+      g3HeaderTitle: "🎓 สร้างการ์ดสรุปคะแนนและผลการเรียนรู้",
+      g3HeaderSub: "ระบบจะปลดล็อกให้กรอกชื่อและสร้างการ์ดคะแนนเมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น",
+      g3ChecklistTitle: "🔍 ตรวจสอบเงื่อนไขก่อนสร้างการ์ดคะแนน (Mission Checklist)",
+      g3FormTitle: "📝 กรอกข้อมูลเพื่อออกการ์ดคะแนน (Certificate)",
+      lblStdId: "รหัสนิสิต (Student ID) *",
+      lblStdName: "ชื่อ - นามสกุล (Full Name) *",
+      btnSubmitLocked: "🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน",
+      btnSubmitReady: "✨ บันทึกคะแนนและสร้างการ์ดผลงาน",
+      certUni: "สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา",
+      certTitle: "ใบรับรองผลการเรียนรู้วิชา DevOps (คาบที่ 1)",
+      lblCertStatus: "สถานะผลการประเมิน",
+      lblCertName: "ชื่อ-นามสกุลนิสิต",
+      lblCertId: "รหัสนิสิต",
+      lblCertScore: "คะแนนและระดับทักษะ",
+      lblCertG1: "🎮 ผลลัพธ์เกมที่ 1: คืนวันศุกร์สุดระทึก",
+      lblCertG2: "🛠️ ผลลัพธ์เกมที่ 2: ซ่อมสายพานมรณะ",
+      lblCertTime: "📅 เวลาที่บันทึกผล:",
+      lblCertHash: "รหัสยืนยัน (Verification Hash):",
+      copyHashBtn: "📋 คัดลอกรหัส",
+      btnSavePNG: "🖼️ บันทึกเป็นรูปภาพ (Save as PNG)",
+      btnPrintPdf: "🖨️ พิมพ์หรือบันทึก PDF (Print)",
+      // Section 4: Admin
+      adminTitle: "🔐 แผงควบคุมผู้สอน (Admin Dashboard)",
+      adminSub: "ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที",
+      btnExportExcel: "📥 Export to Excel (.csv)",
+      btnClearData: "🗑️ ล้างข้อมูล",
+      lblAdminPrompt: "กรุณากรอกรหัสผ่านผู้สอน",
+      lblAdminPromptSub: "เฉพาะอาจารย์ผู้สอนประจำรายวิชาเท่านั้น",
+      btnAdminLogin: "เข้าสู่ระบบ",
+      adminSearchPlaceholder: "🔍 ค้นหาชื่อ หรือ รหัสนิสิต...",
+      lblStatSubmissions: "👥 ผู้ส่งงานทั้งหมด",
+      lblStatRankSA: "🏆 ได้ Rank S & A",
+      lblStatAvgTime: "⏱️ เวลาเฉลี่ย (เกม 1)",
+      lblStatAvgErrors: "🩺 ข้อผิดพลาดเฉลี่ย (เกม 2)",
+      lblAdminListTitle: "📋 รายชื่อผู้ส่งงาน:"
+    },
+    en: {
+      brand: "🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)",
+      tab1: "🎮 Game 1: Friday Night Crisis",
+      tab2: "🛠️ Game 2: Broken Pipeline Doctor",
+      tab3: "🎓 Results & Certificate",
+      tab4: "🔐 Instructor (Admin)",
+      soundOn: "🔊 Audio: ON",
+      soundOff: "🔇 Audio: OFF",
+      langBtn: "🌐 ภาษาไทย (TH)",
+      g1HeaderTitle: "🎮 Game 1: Friday Night Crisis Simulator",
+      g1HeaderSub: "Make strategic architectural and cultural decisions to navigate your team through deployment crises.",
+      btnReset: "🔄 Restart",
+      lblG1Time: "⏱️ Accumulated Delay (Lower is better)",
+      lblG1Stab: "🛡️ System Stability",
+      lblG1Morale: "😊 Team Morale",
+      unitMins: "mins",
+      stageTag: (cur, tot) => `Stage ${cur} of ${tot}`,
+      btnNextStage: "Next Stage ➡️",
+      btnVerdict: "View Final Score & Title 🏆",
+      g1SummaryTitle: "🏁 Summary of Your Game 1 Decisions",
+      g1HistLabel: "Decision History across 4 Stages:",
+      btnG1ToG2: "Continue to Game 2 (Pipeline Doctor) ➡️",
+      btnG1Replay: "🔄 Replay Game 1",
+      g2HeaderTitle: "🛠️ Game 2: DevOps Incident Doctor",
+      g2HeaderSub: 'How to Play: Click <b>"Deploy Feature"</b>. When the pipeline fails, diagnose and choose the <b>"Right DevOps Remedy"</b> to fix the pipeline!',
+      g2BtnReset: "🔄 Restart Mission",
+      g2BtnRun: "▶️ Deploy Feature to Pipeline",
+      g2PipelineTitle: "🚀 Continuous Delivery Pipeline Status",
+      st_1_name: "Stage 1: Merge Code",
+      st_2_name: "Stage 2: Automated Test",
+      st_3_name: "Stage 3: Deploy Server",
+      st_4_name: "Stage 4: Live Production",
+      stageWaiting: "Pending",
+      stageRunningMerge: "Merging Code...",
+      stageRunningTest: "Running Automated Tests...",
+      stageRunningDeploy: "Deploying to Servers...",
+      stageRunningProd: "Releasing to Users...",
+      stagePassMerge: "✅ Small Batch Merged Successfully",
+      stagePassTest: "✅ 100% Automated Tests Passed",
+      stagePassDeploy: "✅ Automated Deployment Completed",
+      stagePassProd: "🌟 System Running Smoothly in Production!",
+      stageFail1: "❌ Merge Conflict Explosion!",
+      stageFail2: "❌ Undetected Bugs Leaked!",
+      stageFail3: "❌ Environment Drift (Works on my machine)!",
+      stageFail4: "⚠️ Midnight Outage & Blame Game!",
+      g2InitialActionBox: '👆 Click <b>"Deploy Feature to Pipeline"</b> above to start diagnosing the pipeline.',
+      lblG2CalmsTitle: "🏅 DevOps Competencies (CALMS) Unlocked by Your Team:",
+      lblG2Lead: "Lead Time for Changes",
+      lblG2Fail: "Change Failure Rate",
+      lblG2Mttr: "Mean Time to Restore (MTTR)",
+      lblG2Level: "Team Readiness Level",
+      // Section 3: Certificate
+      g3HeaderTitle: "🎓 Learning Outcomes & Certificate of Completion",
+      g3HeaderSub: "This certificate unlocks only after completing <b>Game 1 (all 4 stages)</b> and <b>Game 2 (repairing all pipeline stages)</b>.",
+      g3ChecklistTitle: "🔍 Prerequisite Mission Checklist",
+      g3FormTitle: "📝 Student Information for Certificate",
+      lblStdId: "Student ID *",
+      lblStdName: "Full Name (English or Thai) *",
+      btnSubmitLocked: "🔒 Complete Game 1 and Game 2 to unlock certificate generation",
+      btnSubmitReady: "✨ Save Score & Generate Certificate",
+      certUni: "Department of Software Engineering, School of ICT, University of Phayao",
+      certTitle: "Certificate of Achievement in DevOps Foundations",
+      lblCertStatus: "Evaluation Status",
+      lblCertName: "Student Name",
+      lblCertId: "Student ID",
+      lblCertScore: "Score & Proficiency Rank",
+      lblCertG1: "🎮 Game 1: Friday Night Crisis Simulation",
+      lblCertG2: "🛠️ Game 2: Pipeline Incident Doctor",
+      lblCertTime: "📅 Recorded On:",
+      lblCertHash: "Verification Hash:",
+      copyHashBtn: "📋 Copy Hash",
+      btnSavePNG: "🖼️ Save Certificate (PNG)",
+      btnPrintPdf: "🖨️ Print / Save PDF",
+      // Section 4: Admin
+      adminTitle: "🔐 Instructor Control Panel (Admin Dashboard)",
+      adminSub: "Monitor real-time student submissions, performance scores, and export telemetry data to Excel/CSV.",
+      btnExportExcel: "📥 Export to Excel (.csv)",
+      btnClearData: "🗑️ Clear Records",
+      lblAdminPrompt: "Enter Instructor PIN",
+      lblAdminPromptSub: "Authorized course instructors only",
+      btnAdminLogin: "Login",
+      adminSearchPlaceholder: "🔍 Search Student ID or Name...",
+      lblStatSubmissions: "👥 Total Submissions",
+      lblStatRankSA: "🏆 Rank S & A Ratio",
+      lblStatAvgTime: "⏱️ Avg Lead Time (Game 1)",
+      lblStatAvgErrors: "🩺 Avg Diagnostics Errors (Game 2)",
+      lblAdminListTitle: "📋 Submissions List:"
+    }
+  };
+
+  const g1StagesEN = [
+    {
+      title: "Stage 1: Friday 5:00 PM - The Big Merge",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #2563eb; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>Product Owner:</b> <i>"We need 4 features merged and live on production before midnight, or Saturday's campaign will fail!"</i><br>
+          💬 <b>Senior Dev:</b> <i>"Everyone finished their tasks locally. Time to merge into main branch... What's our strategy?"</i>
+        </div>
+        4 developers kept their code unmerged on local machines all week. How will you handle this?
+      `,
+      options: [
+        {
+          badge: "Option A",
+          txt: "Merge everything on Friday evening and manually resolve all conflicting code line by line",
+          time: 180, stab: -30, morale: -25, isDevops: false,
+          fb: "❌ <b>Merge Hell! [Missing L - Lean & CI]</b> Spent 3 painful hours manually resolving conflicts. Accidentally deleted teammates' code, introducing multiple critical bugs!"
+        },
+        {
+          badge: "Option B",
+          txt: "Lock the Git repository to freeze all changes, zip the code, and have the Tech Lead inspect every line",
+          time: 300, stab: -10, morale: -35, isDevops: false,
+          fb: "🐢 <b>Massive Bottleneck! [Missing L - Lean]</b> The Tech Lead is overwhelmed. Everyone waits idle for hours. Release delayed by 5 hours, team burnout!"
+        },
+        {
+          badge: "Option C",
+          txt: "Adopt Trunk-Based Development with small batch commits and Automated CI Testing throughout the week",
+          time: 10, stab: 0, morale: 15, isDevops: true,
+          fb: "✅ <b>Smooth & Reliable! [L - Lean & Automation]</b> CI test bots caught and isolated regressions by afternoon. Merged in 10 minutes, code ready for release at 5 PM!"
+        }
+      ]
+    },
+    {
+      title: "Stage 2: 7:30 PM - Handoff to Operations for Production Deployment",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #d97706; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>Exhausted Ops Engineer:</b> <i>"The code works on your laptop, but the production server has a different OS version! How are we going to deploy this?"</i><br>
+          💬 <b>Senior Dev:</b> <i>"It works on my machine! Please get it up quickly, I have dinner plans!"</i>
+        </div>
+        How do you deploy the software to Production?
+      `,
+      options: [
+        {
+          badge: "Option A",
+          txt: "Zip the project files, email them with a 10-page manual setup guide for Ops to execute commands manually",
+          time: 150, stab: -35, morale: -30, isDevops: false,
+          fb: "🔥 <b>Classic 'Works on My Machine'! [Missing A - Automation]</b> Ops missed one command line parameter. The system crashed, leading to hours of finger-pointing between Dev and Ops."
+        },
+        {
+          badge: "Option B",
+          txt: "SSH directly into the Production Server to edit files and tweak configurations live",
+          time: 240, stab: -45, morale: -40, isDevops: false,
+          fb: "💥 <b>Cardinal Sin of Ops! [Missing Infrastructure as Code]</b> Ten minutes of relief followed by total cluster failure. No version history of what was changed on production!"
+        },
+        {
+          badge: "Option C",
+          txt: "Package app and environment into Docker Containers and trigger an automated Continuous Deployment (CD) pipeline",
+          time: 5, stab: 0, morale: 15, isDevops: true,
+          fb: "✅ <b>100% Deterministic! [A - Automation & CD]</b> Identical runtime environments across dev, staging, and production. Deployed smoothly in 5 minutes with zero configuration drift!"
+        }
+      ]
+    },
+    {
+      title: "Stage 3: 9:00 PM Emergency - Checkout Service Down!",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #dc2626; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>Product Owner Calling:</b> <i>"Customers are complaining on social media that checkout is frozen after charging their cards! Fix this immediately!!"</i><br>
+          💬 <b>Ops:</b> <i>"Millions of lines of raw server logs, we have no idea what failed!"</i>
+        </div>
+        How does your team respond to this critical incident?
+      `,
+      options: [
+        {
+          badge: "Option A",
+          txt: "Shut down the payment gateway temporarily and wait until Saturday morning to dig through logs across servers",
+          time: 360, stab: -45, morale: -35, isDevops: false,
+          fb: "🚨 <b>Extended Outage! [Missing M - Measurement]</b> Massive revenue loss and customer churn. Spent 6 full hours locating the root cause without centralized telemetry."
+        },
+        {
+          badge: "Option B",
+          txt: "Instruct developers to guess potential bugs, hastily patch the code, and push directly to production",
+          time: 210, stab: -35, morale: -30, isDevops: false,
+          fb: "😰 <b>Domino Effect! [Missing Observability]</b> Rushed hotfixes broke authentication service as well. Compounding failures kept the team trapped all night."
+        },
+        {
+          badge: "Option C",
+          txt: "Automated Telemetry alerts root cause instantly; team executes 1-Click Rollback to previous stable release in 3 minutes",
+          time: 5, stab: -5, morale: 10, isDevops: true,
+          fb: "🛡️ <b>Swift Recovery! [M - Measurement & Telemetry]</b> Service restored within 5 minutes. Customers unaffected. Team calmly debugs using distributed traces on the dashboard."
+        }
+      ]
+    },
+    {
+      title: "Stage 4: Monday 9:00 AM - Blameless Post-Mortem & Culture",
+      desc: `
+        <div style="background:#fff; border-left:4px solid #7c3aed; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
+          💬 <b>Boss in Monday All-Hands:</b> <i>"We narrowly avoided disaster Friday night. How do we address this as an organization moving forward?"</i>
+        </div>
+        What cultural and procedural direction do you establish?
+      `,
+      options: [
+        {
+          badge: "Option A",
+          txt: "Run Git Blame to find who committed the faulty code, deduct their salary, and issue disciplinary penalties",
+          time: 240, stab: -10, morale: -45, isDevops: false,
+          fb: "😱 <b>Toxic Culture! [Missing C - Culture & Psychological Safety]</b> Team members fear making changes, hide defects, and delivery slows to a crawl."
+        },
+        {
+          badge: "Option B",
+          txt: "Institute a 15-page change request form requiring sign-offs from 5 department heads before any release",
+          time: 300, stab: -5, morale: -30, isDevops: false,
+          fb: "🐢 <b>Bureaucracy Paralysis! [Missing Lean Governance]</b> Delivery delayed by 3 weeks, lost market opportunities, yet human-reviewed code still leaked bugs."
+        },
+        {
+          badge: "Option C",
+          txt: "Hold a Blameless Post-Mortem focusing on systemic improvements and write Automated Regression Tests to prevent recurrence",
+          time: 15, stab: 15, morale: 20, isDevops: true,
+          fb: "🌟 <b>Strong Generative Culture! [C - Culture & S - Sharing]</b> Open knowledge sharing, resilient system design, and automated safety nets ensure this bug will never happen again!"
+        }
+      ]
+    }
+  ];
+
+  const g2ProblemsEN = [
+    {
+      stageNum: 1,
+      title: "💥 Stage 1 Crash: Massive Merge Conflict",
+      desc: "4 developers kept code isolated on their laptops for a week. Merging on Friday created catastrophic conflicts. Build failed!",
+      calmsBadge: "Lean (Small Batches)",
+      options: [
+        {
+          label: "Option A",
+          icon: "🔒",
+          text: "Freeze the Git repository for 1 week and have only the Team Lead merge all code alone",
+          isCorrect: false,
+          why: "❌ <b>Worse Bottleneck!</b> Entire team is blocked waiting on one person. Features delayed 2 weeks and doesn't solve large batch sizes."
+        },
+        {
+          label: "Option B",
+          icon: "💸",
+          text: "Hire overnight contractors every Friday night to resolve merge conflicts manually",
+          isCorrect: false,
+          why: "❌ <b>Costly and High-Risk!</b> External contractors lack codebase domain knowledge, risking accidental deletion of core logic."
+        },
+        {
+          label: "Option C",
+          icon: "⚡",
+          text: "Apply Lean Thinking: Slice work into small increments (Trunk-based) and merge continuously every day",
+          isCorrect: true,
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Lean)</b> With small batches, merges take seconds and team avoids massive painful code collisions!"
+        }
+      ]
+    },
+    {
+      stageNum: 2,
+      title: "💥 Stage 2 Crash: Testing Bottleneck & Bug Leakage",
+      desc: "Code merged, but manual screen testing takes 5 full days. Fatigue leads to missed critical bugs in production!",
+      calmsBadge: "CI (Automated Testing)",
+      options: [
+        {
+          label: "Option A",
+          icon: "🚀",
+          text: "Skip the testing phase entirely to release features faster and meet the deadline!",
+          isCorrect: false,
+          why: "❌ <b>Immediate Disaster!</b> Release is faster, but system blows up on production immediately upon customer load. Brand ruined."
+        },
+        {
+          label: "Option B",
+          icon: "👀",
+          text: "Mobilize all developers to manually click every button on mobile and web all weekend long",
+          isCorrect: false,
+          why: "❌ <b>Team Burnout!</b> Humans are bad at repetitive regression checks. The more tired they get, the more bugs leak through."
+        },
+        {
+          label: "Option C",
+          icon: "🤖",
+          text: "Build an Automated CI Test Suite running regression checks on every commit automatically",
+          isCorrect: true,
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Automation & CI)</b> Test bots provide instant feedback in seconds with 100% repeatability!"
+        }
+      ]
+    },
+    {
+      stageNum: 3,
+      title: "💥 Stage 3 Crash: Environment Drift (Works on My Machine)",
+      desc: "Tests passed, but failed on production server due to mismatching database and Node.js runtime versions!",
+      calmsBadge: "CD & Containerization",
+      options: [
+        {
+          label: "Option A",
+          icon: "💻",
+          text: "Physically place the developer's laptop into the Data Center rack as the production server!",
+          isCorrect: false,
+          why: "❌ <b>A Famous Meme, Not Production Engineering!</b> Laptops lack redundancy, scalability, and someone might trip on the power cord!"
+        },
+        {
+          label: "Option B",
+          icon: "📄",
+          text: "Write a 50-page manual install guide and send it to Ops to type commands line-by-line",
+          isCorrect: false,
+          why: "❌ <b>Prone to Human Error!</b> A single missing semicolon breaks the server, igniting another Dev vs Ops blame game."
+        },
+        {
+          label: "Option C",
+          icon: "🐳",
+          text: "Package application & environment into Containers (Docker) and use CD scripts to deploy reliably",
+          isCorrect: true,
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Container & CD)</b> Parity across all environments from Dev to Prod. Single-click zero-downtime deployment!"
+        }
+      ]
+    },
+    {
+      stageNum: 4,
+      title: "💥 Stage 4 Crash: Late Night Outage & Finger Pointing",
+      desc: "Production payment crashed at 9:00 PM. No alerts fired, team was unaware until Saturday morning, and started blaming each other!",
+      calmsBadge: "Measurement & Sharing Culture",
+      options: [
+        {
+          label: "Option A",
+          icon: "🔌",
+          text: "Shut down servers and tell customers that their internet provider had a regional power failure",
+          isCorrect: false,
+          why: "❌ <b>Total Loss of Trust!</b> Customers leave for competitors immediately, causing permanent reputational damage."
+        },
+        {
+          label: "Option B",
+          icon: "⚖️",
+          text: "Form an disciplinary committee to hunt down the developer who introduced the bug and penalize them",
+          isCorrect: false,
+          why: "❌ <b>Creates a Toxic Culture!</b> People hide mistakes, stop shipping new features, and the system never becomes resilient."
+        },
+        {
+          label: "Option C",
+          icon: "📈",
+          text: "Deploy Real-Time Monitoring & Observability + 1-Click Rollback + Blameless Post-Mortem",
+          isCorrect: true,
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Measurement & Sharing)</b> Detect issues before customers notice, restore service in 5 minutes, and learn together!"
+        }
+      ]
+    }
+  ];
+
+  const g2MissionsEN = [
+    {
+      badge: "Mission Stage 1 / 5",
+      title: "Test deployment using Traditional Manual Silo",
+      sub: "Click 'Deploy Feature' to observe what happens when big batches of code merge on Friday.",
+      lead: "14 Days", fail: "75%", mttr: "360 mins"
+    },
+    {
+      badge: "Mission Stage 2 / 5",
+      title: "Merge conflict solved! Click deploy to continue",
+      sub: "Now that we work in small batches, let's see what happens with manual testing.",
+      lead: "7 Days", fail: "55%", mttr: "360 mins"
+    },
+    {
+      badge: "Mission Stage 3 / 5",
+      title: "Automated testing active! Click deploy to test server setup",
+      sub: "Code is bug-free, but will it run consistently when handed over to Ops?",
+      lead: "3 Days", fail: "35%", mttr: "240 mins"
+    },
+    {
+      badge: "Mission Stage 4 / 5",
+      title: "Containerized deployment active! Click deploy to run in production",
+      sub: "Production launch is smooth, but what happens during late-night incidents?",
+      lead: "1 Hour", fail: "15%", mttr: "180 mins"
+    },
+    {
+      badge: "Final Mission Stage (5 / 5)",
+      title: "Pipeline fully optimized! Run full CI/CD deployment",
+      sub: "Observe high-performing pipeline speed, reliability, and recovery time.",
+      lead: "10 mins", fail: "2%", mttr: "5 mins"
+    }
+  ];
+
+  function toggleLanguage() {
+    currentLang = (currentLang === 'th') ? 'en' : 'th';
+    localStorage.setItem('devops_lang', currentLang);
+    applyLanguageUI();
+  }
+
+  function applyLanguageUI() {
+    const t = translations[currentLang];
+    
+    // Toggle button label
+    const lBtn = document.getElementById('langToggleBtn');
+    if (lBtn) lBtn.innerText = t.langBtn;
+
+    // Navbar tabs
+    const tab1 = document.getElementById('tabBtn1'); if (tab1) tab1.innerText = t.tab1;
+    const tab2 = document.getElementById('tabBtn2'); if (tab2) tab2.innerText = t.tab2;
+    const tab3 = document.getElementById('tabBtn3'); if (tab3) tab3.innerText = t.tab3;
+    const tab4 = document.getElementById('tabBtn4'); if (tab4) tab4.innerText = t.tab4;
+    const sBtn = document.getElementById('soundToggleBtn');
+    if (sBtn) sBtn.innerText = isSoundOn ? t.soundOn : t.soundOff;
+
+    // Game 1 Static labels
+    const g1HT = document.getElementById('g1HeaderTitle'); if (g1HT) g1HT.innerText = t.g1HeaderTitle;
+    const g1HS = document.getElementById('g1HeaderSub'); if (g1HS) g1HS.innerText = t.g1HeaderSub;
+    const g1RB = document.getElementById('g1ResetBtn'); if (g1RB) g1RB.innerText = t.btnReset;
+    const lblT = document.getElementById('lblG1Time'); if (lblT) lblT.innerText = t.lblG1Time;
+    const lblS = document.getElementById('lblG1Stab'); if (lblS) lblS.innerText = t.lblG1Stab;
+    const lblM = document.getElementById('lblG1Morale'); if (lblM) lblM.innerText = t.lblG1Morale;
+    const g1ST = document.getElementById('g1SummaryTitle'); if (g1ST) g1ST.innerText = t.g1SummaryTitle;
+    const g1HL = document.getElementById('g1HistLabel'); if (g1HL) g1HL.innerText = t.g1HistLabel;
+    const btnG1G2 = document.getElementById('btnG1ToG2'); if (btnG1G2) btnG1G2.innerText = t.btnG1ToG2;
+    const btnG1Rep = document.getElementById('btnG1Replay'); if (btnG1Rep) btnG1Rep.innerText = t.btnG1Replay;
+
+    // Game 2 Static labels
+    const g2HT = document.getElementById('g2HeaderTitle'); if (g2HT) g2HT.innerText = t.g2HeaderTitle;
+    const g2HS = document.getElementById('g2HeaderSub'); if (g2HS) g2HS.innerHTML = t.g2HeaderSub;
+    const g2RB = document.getElementById('g2ResetBtn'); if (g2RB) g2RB.innerText = t.g2BtnReset;
+    const g2Run = document.getElementById('g2RunBtn'); if (g2Run) g2Run.innerText = t.g2BtnRun;
+    const g2PT = document.getElementById('g2PipelineTitle'); if (g2PT) g2PT.innerText = t.g2PipelineTitle;
+    const st1N = document.getElementById('st_1_name'); if (st1N) st1N.innerText = t.st_1_name;
+    const st2N = document.getElementById('st_2_name'); if (st2N) st2N.innerText = t.st_2_name;
+    const st3N = document.getElementById('st_3_name'); if (st3N) st3N.innerText = t.st_3_name;
+    const st4N = document.getElementById('st_4_name'); if (st4N) st4N.innerText = t.st_4_name;
+    const lblCalms = document.getElementById('lblG2CalmsTitle'); if (lblCalms) lblCalms.innerText = t.lblG2CalmsTitle;
+    const lblLead = document.getElementById('lblG2Lead'); if (lblLead) lblLead.innerText = t.lblG2Lead;
+    const lblFail = document.getElementById('lblG2Fail'); if (lblFail) lblFail.innerText = t.lblG2Fail;
+    const lblMttr = document.getElementById('lblG2Mttr'); if (lblMttr) lblMttr.innerText = t.lblG2Mttr;
+    const lblLev = document.getElementById('lblG2Level'); if (lblLev) lblLev.innerText = t.lblG2Level;
+
+    // Section 3 Labels
+    const g3HT = document.getElementById('g3HeaderTitle'); if (g3HT) g3HT.innerText = t.g3HeaderTitle;
+    const g3HS = document.getElementById('g3HeaderSub'); if (g3HS) g3HS.innerHTML = t.g3HeaderSub;
+    const g3CT = document.getElementById('g3ChecklistTitle'); if (g3CT) g3CT.innerText = t.g3ChecklistTitle;
+    const g3FT = document.getElementById('g3FormTitle'); if (g3FT) g3FT.innerText = t.g3FormTitle;
+    const lblId = document.getElementById('lblStdId'); if (lblId) lblId.innerText = t.lblStdId;
+    const lblNm = document.getElementById('lblStdName'); if (lblNm) lblNm.innerText = t.lblStdName;
+    const certU = document.getElementById('certUni'); if (certU) certU.innerText = t.certUni;
+    const certT = document.getElementById('certTitle'); if (certT) certT.innerText = t.certTitle;
+    const lblCS = document.getElementById('lblCertStatus'); if (lblCS) lblCS.innerText = t.lblCertStatus;
+    const lblCN = document.getElementById('lblCertName'); if (lblCN) lblCN.innerText = t.lblCertName;
+    const lblCI = document.getElementById('lblCertId'); if (lblCI) lblCI.innerText = t.lblCertId;
+    const lblCSc = document.getElementById('lblCertScore'); if (lblCSc) lblCSc.innerText = t.lblCertScore;
+    const lblCG1 = document.getElementById('lblCertG1'); if (lblCG1) lblCG1.innerText = t.lblCertG1;
+    const lblCG2 = document.getElementById('lblCertG2'); if (lblCG2) lblCG2.innerText = t.lblCertG2;
+    const lblCTm = document.getElementById('lblCertTime'); if (lblCTm) lblCTm.innerText = t.lblCertTime;
+    const lblCH = document.getElementById('lblCertHash'); if (lblCH) lblCH.innerText = t.lblCertHash;
+    const btnCH = document.getElementById('copyHashBtn'); if (btnCH) btnCH.innerText = t.copyHashBtn;
+    const btnSP = document.getElementById('btnDownloadImg'); if (btnSP) btnSP.innerText = t.btnSavePNG;
+    const btnPP = document.getElementById('btnPrintPdf'); if (btnPP) btnPP.innerText = t.btnPrintPdf;
+
+    // Section 4 Labels
+    const admT = document.getElementById('adminTitle'); if (admT) admT.innerText = t.adminTitle;
+    const admS = document.getElementById('adminSub'); if (admS) admS.innerText = t.adminSub;
+    const btnEE = document.getElementById('btnExportExcel'); if (btnEE) btnEE.innerText = t.btnExportExcel;
+    const btnCD = document.getElementById('btnClearData'); if (btnCD) btnCD.innerText = t.btnClearData;
+    const admP = document.getElementById('lblAdminPrompt'); if (admP) admP.innerText = t.lblAdminPrompt;
+    const admPS = document.getElementById('lblAdminPromptSub'); if (admPS) admPS.innerText = t.lblAdminPromptSub;
+    const btnAL = document.getElementById('btnAdminLogin'); if (btnAL) btnAL.innerText = t.btnAdminLogin;
+    const admSearch = document.getElementById('adminSearch'); if (admSearch) admSearch.placeholder = t.adminSearchPlaceholder;
+    const statSub = document.getElementById('lblStatSubmissions'); if (statSub) statSub.innerText = t.statCardSubmissions;
+    const statRSA = document.getElementById('lblStatRankSA'); if (statRSA) statRSA.innerText = t.statCardRankSA;
+    const statAT = document.getElementById('lblStatAvgTime'); if (statAT) statAT.innerText = t.statCardAvgTime;
+    const statAE = document.getElementById('lblStatAvgErrors'); if (statAE) statAE.innerText = t.statCardAvgErrors;
+    const lblAL = document.getElementById('lblAdminListTitle'); if (lblAL) lblAL.innerText = t.lblAdminListTitle;
+
+    // Refresh active game views
+    g1Render();
+    g1UpdateMetrics();
+    g2UpdateHeader();
+    updateLockGateUI();
+    if (isAdminLoggedIn) renderAdminTable();
+  }
+
+
   // ==================== GAME 1 LOGIC (WITHOUT BIAS LABELS) ====================
-  const g1Stages = [
+  const g1StagesTH = [
     {
       title: "ด่านที่ 1: รวมโค้ดก่อนกลับบ้าน (17:00 น. วันศุกร์)",
       desc: `
@@ -902,16 +1453,18 @@
   let g1CurrentOptions = [];
 
   function g1Render() {
-    document.getElementById('g1Dots').innerHTML = g1Stages.map((_, i) => `<div class="dot ${i < g1Idx ? 'done' : (i === g1Idx ? 'current' : '')}"></div>`).join('');
-    const st = g1Stages[g1Idx];
-    document.getElementById('g1Tag').innerText = `ด่านที่ ${g1Idx + 1} จาก 4`;
+    const stagesArr = (currentLang === 'en') ? g1StagesEN : g1StagesTH;
+    document.getElementById('g1Dots').innerHTML = stagesArr.map((_, i) => `<div class="dot ${i < g1Idx ? 'done' : (i === g1Idx ? 'current' : '')}"></div>`).join('');
+    const stages = (currentLang === 'en') ? g1StagesEN : g1StagesTH;
+    const st = stages[g1Idx];
+    document.getElementById('g1Tag').innerText = translations[currentLang].stageTag(g1Idx + 1, 4);
     document.getElementById('g1Title').innerText = st.title;
     document.getElementById('g1Desc').innerHTML = st.desc;
 
     // สุ่มสลับตัวเลือกป้องกันการลอกกัน
     g1CurrentOptions = shuffleArray(st.options).map((opt, i) => ({
       ...opt,
-      badge: `ทางเลือก ${String.fromCharCode(0x0E01 + i)}`
+      badge: (currentLang === 'en') ? `Option ${String.fromCharCode(65 + i)}` : `ทางเลือก ${String.fromCharCode(0x0E01 + i)}`
     }));
 
     const area = document.getElementById('g1ChoicesArea');
@@ -928,7 +1481,7 @@
   }
 
   function g1UpdateMetrics() {
-    document.getElementById('g1Time').innerText = g1TimeVal + ' นาที';
+    document.getElementById('g1Time').innerText = g1TimeVal + ' ' + translations[currentLang].unitMins;
     document.getElementById('g1Stability').innerText = g1StabVal + '%';
     document.getElementById('g1Morale').innerText = g1MoraleVal + '%';
 
@@ -942,7 +1495,8 @@
   }
 
   function g1Choose(optIdx) {
-    const st = g1Stages[g1Idx];
+    const stages = (currentLang === 'en') ? g1StagesEN : g1StagesTH;
+    const st = stages[g1Idx];
     const opt = g1CurrentOptions[optIdx];
     g1TimeVal += opt.time;
     g1StabVal = Math.max(5, Math.min(100, g1StabVal + opt.stab));
@@ -971,7 +1525,7 @@
     fbBox.style.display = 'block';
     fbBox.style.borderLeftColor = opt.isDevops ? 'var(--success)' : (opt.time > 200 ? 'var(--danger)' : 'var(--warning)');
     document.getElementById('g1FbText').innerHTML = opt.fb;
-    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? 'ไปด่านถัดไป ➡️' : 'ดูผลสรุปคะแนนและฉายา 🏆';
+    document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? translations[currentLang].btnNextStage : translations[currentLang].btnVerdict;
     updateLockGateUI();
   }
 
@@ -994,28 +1548,48 @@
       let endingColor = "";
       let endingDesc = "";
 
-      if (devopsCount === 4) {
-        endingBadge = "👑 DevOps เทพเจ้าสายพาน (DevOps Legend)";
-        endingColor = "var(--purple)";
-        endingDesc = `คุณเลือกแนวทางตามหลักการ DevOps ได้เฉียบขาดครบทุกด่าน! ใช้เวลารวมเพียง <b>${g1TimeVal} นาที</b> ขวัญกำลังใจทีมเต็มเปี่ยม ปล่อยระบบเสร็จตั้งแต่เย็นวันศุกร์ ได้ไปกินหมูกระทะฉลองอย่างสงบสุข ไร้กังวล!`;
-      } else if (devopsCount >= 2 && g1TimeVal < 400) {
-        endingBadge = "🚒 นักดับเพลิงประจำออฟฟิศ (Hero Firefighter)";
-        endingColor = "var(--warning)";
-        endingDesc = `ระบบเกิดคอขวดและไฟไหม้เป็นระยะ แต่คุณยังวิ่งไล่ดับเพลิงและพาทีมรอดพ้นวิกฤตคืนวันศุกร์มาได้! ใช้เวลารวม <b>${g1TimeVal} นาที</b> (ลองเล่นใหม่แล้วค้นหาแนวทาง DevOps ทุกด่านเพื่อลดเวลาให้เหลือไม่กี่นาที)`;
-      } else if (g1MoraleVal < 40 || g1TimeVal >= 400) {
-        endingBadge = "🧟 วิศวกรซอมบี้ (Zombie Engineer)";
-        endingColor = "var(--danger)";
-        endingDesc = `สภาพทีมร่อแร่ใกล้ตาย! นั่งแก้ปัญหาและประสานงานข้ามคืนจนถึงเช้าวันจันทร์ เสียเวลาสะสมถึง <b>${g1TimeVal} นาที</b> ขอบตาดำสนิท กินกาแฟแทนน้ำเปล่า!`;
+      if (currentLang === 'en') {
+        if (devopsCount === 4) {
+          endingBadge = "👑 DevOps Legend (Elite CI/CD Master)";
+          endingColor = "var(--purple)";
+          endingDesc = `You chose DevOps principles flawlessly across all stages! Total lead time was only <b>${g1TimeVal} mins</b> with peak team morale. Release finished smoothly by Friday evening!`;
+        } else if (devopsCount >= 2 && g1TimeVal < 400) {
+          endingBadge = "🚒 Office Firefighter (Crisis Hero)";
+          endingColor = "var(--warning)";
+          endingDesc = `Bottlenecks and fires arose periodically, but you put them out and guided the team through Friday night! Total time: <b>${g1TimeVal} mins</b>.`;
+        } else if (g1MoraleVal < 40 || g1TimeVal >= 400) {
+          endingBadge = "🧟 Zombie Engineer (Exhausted Team)";
+          endingColor = "var(--danger)";
+          endingDesc = `The team barely survived! Troubleshooting and patching through the weekend cost <b>${g1TimeVal} mins</b> with coffee replacing water!`;
+        } else {
+          endingBadge = "🏃 Stealth Escaper (Run for Cover)";
+          endingColor = "var(--danger)";
+          endingDesc = `System crashed catastrophically. Stability dropped to <b>${g1StabVal}%</b>, leaving Ops to triage alone!`;
+        }
       } else {
-        endingBadge = "🏃 สายชิ่งหนีกลับบ้าน (Stealth Escaper)";
-        endingColor = "var(--danger)";
-        endingDesc = `ระบบระเบิดตูมตาม ความเสถียรลดฮวบเหลือ <b>${g1StabVal}%</b> ทิ้งให้ทีม Ops นั่งร้องไห้กู้เซิร์ฟเวอร์คนเดียว!`;
+        if (devopsCount === 4) {
+          endingBadge = "👑 DevOps เทพเจ้าสายพาน (DevOps Legend)";
+          endingColor = "var(--purple)";
+          endingDesc = `คุณเลือกแนวทางตามหลักการ DevOps ได้เฉียบขาดครบทุกด่าน! ใช้เวลารวมเพียง <b>${g1TimeVal} นาที</b> ขวัญกำลังใจทีมเต็มเปี่ยม ปล่อยระบบเสร็จตั้งแต่เย็นวันศุกร์ ได้ไปกินหมูกระทะฉลองอย่างสงบสุข ไร้กังวล!`;
+        } else if (devopsCount >= 2 && g1TimeVal < 400) {
+          endingBadge = "🚒 นักดับเพลิงประจำออฟฟิศ (Hero Firefighter)";
+          endingColor = "var(--warning)";
+          endingDesc = `ระบบเกิดคอขวดและไฟไหม้เป็นระยะ แต่คุณยังวิ่งไล่ดับเพลิงและพาทีมรอดพ้นวิกฤตคืนวันศุกร์มาได้! ใช้เวลารวม <b>${g1TimeVal} นาที</b> (ลองเล่นใหม่แล้วค้นหาแนวทาง DevOps ทุกด่านเพื่อลดเวลาให้เหลือไม่กี่นาที)`;
+        } else if (g1MoraleVal < 40 || g1TimeVal >= 400) {
+          endingBadge = "🧟 วิศวกรซอมบี้ (Zombie Engineer)";
+          endingColor = "var(--danger)";
+          endingDesc = `สภาพทีมร่อแร่ใกล้ตาย! นั่งแก้ปัญหาและประสานงานข้ามคืนจนถึงเช้าวันจันทร์ เสียเวลาสะสมถึง <b>${g1TimeVal} นาที</b> ขอบตาดำสนิท กินกาแฟแทนน้ำเปล่า!`;
+        } else {
+          endingBadge = "🏃 สายชิ่งหนีกลับบ้าน (Stealth Escaper)";
+          endingColor = "var(--danger)";
+          endingDesc = `ระบบระเบิดตูมตาม ความเสถียรลดฮวบเหลือ <b>${g1StabVal}%</b> ทิ้งให้ทีม Ops นั่งร้องไห้กู้เซิร์ฟเวอร์คนเดียว!`;
+        }
       }
 
       vBox.innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
           <span style="font-size:18px; font-weight:900; color:${endingColor};">${endingBadge}</span>
-          <span style="font-size:13px; font-weight:700; background:#fff; padding:4px 10px; border-radius:20px; border:1px solid var(--border);">เลือกแนวทาง DevOps: ${devopsCount} / 4 ด่าน</span>
+          <span style="font-size:13px; font-weight:700; background:#fff; padding:4px 10px; border-radius:20px; border:1px solid var(--border);">${(currentLang === 'en') ? 'DevOps Choices: ' : 'เลือกแนวทาง DevOps: '}${devopsCount} / 4</span>
         </div>
         <div style="font-size:14.5px; color:var(--text); line-height:1.6;">
           ${endingDesc}
@@ -1048,7 +1622,7 @@
   let g2Busy = false;
   let g2Errors = 0;
 
-  const g2Problems = [
+  const g2ProblemsTH = [
     {
       stageNum: 1,
       title: "💥 ด่านที่ 1 พังยับ: โค้ดชนกันเละเทะ (Merge Conflict)",
@@ -1167,7 +1741,7 @@
     }
   ];
 
-  const g2Missions = [
+  const g2MissionsTH = [
     {
       badge: "ภารกิจด่านที่ 1 / 5",
       title: "ลองปล่อยฟีเจอร์ด้วยระบบมือแบบดั้งเดิม (Manual Silo)",
@@ -1213,7 +1787,7 @@
   }
 
   function g2UpdateHeader() {
-    const m = g2Missions[g2Level];
+    const m = ((currentLang === 'en') ? g2MissionsEN : g2MissionsTH)[g2Level];
     document.getElementById('g2StepBadge').innerText = m.badge;
     document.getElementById('g2MissionTitle').innerText = m.title;
     document.getElementById('g2MissionSub').innerText = m.sub;
@@ -1222,7 +1796,12 @@
     document.getElementById('g2Mttr').innerText = m.mttr;
     document.getElementById('g2Level').innerText = g2Level + ' / 4';
 
-    const labels = [
+    const labels = (currentLang === 'en') ? [
+      "1. Lean (Small Batches)",
+      "2. CI (Automated Test)",
+      "3. CD & Container",
+      "4. Monitoring & Culture"
+    ] : [
       "1. Lean (ซอยงานเล็ก)",
       "2. CI (บอทเทสต์อัตโนมัติ)",
       "3. CD & Container",
@@ -1245,13 +1824,13 @@
   let g2CurrentOptions = [];
 
   function g2ShowIncidentDoctor(lvl) {
-    const prob = g2Problems[lvl];
+    const prob = ((currentLang === 'en') ? g2ProblemsEN : g2ProblemsTH)[lvl];
     const box = document.getElementById('g2ActionBox');
 
     // สุ่มสลับตัวเลือกป้องกันการลอกกัน
     g2CurrentOptions = shuffleArray(prob.options).map((opt, i) => ({
       ...opt,
-      label: `ทางเลือก ${String.fromCharCode(0x0E01 + i)}`
+      label: (currentLang === 'en') ? `Option ${String.fromCharCode(65 + i)}` : `ทางเลือก ${String.fromCharCode(0x0E01 + i)}`
     }));
 
     let html = `
@@ -1261,8 +1840,8 @@
       </div>
 
       <div style="margin-bottom:8px; font-weight:800; font-size:14px; color:var(--text); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <span>🩺 <b>ภารกิจกู้ชีพ:</b> เลือกแนวทางแก้ปัญหาที่เหมาะสมที่สุด</span>
-        <span style="font-size:12px; font-weight:700; color:var(--purple); background:var(--purple-light); padding:3px 10px; border-radius:12px; border:1px solid #ddd6fe;">เป้าหมายทักษะ: ${prob.calmsBadge}</span>
+        <span>🩺 <b>${(currentLang === 'en') ? 'Incident Remedy:' : 'ภารกิจกู้ชีพ:'}</b> ${(currentLang === 'en') ? 'Select the optimal recovery solution' : 'เลือกแนวทางแก้ปัญหาที่เหมาะสมที่สุด'}</span>
+        <span style="font-size:12px; font-weight:700; color:var(--purple); background:var(--purple-light); padding:3px 10px; border-radius:12px; border:1px solid #ddd6fe;">${(currentLang === 'en') ? 'Competency Target: ' : 'เป้าหมายทักษะ: '}${prob.calmsBadge}</span>
       </div>
 
       <div class="g2-options-grid" id="g2OptionsGrid">
@@ -1312,7 +1891,7 @@
         <div style="background:var(--success-light); border:2px solid var(--success); padding:16px; border-radius:10px;">
           <div style="font-size:15px; margin-bottom:12px; color:var(--text);">${opt.why}</div>
           <button class="btn btn-success" onclick="g2Unlock(${lvl + 1})" style="width:100%; font-size:15px; padding:12px; font-weight:800;">
-            🚀 อัปเกรดสายพานด้วยแนวทางนี้ และเดินเครื่องต่อ! ➡️
+            ${(currentLang === 'en') ? '🚀 Upgrade Pipeline with this Remedy & Resume! ➡️' : '🚀 อัปเกรดสายพานด้วยแนวทางนี้ และเดินเครื่องต่อ! ➡️'}
           </button>
         </div>
       `;
@@ -1327,7 +1906,7 @@
         <div style="background:var(--danger-light); border:1.5px solid var(--danger); padding:14px; border-radius:10px;">
           <div style="font-size:14.5px; color:#7f1d1d;">${opt.why}</div>
           <div style="margin-top:8px; font-size:13px; font-weight:700; color:var(--muted);">
-            👉 ลองวิเคราะห์ใหม่อีกครั้ง แล้วคลิกเลือกการ์ดใบอื่นด้านบนได้เลยครับ
+            ${(currentLang === 'en') ? '👉 Re-analyze the root cause and select another remedy card above.' : '👉 ลองวิเคราะห์ใหม่อีกครั้ง แล้วคลิกเลือกการ์ดใบอื่นด้านบนได้เลยครับ'}
           </div>
         </div>
       `;
@@ -1388,41 +1967,44 @@
     g2Completed = true;
     playSound('victory');
     g2SetStage(4, 'passed', '🌟 ระบบทำงานได้อย่างราบรื่น!');
+    const isEn = (currentLang === 'en');
     box.innerHTML = `
       <div style="background:var(--success-light); border:2px solid var(--success); padding:18px; border-radius:12px; text-align:center;">
-        <h3 style="margin:0 0 8px; color:var(--success); font-size:20px;">🏆 ภารกิจสำเร็จ! สายพานการส่งมอบงานมีประสิทธิภาพสูงสุด</h3>
+        <h3 style="margin:0 0 8px; color:var(--success); font-size:20px;">
+          ${isEn ? '🏆 Mission Accomplished! Pipeline Fully Optimized' : '🏆 ภารกิจสำเร็จ! สายพานการส่งมอบงานมีประสิทธิภาพสูงสุด'}
+        </h3>
         <p style="margin:0 0 14px; color:var(--text); font-size:14.5px;">
-          คุณได้ปรับปรุงกระบวนการทำงานจากเดิมที่ใช้เวลา <b>14 วัน</b> ให้สามารถส่งมอบงานได้รวดเร็วและปลอดภัย พร้อมกู้คืนระบบได้อย่างรวดเร็ว!
+          ${isEn ? 'You transformed the delivery workflow from <b>14 days</b> down to minutes with high stability and instant rollback resilience!' : 'คุณได้ปรับปรุงกระบวนการทำงานจากเดิมที่ใช้เวลา <b>14 วัน</b> ให้สามารถส่งมอบงานได้รวดเร็วและปลอดภัย พร้อมกู้คืนระบบได้อย่างรวดเร็ว!'}
         </p>
 
         <!-- DORA Metrics Comparison Card -->
         <div style="margin:14px 0 18px; background:#ffffff; border-radius:10px; border:1.5px solid #a7f3d0; padding:14px; text-align:left;">
           <div style="font-weight:800; font-size:14px; color:#065f46; margin-bottom:8px;">
-            📊 ผลลัพธ์ชี้วัดความสำเร็จตามมาตรฐาน DORA Metrics (ก่อน vs หลังนำ DevOps มาใช้):
+            ${isEn ? '📊 DORA Metrics Performance Benchmark (Before vs. After DevOps Adoption):' : '📊 ผลลัพธ์ชี้วัดความสำเร็จตามมาตรฐาน DORA Metrics (ก่อน vs หลังนำ DevOps มาใช้):'}
           </div>
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px;">
               <div style="font-size:12px; color:var(--muted); font-weight:700;">⏱️ Lead Time for Changes</div>
-              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">14 วัน</span> ➔ <b style="color:var(--success);">15 นาที</b></div>
+              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">${isEn ? '14 Days' : '14 วัน'}</span> ➔ <b style="color:var(--success);">${isEn ? '15 mins' : '15 นาที'}</b></div>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px;">
               <div style="font-size:12px; color:var(--muted); font-weight:700;">🚀 Deployment Frequency</div>
-              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">เดือนละครั้ง</span> ➔ <b style="color:var(--success);">วันละหลายรอบ</b></div>
+              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">${isEn ? 'Monthly' : 'เดือนละครั้ง'}</span> ➔ <b style="color:var(--success);">${isEn ? 'Multiple/day' : 'วันละหลายรอบ'}</b></div>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px;">
               <div style="font-size:12px; color:var(--muted); font-weight:700;">💥 Change Failure Rate</div>
-              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">40% (ล่มบ่อย)</span> ➔ <b style="color:var(--success);">&lt; 5% (เสถียร)</b></div>
+              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">40%</span> ➔ <b style="color:var(--success);">&lt; 5% (${isEn ? 'Resilient' : 'เสถียร'})</b></div>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px;">
               <div style="font-size:12px; color:var(--muted); font-weight:700;">🛡️ Mean Time to Restore (MTTR)</div>
-              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">24 ชั่วโมง</span> ➔ <b style="color:var(--success);">3 นาที (ย้อนคืนทันที)</b></div>
+              <div style="font-size:13.5px; margin-top:3px;"><span style="color:var(--danger); text-decoration:line-through;">${isEn ? '24 Hours' : '24 ชั่วโมง'}</span> ➔ <b style="color:var(--success);">${isEn ? '3 mins (Rollback)' : '3 นาที (ย้อนคืนทันที)'}</b></div>
             </div>
           </div>
         </div>
 
         <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-          <button class="btn btn-purple" onclick="switchGame(3)">🎓 ไปหน้าสร้างการ์ดคะแนนส่งอาจารย์ ➡️</button>
-          <button class="btn btn-secondary" onclick="g2Reset()">🔄 ลองเล่นทบทวนอีกครั้ง</button>
+          <button class="btn btn-purple" onclick="switchGame(3)">${isEn ? '🎓 Go to Certificate & Submission ➡️' : '🎓 ไปหน้าสร้างการ์ดคะแนนส่งอาจารย์ ➡️'}</button>
+          <button class="btn btn-secondary" onclick="g2Reset()">${isEn ? '🔄 Replay Pipeline' : '🔄 ลองเล่นทบทวนอีกครั้ง'}</button>
         </div>
       </div>
     `;
@@ -1438,8 +2020,8 @@
     document.getElementById('g2RunBtn').disabled = false;
     document.getElementById('g2ActionBox').innerHTML = `
       <div style="text-align:center; color:var(--success); font-weight:700; padding:14px; background:var(--success-light); border-radius:10px; border:1.5px solid #a7f3d0;">
-        🎉 อัปเกรดกระบวนการขั้นที่ ${lvl} เรียบร้อยแล้ว!<br>
-        <span style="font-size:14px; color:var(--text); font-weight:500;">กดปุ่ม <b>"▶️ กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบน เพื่อเดินเครื่องสายพานต่อได้เลย!</span>
+        🎉 ${(currentLang === 'en') ? `Pipeline Stage ${lvl} Upgraded Successfully!` : `อัปเกรดกระบวนการขั้นที่ ${lvl} เรียบร้อยแล้ว!`}<br>
+        <span style="font-size:14px; color:var(--text); font-weight:500;">${(currentLang === 'en') ? 'Click <b>"Deploy Feature to Pipeline"</b> above to proceed!' : 'กดปุ่ม <b>"▶️ กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบน เพื่อเดินเครื่องสายพานต่อได้เลย!'}</span>
       </div>
     `;
     updateLockGateUI();
@@ -1455,7 +2037,7 @@
     document.getElementById('g2RunBtn').disabled = false;
     document.getElementById('g2ActionBox').innerHTML = `
       <div style="text-align:center; color:var(--muted); padding:10px;">
-        👆 กดปุ่ม <b>"กดทดลองปล่อยฟีเจอร์ขึ้นระบบ"</b> ด้านบนเพื่อเริ่มตรวจสอบสายพานได้เลยครับ
+        ${translations[currentLang].g2InitialActionBox}
       </div>
     `;
     updateLockGateUI();
@@ -1468,44 +2050,55 @@
     const g1Done = g1Hist.length === 4;
     const g2Done = g2Completed === true;
     const allDone = g1Done && g2Done;
+    const isEn = (currentLang === 'en');
 
     const box1 = document.getElementById('reqBox1');
-    box1.className = 'req-card ' + (g1Done ? 'done' : 'pending');
-    document.getElementById('reqTitle1').innerText = (g1Done ? '✅ ' : '🔒 ') + 'เกมที่ 1: คืนวันศุกร์สุดระทึก';
-    document.getElementById('reqSub1').innerText = g1Done
-      ? `ผ่านครบ 4 ด่านแล้ว`
-      : `ยังเล่นไม่จบ (${g1Hist.length} / 4 ด่าน)`;
-    document.getElementById('reqBtn1').style.display = g1Done ? 'none' : 'inline-block';
+    if (box1) {
+      box1.className = 'req-card ' + (g1Done ? 'done' : 'pending');
+      document.getElementById('reqTitle1').innerText = (g1Done ? '✅ ' : '🔒 ') + (isEn ? 'Game 1: Friday Night Crisis' : 'เกมที่ 1: คืนวันศุกร์สุดระทึก');
+      document.getElementById('reqSub1').innerText = g1Done
+        ? (isEn ? 'All 4 stages completed' : 'ผ่านครบ 4 ด่านแล้ว')
+        : (isEn ? `Incomplete (${g1Hist.length} / 4 stages)` : `ยังเล่นไม่จบ (${g1Hist.length} / 4 ด่าน)`);
+      const btn1 = document.getElementById('reqBtn1');
+      if (btn1) {
+        btn1.style.display = g1Done ? 'none' : 'inline-block';
+        btn1.innerText = isEn ? 'Play Game 1 🎮' : 'ไปเล่นเกมที่ 1 🎮';
+      }
+    }
 
     const box2 = document.getElementById('reqBox2');
-    box2.className = 'req-card ' + (g2Done ? 'done' : 'pending');
-    document.getElementById('reqTitle2').innerText = (g2Done ? '✅ ' : '🔒 ') + 'เกมที่ 2: ซ่อมสายพานมรณะ';
-    document.getElementById('reqSub2').innerText = g2Done
-      ? 'ซ่อมสายพานและเดินเครื่อง Production สำเร็จ 100%!'
-      : `ยังซ่อมสายพานไม่จบ (ปลดล็อก ${g2Level} / 4 ขั้น)`;
-    document.getElementById('reqBtn2').style.display = g2Done ? 'none' : 'inline-block';
+    if (box2) {
+      box2.className = 'req-card ' + (g2Done ? 'done' : 'pending');
+      document.getElementById('reqTitle2').innerText = (g2Done ? '✅ ' : '🔒 ') + (isEn ? 'Game 2: Broken Pipeline Doctor' : 'เกมที่ 2: ซ่อมสายพานมรณะ');
+      document.getElementById('reqSub2').innerText = g2Done
+        ? (isEn ? 'Pipeline repaired and live release 100% operational!' : 'ซ่อมสายพานและเดินเครื่อง Production สำเร็จ 100%!')
+        : (isEn ? `Pipeline repair incomplete (${g2Level} / 4 unlocked)` : `ยังซ่อมสายพานไม่จบ (ปลดล็อก ${g2Level} / 4 ขั้น)`);
+      const btn2 = document.getElementById('reqBtn2');
+      if (btn2) {
+        btn2.style.display = g2Done ? 'none' : 'inline-block';
+        btn2.innerText = isEn ? 'Play Game 2 🛠️' : 'ไปเล่นเกมที่ 2 🛠️';
+      }
+    }
 
     const btn = document.getElementById('btnSubmitCard');
-    if (isSubmitted) {
-      btn.disabled = true;
-      btn.innerText = (typeof GOOGLE_SCRIPT_URL === 'string' && GOOGLE_SCRIPT_URL.startsWith('http'))
-        ? '✅ บันทึกคะแนนเข้า Google Sheets เรียบร้อยแล้ว (แคปหน้าจอการ์ดด้านล่างได้เลย)'
-        : '✅ สร้างการ์ดคะแนนเรียบร้อยแล้ว (แคปหน้าจอการ์ดด้านล่างได้เลย)';
-    } else if (allDone) {
-      btn.disabled = false;
-      btn.innerText = (typeof GOOGLE_SCRIPT_URL === 'string' && GOOGLE_SCRIPT_URL.startsWith('http'))
-        ? '✨ ส่งคะแนนเข้า Google Sheets และสร้างการ์ดผลงาน'
-        : '✨ สร้างการ์ดสรุปคะแนน';
-    } else {
-      btn.disabled = true;
-      btn.innerText = '🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน';
+    if (btn) {
+      if (isSubmitted) {
+        btn.disabled = true;
+        btn.innerText = isEn ? '✅ Certificate Generated & Recorded!' : '✅ บันทึกคะแนนและสร้างการ์ดผลงานเรียบร้อยแล้ว';
+      } else if (allDone) {
+        btn.disabled = false;
+        btn.innerText = isEn ? '✨ Save Score & Generate Certificate' : '✨ บันทึกคะแนนและสร้างการ์ดผลงาน';
+      } else {
+        btn.disabled = true;
+        btn.innerText = isEn ? '🔒 Complete Game 1 and Game 2 first to unlock certificate generation' : '🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน';
+      }
     }
   }
 
   async function generateCard() {
     const g1Played = g1Hist.length === 4;
     if (!g1Played || !g2Completed) {
-      alert('⚠️ ระบบล็อกการส่งงาน: กรุณาเล่นเกมที่ 1 ให้ครบ 4 ด่าน และซ่อมสายพานในเกมที่ 2 จนขึ้นสถานะภารกิจสำเร็จก่อนครับ!');
+      alert((currentLang === 'en') ? '⚠️ Mission Locked: Please complete all 4 stages of Game 1 and fully repair the pipeline in Game 2 first!' : '⚠️ ระบบล็อกการส่งงาน: กรุณาเล่นเกมที่ 1 ให้ครบ 4 ด่าน และซ่อมสายพานในเกมที่ 2 จนขึ้นสถานะภารกิจสำเร็จก่อนครับ!');
       updateLockGateUI();
       return;
     }
@@ -1514,7 +2107,7 @@
     const stdName = document.getElementById('stdName').value.trim();
 
     if (!stdId || !stdName) {
-      alert('กรุณากรอก รหัสนิสิต และ ชื่อ-นามสกุล ให้ครบก่อนกดสร้างการ์ดคะแนนครับ');
+      alert((currentLang === 'en') ? 'Please fill in both Student ID and Full Name before generating the certificate.' : 'กรุณากรอก รหัสนิสิต และ ชื่อ-นามสกุล ให้ครบก่อนกดสร้างการ์ดคะแนนครับ');
       return;
     }
 
@@ -1561,18 +2154,32 @@
     badgeEl.innerText = totalScore >= 90 ? 'MASTER 🏆' : 'COMPLETED ✅';
     badgeEl.style.color = 'var(--success)';
 
-    document.getElementById('outG1Detail').innerHTML =
-      `• วิเคราะห์เลือกแนวทางที่เหมาะสม: <b>${g1BestChoices} / 4 ด่าน</b><br>` +
-      `• เวลาส่งมอบรวม: <b>${g1TimeVal} นาที</b> | ความเสถียร: <b>${g1StabVal}%</b><br>` +
-      `• คะแนนที่ได้: <b>${g1Score} / 50 คะแนน</b>`;
+    if (currentLang === 'en') {
+      document.getElementById('outG1Detail').innerHTML =
+        `• Optimal DevOps Choices: <b>${g1BestChoices} / 4 stages</b><br>` +
+        `• Total Lead Time: <b>${g1TimeVal} mins</b> | System Stability: <b>${g1StabVal}%</b><br>` +
+        `• Score Awarded: <b>${g1Score} / 50 points</b>`;
 
-    document.getElementById('outG2Detail').innerHTML =
-      `• ปลดล็อกกระบวนการทำงานครบ: <b>4 / 4 ขั้นตอน</b><br>` +
-      `• ข้อผิดพลาด/ลองผิดลองถูก: <b>${g2Errors} ครั้ง</b><br>` +
-      `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที) | คะแนน: <b>50 / 50</b>`;
+      document.getElementById('outG2Detail').innerHTML =
+        `• Pipeline Stages Fully Unlocked: <b>4 / 4 stages</b><br>` +
+        `• Diagnostic Errors / Attempts: <b>${g2Errors} times</b><br>` +
+        `• Pipeline Operational (Lead Time reduced to 10 mins) | Score: <b>50 / 50 points</b>`;
+    } else {
+      document.getElementById('outG1Detail').innerHTML =
+        `• วิเคราะห์เลือกแนวทางที่เหมาะสม: <b>${g1BestChoices} / 4 ด่าน</b><br>` +
+        `• เวลาส่งมอบรวม: <b>${g1TimeVal} นาที</b> | ความเสถียร: <b>${g1StabVal}%</b><br>` +
+        `• คะแนนที่ได้: <b>${g1Score} / 50 คะแนน</b>`;
+
+      document.getElementById('outG2Detail').innerHTML =
+        `• ปลดล็อกกระบวนการทำงานครบ: <b>4 / 4 ขั้นตอน</b><br>` +
+        `• ข้อผิดพลาด/ลองผิดลองถูก: <b>${g2Errors} ครั้ง</b><br>` +
+        `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที) | คะแนน: <b>50 / 50</b>`;
+    }
 
     const now = new Date();
-    const timeStr = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = (currentLang === 'en')
+      ? now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      : now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
     document.getElementById('outTime').innerText = timeStr;
 
     const rawStr = `${stdId}-${totalScore}-${g1TimeVal}-${g2Level}`;
@@ -1782,10 +2389,11 @@
     const sumErrors = list.reduce((acc, cur) => acc + (cur.g2Errors || 0), 0);
     const avgErrors = totalSubmissions > 0 ? (sumErrors / totalSubmissions).toFixed(1) : '0.0';
 
-    if (document.getElementById('statSubmissions')) document.getElementById('statSubmissions').innerText = totalSubmissions + ' คน';
+    const isEn = (currentLang === 'en');
+    if (document.getElementById('statSubmissions')) document.getElementById('statSubmissions').innerText = totalSubmissions + (isEn ? ' students' : ' คน');
     if (document.getElementById('statRankSA')) document.getElementById('statRankSA').innerText = pctRankSA + '%';
-    if (document.getElementById('statAvgTime')) document.getElementById('statAvgTime').innerText = avgTime + ' นาที';
-    if (document.getElementById('statAvgErrors')) document.getElementById('statAvgErrors').innerText = avgErrors + ' ครั้ง';
+    if (document.getElementById('statAvgTime')) document.getElementById('statAvgTime').innerText = avgTime + (isEn ? ' mins' : ' นาที');
+    if (document.getElementById('statAvgErrors')) document.getElementById('statAvgErrors').innerText = avgErrors + (isEn ? ' errors' : ' ครั้ง');
 
     const query = (document.getElementById('adminSearch')?.value || '').toLowerCase().trim();
     const filtered = list.filter(item => {
@@ -1804,7 +2412,7 @@
       tbody.innerHTML = `
         <tr>
           <td colspan="9" style="text-align:center; padding:24px; color:var(--muted);">
-            ${list.length === 0 ? 'ยังไม่มีข้อมูลการส่งงานในระบบ' : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา'}
+            ${list.length === 0 ? (isEn ? 'No student submission records found.' : 'ยังไม่มีข้อมูลการส่งงานในระบบ') : (isEn ? 'No records match your search criteria.' : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา')}
           </td>
         </tr>
       `;
@@ -1828,8 +2436,8 @@
           <td style="padding:10px 8px; text-align:center;">
             <span style="font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:10px; background:${badgeBg}; color:${badgeColor};">${rank}</span>
           </td>
-          <td style="padding:10px 8px; text-align:center;">${item.g1Score} <span style="font-size:11px; color:var(--muted);">(${item.g1TimeVal}น.)</span></td>
-          <td style="padding:10px 8px; text-align:center; color:${(item.g2Errors || 0) > 0 ? 'var(--warning)' : 'var(--success)'}; font-weight:700;">${item.g2Score} <span style="font-size:11px; color:var(--muted);">(${item.g2Errors ?? 0} ผิด)</span></td>
+          <td style="padding:10px 8px; text-align:center;">${item.g1Score} <span style="font-size:11px; color:var(--muted);">(${item.g1TimeVal}${isEn ? 'm' : 'น.'})</span></td>
+          <td style="padding:10px 8px; text-align:center; color:${(item.g2Errors || 0) > 0 ? 'var(--warning)' : 'var(--success)'}; font-weight:700;">${item.g2Score} <span style="font-size:11px; color:var(--muted);">(${item.g2Errors ?? 0} ${isEn ? 'err' : 'ผิด'})</span></td>
           <td style="padding:10px 8px; font-family:monospace; font-size:12px; color:var(--muted);">${item.verifyHash}</td>
         </tr>
       `;
@@ -1898,9 +2506,7 @@
   }
 
   // Initialize
-  g1Render();
-  g2UpdateHeader();
-  updateLockGateUI();
+  applyLanguageUI();
 </script>
 </body>
 </html>
