@@ -1,0 +1,71 @@
+# 🚀 DevOps Interactive Learning Lab (Week 1: Mindset & CALMS)
+
+เว็บแอปพลิเคชันจำลองการเรียนรู้เชิงปฏิสัมพันธ์ (Interactive Learning Simulation) สำหรับนิสิตวิชา **DevOps (คาบที่ 1: Mindset, Culture & CALMS)** 
+สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา
+
+---
+
+## 🎮 กิจกรรมการเรียนรู้ภายในแล็บ
+
+1. **เกมที่ 1: คืนวันศุกร์สุดระทึก (Crisis Simulator)**
+   - จำลองสถานการณ์วิกฤต 4 ด่าน (การรวมโค้ด, การนำขึ้นเซิร์ฟเวอร์, รับมือระบบล่มตอนค่ำ, และวัฒนธรรม Post-Mortem)
+   - **ระบบนับเวลาถอยหลัง 60 วินาทีต่อข้อ** เพื่อกระตุ้นการตัดสินใจในภาวะกดดัน
+   - คำนวณ Lead Time สะสม, ความเสถียรของระบบ (System Stability), และขวัญกำลังใจทีม (Team Morale)
+
+2. **เกมที่ 2: ภารกิจหมอสายพานกู้ชีพ (DevOps Incident Doctor)**
+   - จำลองปัญหาคอขวดใน Deployment Pipeline ทั้ง 4 สเตจ (Merge ➔ Test ➔ Deploy ➔ Production)
+   - ให้ผู้เรียนวิเคราะห์เลือก **การ์ดทางเลือกกู้ชีพ 3 ใบ** ต่อด่าน (มีมุกตลก/ข้อผิดพลาดจริง vs แนวคิด DevOps สากล)
+   - ปลดล็อกทักษะตามกรอบ **CALMS**:
+     - สเตจ 1: **Lean** (ซอยงานเล็ก Trunk-based Development)
+     - สเตจ 2: **CI** (Continuous Integration & Automated Test Bot)
+     - สเตจ 3: **CD & Container** (Docker & Script Deployment อัตโนมัติ)
+     - สเตจ 4: **Measurement & Sharing** (Real-time Monitoring, 1-Click Rollback & Blameless Culture)
+
+3. **ระบบสรุปผลคะแนน & Exit Ticket (Score Card)**
+   - ปลดล็อกเมื่อผ่านภารกิจทั้ง 2 เกมครบถ้วน
+   - สร้าง Verification Hash ป้องกันการแก้ไขคะแนน
+   - รองรับการทำงานทั้งแบบ **Offline (แคปหน้าจอ / Print to PDF)** และ **Online (ส่งข้อมูลเข้า Google Sheets)**
+
+---
+
+## ☁️ วิธีการตั้งค่าส่งคะแนนเข้า Google Sheets (สำหรับผู้สอน)
+
+1. สร้าง Google Sheets เปล่า 1 ไฟล์
+2. ไปที่เมนู **ส่วนขยาย (Extensions)** ➔ **Apps Script**
+3. วางโค้ด `doPost(e)`:
+
+```javascript
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "วัน-เวลาที่ส่ง", "รหัสนิสิต", "ชื่อ-นามสกุล",
+        "คะแนนรวม (เต็ม 100)", "คะแนนเกม 1", "คะแนนเกม 2",
+        "เวลาเกม 1 (นาที)", "คำตอบท้ายคาบ (Exit Ticket)", "รหัสยืนยัน (Hash)"
+      ]);
+      sheet.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#e0f2fe");
+    }
+    var data = JSON.parse(e.postData.contents);
+    var now = Utilities.formatDate(new Date(), "Asia/Bangkok", "dd/MM/yyyy HH:mm:ss");
+    sheet.appendRow([
+      now, data.stdId, data.stdName, data.totalScore,
+      data.g1Score, data.g2Score, data.g1TimeVal,
+      data.stdReflect, data.verifyHash
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+```
+
+4. กด **Deploy** ➔ **New deployment** ➔ เลือก **Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+5. นำ Web App URL ที่ได้ มาวางในไฟล์ `index.html`:
+```javascript
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/.../exec";
+```
