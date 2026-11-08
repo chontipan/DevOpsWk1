@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DevOps Interactive Learning Lab - คาบที่ 1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --bg: #f8fafc;
@@ -558,9 +559,12 @@
         </div>
       </div>
 
-      <div style="margin-top:16px; text-align:center;" class="no-print">
-        <button class="btn btn-secondary" onclick="window.print()" style="font-size:13.5px; padding:9px 16px;">
-          🖨️ พิมพ์หรือบันทึกเป็น PDF (Print to PDF)
+      <div style="margin-top:16px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;" class="no-print">
+        <button type="button" class="btn btn-primary" id="btnDownloadImg" onclick="downloadCertImage()" style="font-size:13.5px; padding:9px 18px; font-weight:700;">
+          🖼️ บันทึกเป็นรูปภาพ (Save as PNG)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="window.print()" style="font-size:13.5px; padding:9px 18px;">
+          🖨️ พิมพ์หรือบันทึก PDF (Print)
         </button>
       </div>
     </div>
@@ -1676,6 +1680,60 @@
     }).catch(() => {
       alert('รหัสยืนยัน: ' + hash);
     });
+  }
+
+  async function downloadCertImage() {
+    const card = document.getElementById('certCard');
+    const btn = document.getElementById('btnDownloadImg');
+    if (!card) return;
+
+    const origText = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳ กำลังสร้างรูปภาพ...';
+    }
+
+    // Hide no-print elements temporarily during capture
+    const noPrintElements = card.querySelectorAll('.no-print');
+    noPrintElements.forEach(el => el.style.visibility = 'hidden');
+
+    try {
+      if (typeof html2canvas === 'undefined') {
+        alert('กำลังโหลดไลบรารีบันทึกภาพ กรุณาลองใหม่อีกครั้งใน 2-3 วินาที');
+        if (btn) { btn.innerHTML = origText; btn.disabled = false; }
+        return;
+      }
+
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      const stdId = document.getElementById('outId')?.innerText || 'DevOps';
+      const cleanStdId = stdId.replace(/[^a-zA-Z0-9_-]/g, '') || 'DevOps';
+      const link = document.createElement('a');
+      link.download = `DevOps_Certificate_${cleanStdId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      if (btn) {
+        btn.innerHTML = '✅ บันทึกสำเร็จ!';
+        setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; }, 2000);
+      }
+    } catch (err) {
+      console.error('Error generating image:', err);
+      alert('ไม่สามารถสร้างรูปภาพได้ กรุณาใช้ปุ่มพิมพ์/Print to PDF แทนครับ');
+      if (btn) {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    } finally {
+      noPrintElements.forEach(el => el.style.visibility = '');
+    }
   }
 
   // ==================== ADMIN DASHBOARD LOGIC ====================
