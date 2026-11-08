@@ -21,51 +21,8 @@
      - สเตจ 3: **CD & Container** (Docker & Script Deployment อัตโนมัติ)
      - สเตจ 4: **Measurement & Sharing** (Real-time Monitoring, 1-Click Rollback & Blameless Culture)
 
-3. **ระบบสรุปผลคะแนน & Exit Ticket (Score Card)**
-   - ปลดล็อกเมื่อผ่านภารกิจทั้ง 2 เกมครบถ้วน
+3. **ระบบสรุปผลคะแนน & แผงควบคุมผู้สอน (Admin Dashboard)**
+   - ปลดล็อกสร้างการ์ดคะแนนเมื่อผ่านภารกิจทั้ง 2 เกมครบถ้วน (กรอกเพียงรหัสนิสิตและชื่อ-นามสกุล)
    - สร้าง Verification Hash ป้องกันการแก้ไขคะแนน
-   - รองรับการทำงานทั้งแบบ **Offline (แคปหน้าจอ / Print to PDF)** และ **Online (ส่งข้อมูลเข้า Google Sheets)**
-
----
-
-## ☁️ วิธีการตั้งค่าส่งคะแนนเข้า Google Sheets (สำหรับผู้สอน)
-
-1. สร้าง Google Sheets เปล่า 1 ไฟล์
-2. ไปที่เมนู **ส่วนขยาย (Extensions)** ➔ **Apps Script**
-3. วางโค้ด `doPost(e)`:
-
-```javascript
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        "วัน-เวลาที่ส่ง", "รหัสนิสิต", "ชื่อ-นามสกุล",
-        "คะแนนรวม (เต็ม 100)", "คะแนนเกม 1", "คะแนนเกม 2",
-        "เวลาเกม 1 (นาที)", "คำตอบท้ายคาบ (Exit Ticket)", "รหัสยืนยัน (Hash)"
-      ]);
-      sheet.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#e0f2fe");
-    }
-    var data = JSON.parse(e.postData.contents);
-    var now = Utilities.formatDate(new Date(), "Asia/Bangkok", "dd/MM/yyyy HH:mm:ss");
-    sheet.appendRow([
-      now, data.stdId, data.stdName, data.totalScore,
-      data.g1Score, data.g2Score, data.g1TimeVal,
-      data.stdReflect, data.verifyHash
-    ]);
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-```
-
-4. กด **Deploy** ➔ **New deployment** ➔ เลือก **Web app**
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-5. นำ Web App URL ที่ได้ มาวางในไฟล์ `index.html`:
-```javascript
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/.../exec";
-```
+   - **แผงควบคุมอาจารย์ (Admin):** ล็อกอินดูรายชื่อคะแนนนิสิตแบบเรียลไทม์ และกด **Export to Excel (.csv)** ได้ในคลิกเดียว
+   - รองรับการเก็บข้อมูลอัตโนมัติผ่าน **Netlify Forms** ในตัว

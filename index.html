@@ -294,7 +294,6 @@
   <input type="number" name="g1Score" />
   <input type="number" name="g2Score" />
   <input type="number" name="g1TimeVal" />
-  <input type="text" name="stdReflect" />
   <input type="text" name="verifyHash" />
 </form>
 
@@ -502,8 +501,8 @@
         </div>
       </div>
 
-      <div class="panel-title" style="margin-top:8px;">📝 กรอกข้อมูลนิสิตและคำถามท้ายคาบ (Exit Ticket)</div>
-      <div class="form-grid">
+      <div class="panel-title" style="margin-top:8px;">📝 กรอกข้อมูลนิสิตเพื่อสร้างการ์ดคะแนน</div>
+      <div class="form-grid" style="margin-bottom:16px;">
         <div class="form-group">
           <label for="stdId">รหัสนิสิต (Student ID) *</label>
           <input type="text" id="stdId" class="form-input" placeholder="เช่น 6602xxxx">
@@ -512,10 +511,6 @@
           <label for="stdName">ชื่อ - นามสกุล (Full Name) *</label>
           <input type="text" id="stdName" class="form-input" placeholder="เช่น นายสมชาย สายเดฟออปส์">
         </div>
-      </div>
-      <div class="form-group" style="margin-bottom:16px;">
-        <label for="stdReflect">💡 คำถามท้ายคาบ: ถ้านำแนวคิด DevOps ไปใช้ในโปรเจกต์กลุ่มของคุณ สิ่งแรกที่จะเปลี่ยนคืออะไร? (ตอบสั้นๆ 1 ประโยค) *</label>
-        <input type="text" id="stdReflect" class="form-input" placeholder="เช่น เลิกดองโค้ดไว้รวมกันวันสุดท้าย และตั้งระบบตรวจจับบั๊กอัตโนมัติ">
       </div>
       <button class="btn btn-purple" id="btnSubmitCard" onclick="generateCard()" disabled style="width:100%; font-size:15px; padding:13px;">
         🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มสร้างการ์ดคะแนน
@@ -560,11 +555,6 @@
           <div style="font-weight:800; font-size:14px; color:var(--success); margin-bottom:6px;">🛠️ ผลลัพธ์เกมที่ 2: ซ่อมสายพานมรณะ</div>
           <div id="outG2Detail" style="font-size:13.5px; color:var(--text); line-height:1.6;"></div>
         </div>
-      </div>
-
-      <div class="cert-quote">
-        <div style="font-weight:800; font-size:12.5px; color:var(--purple); margin-bottom:4px;">💬 สิ่งที่จะนำไปปรับใช้ในโปรเจกต์กลุ่ม (Exit Ticket):</div>
-        <div id="outReflect" style="font-style:italic; color:var(--text); font-weight:600;">"-"</div>
       </div>
 
       <div class="cert-footer">
@@ -625,7 +615,6 @@
               <th style="padding:10px 8px; text-align:center;">คะแนนรวม</th>
               <th style="padding:10px 8px; text-align:center;">เกม 1</th>
               <th style="padding:10px 8px; text-align:center;">เกม 2</th>
-              <th style="padding:10px 8px;">สิ่งที่สะท้อนคิด (Exit Ticket)</th>
               <th style="padding:10px 8px;">Hash ยืนยัน</th>
             </tr>
           </thead>
@@ -1315,10 +1304,9 @@
 
     const stdId = document.getElementById('stdId').value.trim();
     const stdName = document.getElementById('stdName').value.trim();
-    const stdReflect = document.getElementById('stdReflect').value.trim();
 
-    if (!stdId || !stdName || !stdReflect) {
-      alert('กรุณากรอก รหัสนิสิต, ชื่อ-นามสกุล และคำตอบท้ายคาบให้ครบก่อนกดสร้างการ์ดคะแนนครับ');
+    if (!stdId || !stdName) {
+      alert('กรุณากรอก รหัสนิสิต และ ชื่อ-นามสกุล ให้ครบก่อนกดสร้างการ์ดคะแนนครับ');
       return;
     }
 
@@ -1330,7 +1318,6 @@
     document.getElementById('outName').innerText = stdName;
     document.getElementById('outId').innerText = stdId;
     document.getElementById('outTotalScore').innerText = `${totalScore} / 100`;
-    document.getElementById('outReflect').innerText = `"${stdReflect}"`;
 
     const badgeEl = document.getElementById('certOverallBadge');
     badgeEl.innerText = totalScore >= 90 ? 'MASTER 🏆' : 'COMPLETED ✅';
@@ -1371,7 +1358,6 @@
       g1Score: g1Score,
       g2Score: g2Score,
       g1TimeVal: g1TimeVal,
-      stdReflect: stdReflect,
       verifyHash: cleanHash
     };
     saveSubmissionLocally(submissionRecord);
@@ -1386,7 +1372,6 @@
       netlifyParams.append('g1Score', g1Score);
       netlifyParams.append('g2Score', g2Score);
       netlifyParams.append('g1TimeVal', g1TimeVal);
-      netlifyParams.append('stdReflect', stdReflect);
       netlifyParams.append('verifyHash', cleanHash);
       fetch('/', {
         method: 'POST',
@@ -1407,7 +1392,6 @@
         g1Score: g1Score,
         g2Score: g2Score,
         g1TimeVal: g1TimeVal,
-        stdReflect: stdReflect,
         verifyHash: cleanHash
       };
 
@@ -1421,7 +1405,6 @@
         isSubmitted = true;
         document.getElementById('stdId').disabled = true;
         document.getElementById('stdName').disabled = true;
-        document.getElementById('stdReflect').disabled = true;
         badgeEl.innerText += ' (บันทึกเข้า Sheets แล้ว ☁️)';
       } catch (err) {
         console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', err);
@@ -1432,7 +1415,6 @@
       isSubmitted = true;
       document.getElementById('stdId').disabled = true;
       document.getElementById('stdName').disabled = true;
-      document.getElementById('stdReflect').disabled = true;
     }
 
     updateLockGateUI();
@@ -1491,7 +1473,7 @@
     if (filtered.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" style="text-align:center; padding:24px; color:var(--muted);">
+          <td colspan="8" style="text-align:center; padding:24px; color:var(--muted);">
             ${list.length === 0 ? 'ยังไม่มีข้อมูลการส่งงานในระบบ' : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา'}
           </td>
         </tr>
@@ -1508,7 +1490,6 @@
         <td style="padding:10px 8px; text-align:center; font-weight:900; color:${item.totalScore >= 90 ? 'var(--purple)' : 'var(--success)'};">${item.totalScore}</td>
         <td style="padding:10px 8px; text-align:center;">${item.g1Score}</td>
         <td style="padding:10px 8px; text-align:center;">${item.g2Score}</td>
-        <td style="padding:10px 8px; max-width:240px; font-size:12.5px; color:#334155;">"${item.stdReflect}"</td>
         <td style="padding:10px 8px; font-family:monospace; font-size:12px; color:var(--muted);">${item.verifyHash}</td>
       </tr>
     `).join('');
@@ -1529,7 +1510,6 @@
       "คะแนนเกม 1",
       "คะแนนเกม 2",
       "เวลาเกม 1 (นาที)",
-      "คำตอบท้ายคาบ (Exit Ticket)",
       "รหัสยืนยัน (Hash)"
     ];
 
@@ -1545,7 +1525,6 @@
         item.g1Score,
         item.g2Score,
         item.g1TimeVal,
-        item.stdReflect,
         item.verifyHash
       ];
       csvContent += row.map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(",") + "\r\n";
