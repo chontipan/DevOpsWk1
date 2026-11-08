@@ -1235,7 +1235,7 @@
   function toggleLanguage() {
     currentLang = (currentLang === 'th') ? 'en' : 'th';
     localStorage.setItem('devops_lang', currentLang);
-    applyLanguageUI();
+    window.location.reload();
   }
 
   function applyLanguageUI() {
