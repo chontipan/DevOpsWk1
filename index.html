@@ -383,7 +383,8 @@
       <div id="g1Verdict" style="padding:16px; border-radius:10px; background:#f8fafc; border:1px solid var(--border); margin-bottom:14px; font-size:15px;"></div>
       <div style="font-weight:800; margin-bottom:8px;" id="g1HistLabel">ประวัติการตัดสินใจทั้ง 4 ด่าน:</div>
       <div id="g1History"></div>
-      <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+      <div id="g1LockNotice" style="display:none; margin:14px 0; background:#fffbeb; border:1.5px solid #fde68a; border-radius:10px; padding:12px 16px; font-size:13.5px; color:#92400e; font-weight:700;"></div>
+      <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
         <button class="btn btn-primary" id="btnG1ToG2" onclick="switchGame(2)">ไปเล่นเกมที่ 2 ต่อ (ซ่อมสายพานมรณะ) ➡️</button>
         <button class="btn btn-secondary" id="btnG1Replay" onclick="g1Reset()">🔄 เล่นเกมที่ 1 ซ้ำอีกครั้ง</button>
       </div>
@@ -1345,6 +1346,80 @@
 
 
   // ==================== GAME 1 LOGIC (WITHOUT BIAS LABELS) ====================
+
+  // ==================== GAME 1 ANTI-TAMPER & STATE LOCKING ====================
+  function saveG1State() {
+    try {
+      const state = {
+        g1Idx: g1Idx,
+        g1TimeVal: g1TimeVal,
+        g1StabVal: g1StabVal,
+        g1MoraleVal: g1MoraleVal,
+        g1Hist: g1Hist,
+        isFinished: (g1Hist.length === 4)
+      };
+      sessionStorage.setItem('devops_g1_state', JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function updateG1LockUI() {
+    const resetBtn = document.getElementById('g1ResetBtn');
+    const replayBtn = document.getElementById('btnG1Replay');
+    const lockNotice = document.getElementById('g1LockNotice');
+
+    if (lockNotice) {
+      lockNotice.innerText = (currentLang === 'en')
+        ? '🔒 Assessment Locked: Game 1 decisions are finalized to maintain assessment integrity. You cannot modify your score before submitting.'
+        : '🔒 ระบบล็อกการประเมิน: ผลการตัดสินใจในเกมที่ 1 ถูกบันทึกเรียบร้อยแล้ว ไม่สามารถเล่นซ้ำเพื่อแก้ไขคะแนนได้ก่อนส่งงานครับ';
+    }
+
+    if (!isSubmitted && g1Hist.length > 0) {
+      if (resetBtn) resetBtn.style.display = 'none';
+      if (replayBtn) replayBtn.style.display = 'none';
+      if (lockNotice) lockNotice.style.display = 'block';
+    } else if (isSubmitted) {
+      if (resetBtn) {
+        resetBtn.style.display = 'inline-block';
+        resetBtn.innerText = (currentLang === 'en') ? '🔄 Review Game 1' : '🔄 เล่นทบทวนเกมที่ 1';
+      }
+      if (replayBtn) {
+        replayBtn.style.display = 'inline-block';
+        replayBtn.innerText = (currentLang === 'en') ? '🔄 Replay for Review' : '🔄 เล่นทบทวนอีกครั้ง';
+      }
+      if (lockNotice) lockNotice.style.display = 'none';
+    } else {
+      if (resetBtn) resetBtn.style.display = 'inline-block';
+      if (replayBtn) replayBtn.style.display = 'none';
+      if (lockNotice) lockNotice.style.display = 'none';
+    }
+  }
+
+  function loadG1State() {
+    try {
+      const saved = sessionStorage.getItem('devops_g1_state');
+      if (saved) {
+        const state = JSON.parse(saved);
+        if (state && Array.isArray(state.g1Hist) && state.g1Hist.length > 0) {
+          g1Idx = state.g1Idx;
+          g1TimeVal = state.g1TimeVal;
+          g1StabVal = state.g1StabVal;
+          g1MoraleVal = state.g1MoraleVal;
+          g1Hist = state.g1Hist;
+          g1UpdateMetrics();
+          if (state.isFinished || g1Hist.length === 4) {
+            g1Idx = 3;
+            g1NextStage();
+          } else {
+            g1Render();
+          }
+          updateG1LockUI();
+          return true;
+        }
+      }
+    } catch(e) {}
+    return false;
+  }
+
   const g1StagesTH = [
     {
       title: "ด่านที่ 1: รวมโค้ดก่อนกลับบ้าน (17:00 น. วันศุกร์)",
@@ -1471,6 +1546,12 @@
   let g1CurrentOptions = [];
 
   function g1Render() {
+    if (g1Hist.length === 4) {
+      document.getElementById('g1PlayArea').style.display = 'none';
+      document.getElementById('g1Summary').style.display = 'block';
+      updateG1LockUI();
+      return;
+    }
     const stagesArr = (currentLang === 'en') ? g1StagesEN : g1StagesTH;
     document.getElementById('g1Dots').innerHTML = stagesArr.map((_, i) => `<div class="dot ${i < g1Idx ? 'done' : (i === g1Idx ? 'current' : '')}"></div>`).join('');
     const stages = (currentLang === 'en') ? g1StagesEN : g1StagesTH;
@@ -1544,6 +1625,8 @@
     fbBox.style.borderLeftColor = opt.isDevops ? 'var(--success)' : (opt.time > 200 ? 'var(--danger)' : 'var(--warning)');
     document.getElementById('g1FbText').innerHTML = opt.fb;
     document.getElementById('g1NextBtn').innerText = g1Idx < 3 ? translations[currentLang].btnNextStage : translations[currentLang].btnVerdict;
+    saveG1State();
+    updateG1LockUI();
     updateLockGateUI();
   }
 
@@ -1621,16 +1704,26 @@
           <span style="color:var(--text); font-size:13.5px;">${h.fb}</span>
         </div>
       `).join('');
+      saveG1State();
+      updateG1LockUI();
       updateLockGateUI();
     }
   }
 
   function g1Reset() {
+    if (!isSubmitted && g1Hist.length > 0) {
+      alert((currentLang === 'en')
+        ? '🔒 Game 1 scores are locked to preserve assessment integrity. You cannot reset or modify your score before submitting your score report in Section 3.'
+        : '🔒 ระบบล็อกผลคะแนนเกมที่ 1 เพื่อความโปร่งใสในการประเมินผล ไม่สามารถเริ่มเล่นใหม่เพื่อแก้คะแนนได้ในระหว่างที่ยังไม่กรอกข้อมูลและส่งคะแนนครับ');
+      return;
+    }
     g1Idx = 0; g1TimeVal = 0; g1StabVal = 100; g1MoraleVal = 100; g1Hist = [];
+    try { sessionStorage.removeItem('devops_g1_state'); } catch(e) {}
     g1UpdateMetrics();
     document.getElementById('g1PlayArea').style.display = 'block';
     document.getElementById('g1Summary').style.display = 'none';
     g1Render();
+    updateG1LockUI();
     updateLockGateUI();
   }
 
@@ -2341,6 +2434,7 @@
       document.getElementById('stdName').disabled = true;
     }
 
+    updateG1LockUI();
     updateLockGateUI();
     certCard.scrollIntoView({ behavior: 'smooth' });
   }
@@ -2629,7 +2723,9 @@
   }
 
   // Initialize
+  const restored = loadG1State();
   applyLanguageUI();
+  updateG1LockUI();
 </script>
 </body>
 </html>
