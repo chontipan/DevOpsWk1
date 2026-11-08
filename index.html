@@ -295,9 +295,23 @@
   <input type="number" name="totalScore" />
   <input type="text" name="rankGrade" />
   <input type="number" name="g1Score" />
-  <input type="number" name="g2Score" />
+  <input type="number" name="g1BestChoices" />
   <input type="number" name="g1TimeVal" />
+  <input type="number" name="g1Stability" />
+  <input type="number" name="g1Morale" />
+  <input type="text" name="g1_s1" />
+  <input type="text" name="g1_s2" />
+  <input type="text" name="g1_s3" />
+  <input type="text" name="g1_s4" />
+  <input type="number" name="g2Score" />
   <input type="number" name="g2Errors" />
+  <input type="number" name="g2_s1_err" />
+  <input type="number" name="g2_s2_err" />
+  <input type="number" name="g2_s3_err" />
+  <input type="number" name="g2_s4_err" />
+  <input type="number" name="durationSec" />
+  <input type="text" name="langUsed" />
+  <input type="text" name="deviceType" />
   <input type="text" name="verifyHash" />
 </form>
 
@@ -651,6 +665,7 @@
 </div>
 
 <script>
+  const sessionStartTime = Date.now();
   // 📌 นำลิงก์ Web App URL ที่ได้จาก Google Apps Script มาวางที่นี่ (ถ้าเว้นว่าง "" จะเป็นโหมดบันทึกแบบ Offline)
   const GOOGLE_SCRIPT_URL = "";
 
@@ -1624,6 +1639,7 @@
   let g2Completed = false;
   let g2Busy = false;
   let g2Errors = 0;
+  let g2StageErrors = [0, 0, 0, 0];
 
   const g2ProblemsTH = [
     {
@@ -1900,6 +1916,7 @@
       `;
     } else {
       g2Errors++;
+      g2StageErrors[lvl] = (g2StageErrors[lvl] || 0) + 1;
       playSound('error');
       const card = document.getElementById('g2Opt_' + optIdx);
       card.className = 'g2-card selected-wrong';
@@ -2035,6 +2052,7 @@
     g2Completed = false;
     g2Busy = false;
     g2Errors = 0;
+    g2StageErrors = [0, 0, 0, 0];
     g2UpdateHeader();
     g2ResetStages();
     document.getElementById('g2RunBtn').disabled = false;
@@ -2197,6 +2215,16 @@
     const certCard = document.getElementById('certCard');
     certCard.style.display = 'block';
 
+    // Learning Analytics Telemetry Calculations
+    const realDurationSec = Math.round((Date.now() - sessionStartTime) / 1000);
+    const deviceType = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+    const langUsed = (currentLang || 'th').toUpperCase();
+
+    const g1_s1 = g1Hist[0] ? (g1Hist[0].isDevops ? 'DevOps' : g1Hist[0].optBadge) : '-';
+    const g1_s2 = g1Hist[1] ? (g1Hist[1].isDevops ? 'DevOps' : g1Hist[1].optBadge) : '-';
+    const g1_s3 = g1Hist[2] ? (g1Hist[2].isDevops ? 'DevOps' : g1Hist[2].optBadge) : '-';
+    const g1_s4 = g1Hist[3] ? (g1Hist[3].isDevops ? 'DevOps' : g1Hist[3].optBadge) : '-';
+
     // Store record locally for Admin Dashboard
     const submissionRecord = {
       time: timeStr,
@@ -2206,9 +2234,22 @@
       rankGrade: rankGrade,
       g1Score: g1Score,
       g1BestChoices: g1BestChoices,
+      g1TimeVal: g1TimeVal,
+      g1Stability: g1StabVal,
+      g1Morale: g1MoraleVal,
+      g1_s1: g1_s1,
+      g1_s2: g1_s2,
+      g1_s3: g1_s3,
+      g1_s4: g1_s4,
       g2Score: g2Score,
       g2Errors: g2Errors,
-      g1TimeVal: g1TimeVal,
+      g2_s1_err: g2StageErrors[0] || 0,
+      g2_s2_err: g2StageErrors[1] || 0,
+      g2_s3_err: g2StageErrors[2] || 0,
+      g2_s4_err: g2StageErrors[3] || 0,
+      durationSec: realDurationSec,
+      langUsed: langUsed,
+      deviceType: deviceType,
       verifyHash: cleanHash
     };
     saveSubmissionLocally(submissionRecord);
@@ -2222,9 +2263,23 @@
       netlifyParams.append('totalScore', totalScore);
       netlifyParams.append('rankGrade', rankGrade);
       netlifyParams.append('g1Score', g1Score);
+      netlifyParams.append('g1BestChoices', g1BestChoices);
+      netlifyParams.append('g1TimeVal', g1TimeVal);
+      netlifyParams.append('g1Stability', g1StabVal);
+      netlifyParams.append('g1Morale', g1MoraleVal);
+      netlifyParams.append('g1_s1', g1_s1);
+      netlifyParams.append('g1_s2', g1_s2);
+      netlifyParams.append('g1_s3', g1_s3);
+      netlifyParams.append('g1_s4', g1_s4);
       netlifyParams.append('g2Score', g2Score);
       netlifyParams.append('g2Errors', g2Errors);
-      netlifyParams.append('g1TimeVal', g1TimeVal);
+      netlifyParams.append('g2_s1_err', g2StageErrors[0] || 0);
+      netlifyParams.append('g2_s2_err', g2StageErrors[1] || 0);
+      netlifyParams.append('g2_s3_err', g2StageErrors[2] || 0);
+      netlifyParams.append('g2_s4_err', g2StageErrors[3] || 0);
+      netlifyParams.append('durationSec', realDurationSec);
+      netlifyParams.append('langUsed', langUsed);
+      netlifyParams.append('deviceType', deviceType);
       netlifyParams.append('verifyHash', cleanHash);
       fetch('/', {
         method: 'POST',
@@ -2245,9 +2300,22 @@
         rankGrade: rankGrade,
         g1Score: g1Score,
         g1BestChoices: g1BestChoices,
+        g1TimeVal: g1TimeVal,
+        g1Stability: g1StabVal,
+        g1Morale: g1MoraleVal,
+        g1_s1: g1_s1,
+        g1_s2: g1_s2,
+        g1_s3: g1_s3,
+        g1_s4: g1_s4,
         g2Score: g2Score,
         g2Errors: g2Errors,
-        g1TimeVal: g1TimeVal,
+        g2_s1_err: g2StageErrors[0] || 0,
+        g2_s2_err: g2StageErrors[1] || 0,
+        g2_s3_err: g2StageErrors[2] || 0,
+        g2_s4_err: g2StageErrors[3] || 0,
+        durationSec: realDurationSec,
+        langUsed: langUsed,
+        deviceType: deviceType,
         verifyHash: cleanHash
       };
 
@@ -2454,17 +2522,56 @@
       return;
     }
 
-    const headers = [
+    const isEn = (currentLang === 'en');
+    const headers = isEn ? [
+      "Timestamp",
+      "Student_ID",
+      "Student_Name",
+      "Total_Score",
+      "DevOps_Rank",
+      "G1_Score",
+      "G1_DevOps_Count",
+      "G1_Simulated_Mins",
+      "G1_Stability_Pct",
+      "G1_Morale_Pct",
+      "G1_S1_Merge_Choice",
+      "G1_S2_Deploy_Choice",
+      "G1_S3_Incident_Choice",
+      "G1_S4_Culture_Choice",
+      "G2_Score",
+      "G2_Total_Errors",
+      "G2_S1_Merge_Errors",
+      "G2_S2_Test_Errors",
+      "G2_S3_Deploy_Errors",
+      "G2_S4_Monitor_Errors",
+      "Real_Duration_Sec",
+      "Language_Used",
+      "Device_Type",
+      "Verification_Hash"
+    ] : [
       "วัน-เวลาที่ส่ง",
       "รหัสนิสิต",
       "ชื่อ-นามสกุล",
       "คะแนนรวม (เต็ม 100)",
       "DevOps Rank",
       "คะแนนเกม 1",
-      "ตัวเลือก DevOps (เกม 1)",
-      "เวลาเกม 1 (นาที)",
+      "จำนวนเลือก DevOps (เกม 1)",
+      "เวลาจำลองเกม 1 (นาที)",
+      "ความเสถียรคงเหลือ เกม 1 (%)",
+      "ขวัญกำลังใจ เกม 1 (%)",
+      "เกม1_ด่าน1_รวมโค้ด",
+      "เกม1_ด่าน2_ส่งมอบ",
+      "เกม1_ด่าน3_วิกฤต",
+      "เกม1_ด่าน4_วัฒนธรรม",
       "คะแนนเกม 2",
-      "ข้อผิดพลาดเกม 2 (ครั้ง)",
+      "ข้อผิดพลาดรวม เกม 2",
+      "เกม2_ด่าน1_รวมโค้ด(ผิด)",
+      "เกม2_ด่าน2_ทดสอบ(ผิด)",
+      "เกม2_ด่าน3_ติดตั้ง(ผิด)",
+      "เกม2_ด่าน4_เฝ้าระวัง(ผิด)",
+      "เวลาเล่นจริงในระบบ (วินาที)",
+      "ภาษาที่ใช้",
+      "อุปกรณ์",
       "รหัสยืนยัน (Hash)"
     ];
 
@@ -2482,8 +2589,21 @@
         item.g1Score,
         item.g1BestChoices ?? '-',
         item.g1TimeVal,
+        item.g1Stability ?? '-',
+        item.g1Morale ?? '-',
+        item.g1_s1 ?? '-',
+        item.g1_s2 ?? '-',
+        item.g1_s3 ?? '-',
+        item.g1_s4 ?? '-',
         item.g2Score,
         item.g2Errors ?? 0,
+        item.g2_s1_err ?? 0,
+        item.g2_s2_err ?? 0,
+        item.g2_s3_err ?? 0,
+        item.g2_s4_err ?? 0,
+        item.durationSec ?? '-',
+        item.langUsed ?? 'TH',
+        item.deviceType ?? 'Desktop',
         item.verifyHash
       ];
       csvContent += row.map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(",") + "\r\n";
