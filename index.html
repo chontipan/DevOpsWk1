@@ -307,7 +307,7 @@
   <div class="nav-tabs">
     <button class="tab-btn active" id="tabBtn1" onclick="switchGame(1)">🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก</button>
     <button class="tab-btn" id="tabBtn2" onclick="switchGame(2)">🛠️ เกมที่ 2: ซ่อมสายพานมรณะ</button>
-    <button class="tab-btn cert-tab" id="tabBtn3" onclick="switchGame(3)">🎓 สรุปผลคะแนนท้ายคาบ</button>
+    <button class="tab-btn cert-tab" id="tabBtn3" onclick="switchGame(3)">📊 บันทึกคะแนน & ส่งงาน</button>
     <button class="tab-btn" id="tabBtn4" onclick="switchGame(4)" style="background:#f1f5f9; border-color:#cbd5e1; color:#475569;">🔐 สำหรับผู้สอน (Admin)</button>
     <button class="tab-btn" id="soundToggleBtn" onclick="toggleSound()" style="background:#fff; border-color:#cbd5e1; font-weight:700;">🔊 เสียง: เปิด</button>
     <button class="tab-btn" id="langToggleBtn" onclick="toggleLanguage()" style="background:#2563eb; color:#fff; border-color:#1d4ed8; font-weight:800;">🌐 EN</button>
@@ -467,14 +467,14 @@
   <section id="game3" class="game-section">
     <div class="header-card">
       <div>
-        <h2 style="color:var(--purple);" id="g3HeaderTitle">🎓 สร้างการ์ดสรุปคะแนนและผลการเรียนรู้</h2>
-        <p id="g3HeaderSub">ระบบจะปลดล็อกให้กรอกชื่อและสร้างการ์ดคะแนนเมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น</p>
+        <h2 style="color:var(--purple);" id="g3HeaderTitle">📊 บันทึกผลคะแนนและส่งงานประจำคาบ</h2>
+        <p id="g3HeaderSub">ระบบจะปลดล็อกให้กรอกชื่อและส่งงานเมื่อคุณเล่น <b>เกมที่ 1 (ครบ 4 ด่าน)</b> และ <b>เกมที่ 2 (ซ่อมสายพานสำเร็จครบทุกขั้น)</b> เท่านั้น</p>
       </div>
     </div>
 
     <!-- Pre-requisite Gate Checklist -->
     <div class="panel">
-      <div class="panel-title" id="g3ChecklistTitle">🔍 ตรวจสอบเงื่อนไขก่อนสร้างการ์ดคะแนน (Mission Checklist)</div>
+      <div class="panel-title" id="g3ChecklistTitle">🔍 ตรวจสอบเงื่อนไขก่อนส่งงาน (Mission Checklist)</div>
       <div class="req-grid">
         <div class="req-card pending" id="reqBox1">
           <div>
@@ -493,7 +493,7 @@
         </div>
       </div>
 
-      <div class="panel-title" style="margin-top:8px;">📝 กรอกข้อมูลนิสิตเพื่อสร้างการ์ดคะแนน</div>
+      <div class="panel-title" id="g3FormTitle" style="margin-top:8px;">📝 ข้อมูลผู้เรียนสำหรับส่งคะแนนและออกใบบันทึกผล</div>
       <div class="form-grid" style="margin-bottom:16px;">
         <div class="form-group">
           <label for="stdId" id="lblStdId">รหัสนิสิต (Student ID) *</label>
@@ -505,7 +505,7 @@
         </div>
       </div>
       <button class="btn btn-purple" id="btnSubmitCard" onclick="generateCard()" disabled style="width:100%; font-size:15px; padding:13px;">
-        🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มสร้างการ์ดคะแนน
+        🔒 กรุณาเล่นเกมที่ 1 และเกมที่ 2 ให้จบก่อนเพื่อปลดล็อกปุ่มส่งคะแนน
       </button>
     </div>
 
@@ -513,12 +513,12 @@
     <div class="cert-wrapper" id="certCard">
       <div class="cert-header">
         <div>
-          <span class="cert-badge">DEVOPS MINDSET & CALMS LAB</span>
-          <h2 style="margin:8px 0 2px; font-size:22px; color:var(--text);" id="certTitle">ใบรับรองผลการเรียนรู้วิชา DevOps (คาบที่ 1)</h2>
+          <span class="cert-badge" id="certBadge">DEVOPS LAB 1: SCORE REPORT & TELEMETRY</span>
+          <h2 style="margin:8px 0 2px; font-size:22px; color:var(--text);" id="certTitle">ใบบันทึกผลคะแนนปฏิบัติการ DevOps (คาบที่ 1)</h2>
           <div style="font-size:13px; color:var(--muted);" id="certUni">สาขาวิชาวิศวกรรมซอฟต์แวร์ คณะเทคโนโลยีสารสนเทศและการสื่อสาร มหาวิทยาลัยพะเยา</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertStatus">สถานะผลการประเมิน</div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700;" id="lblCertStatus">สถานะการส่งงาน</div>
           <div id="certOverallBadge" style="font-size:18px; font-weight:900; color:var(--success);">PASSED ✅</div>
         </div>
       </div>
@@ -555,14 +555,14 @@
       <div class="cert-footer">
         <div><span id="lblCertTime">📅 เวลาที่บันทึกผล:</span> <span id="outTime" style="font-weight:700;">-</span></div>
         <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-          <span><span id="lblCertHash">รหัสยืนยัน (Verification Hash):</span> <span class="verify-code" id="outHash">-</span></span>
+          <span><span id="lblCertHash">รหัสยืนยันการส่งงาน (Verification Hash):</span> <span class="verify-code" id="outHash">-</span></span>
           <button type="button" class="btn btn-secondary no-print" onclick="copyVerificationHash()" id="copyHashBtn" style="font-size:12px; padding:3px 9px;">📋 คัดลอกรหัส</button>
         </div>
       </div>
 
       <div style="margin-top:16px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;" class="no-print">
         <button type="button" class="btn btn-primary" id="btnDownloadImg" onclick="downloadCertImage()" style="font-size:13.5px; padding:9px 18px; font-weight:700;">
-          🖼️ บันทึกเป็นรูปภาพ (Save as PNG)
+          🖼️ บันทึกเป็นรูปภาพ (Save Slip as PNG)
         </button>
         <button type="button" class="btn btn-secondary" id="btnPrintPdf" onclick="window.print()" style="font-size:13.5px; padding:9px 18px;">
           🖨️ พิมพ์หรือบันทึก PDF (Print)
@@ -784,7 +784,7 @@
       brand: "🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)",
       tab1: "🎮 เกมที่ 1: คืนวันศุกร์สุดระทึก",
       tab2: "🛠️ เกมที่ 2: ซ่อมสายพานมรณะ",
-      tab3: "🎓 สรุปผลคะแนนท้ายคาบ",
+      tab3: "📊 บันทึกคะแนน & ส่งงาน",
       tab4: "🔐 สำหรับผู้สอน (Admin)",
       soundOn: "🔊 เสียง: เปิด",
       soundOff: "🔇 เสียง: ปิด",
@@ -851,7 +851,7 @@
       lblCertTime: "📅 เวลาที่บันทึกผล:",
       lblCertHash: "รหัสยืนยัน (Verification Hash):",
       copyHashBtn: "📋 คัดลอกรหัส",
-      btnSavePNG: "🖼️ บันทึกเป็นรูปภาพ (Save as PNG)",
+      btnSavePNG: "🖼️ บันทึกเป็นรูปภาพ (Save Slip as PNG)",
       btnPrintPdf: "🖨️ พิมพ์หรือบันทึก PDF (Print)",
       // Section 4: Admin
       adminTitle: "🔐 แผงควบคุมผู้สอน (Admin Dashboard)",
@@ -872,7 +872,7 @@
       brand: "🚀 DevOps Interactive Lab (Week 1: Mindset & CALMS)",
       tab1: "🎮 Game 1: Friday Night Crisis",
       tab2: "🛠️ Game 2: Broken Pipeline Doctor",
-      tab3: "🎓 Results & Certificate",
+      tab3: "📊 Submit Score & Report",
       tab4: "🔐 Instructor (Admin)",
       soundOn: "🔊 Audio: ON",
       soundOff: "🔇 Audio: OFF",
@@ -919,27 +919,29 @@
       lblG2Fail: "Change Failure Rate",
       lblG2Mttr: "Mean Time to Restore (MTTR)",
       lblG2Level: "Team Readiness Level",
-      // Section 3: Certificate
-      g3HeaderTitle: "🎓 Learning Outcomes & Certificate of Completion",
-      g3HeaderSub: "This certificate unlocks only after completing <b>Game 1 (all 4 stages)</b> and <b>Game 2 (repairing all pipeline stages)</b>.",
+      // Section 3: Score Report & Submission
+      tab3: "📊 Submit Score & Report",
+      g3HeaderTitle: "📊 Lab Score Submission & Telemetry Report",
+      g3HeaderSub: "Submission form unlocks once you complete <b>Game 1 (all 4 stages)</b> and <b>Game 2 (repairing all pipeline stages)</b>.",
       g3ChecklistTitle: "🔍 Prerequisite Mission Checklist",
-      g3FormTitle: "📝 Student Information for Certificate",
+      g3FormTitle: "📝 Student Information for Score Submission",
       lblStdId: "Student ID *",
       lblStdName: "Full Name (English or Thai) *",
-      btnSubmitLocked: "🔒 Complete Game 1 and Game 2 to unlock certificate generation",
-      btnSubmitReady: "✨ Save Score & Generate Certificate",
+      btnSubmitLocked: "🔒 Complete Game 1 and Game 2 first to unlock submission",
+      btnSubmitReady: "✨ Submit Score & Generate Report Slip",
+      certBadge: "DEVOPS LAB 1: SCORE REPORT & TELEMETRY",
       certUni: "Department of Software Engineering, School of ICT, University of Phayao",
-      certTitle: "Certificate of Achievement in DevOps Foundations",
-      lblCertStatus: "Evaluation Status",
+      certTitle: "DevOps Lab 1: Score & Telemetry Report Slip",
+      lblCertStatus: "Submission Status",
       lblCertName: "Student Name",
       lblCertId: "Student ID",
       lblCertScore: "Score & Proficiency Rank",
       lblCertG1: "🎮 Game 1: Friday Night Crisis Simulation",
       lblCertG2: "🛠️ Game 2: Pipeline Incident Doctor",
-      lblCertTime: "📅 Recorded On:",
-      lblCertHash: "Verification Hash:",
+      lblCertTime: "📅 Submitted At:",
+      lblCertHash: "Submission Hash:",
       copyHashBtn: "📋 Copy Hash",
-      btnSavePNG: "🖼️ Save Certificate (PNG)",
+      btnSavePNG: "🖼️ Save Score Slip (PNG)",
       btnPrintPdf: "🖨️ Print / Save PDF",
       // Section 4: Admin
       adminTitle: "🔐 Instructor Control Panel (Admin Dashboard)",
@@ -1290,6 +1292,7 @@
     const lblNm = document.getElementById('lblStdName'); if (lblNm) lblNm.innerText = t.lblStdName;
     const certU = document.getElementById('certUni'); if (certU) certU.innerText = t.certUni;
     const certT = document.getElementById('certTitle'); if (certT) certT.innerText = t.certTitle;
+    const certB = document.getElementById('certBadge'); if (certB) certB.innerText = t.certBadge;
     const lblCS = document.getElementById('lblCertStatus'); if (lblCS) lblCS.innerText = t.lblCertStatus;
     const lblCN = document.getElementById('lblCertName'); if (lblCN) lblCN.innerText = t.lblCertName;
     const lblCI = document.getElementById('lblCertId'); if (lblCI) lblCI.innerText = t.lblCertId;
@@ -2321,7 +2324,7 @@
       const stdId = document.getElementById('outId')?.innerText || 'DevOps';
       const cleanStdId = stdId.replace(/[^a-zA-Z0-9_-]/g, '') || 'DevOps';
       const link = document.createElement('a');
-      link.download = `DevOps_Certificate_${cleanStdId}.png`;
+      link.download = `DevOps_ScoreReport_${cleanStdId}.png`;
       link.href = canvas.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
