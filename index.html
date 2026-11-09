@@ -603,7 +603,7 @@
           <span id="wsLiveText">⚡ Realtime WebSocket Live (อัปเดตอัตโนมัติไม่ต้องกดปุ่ม)</span>
         </div>
         <button class="btn btn-success" id="btnExportExcel" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
-        <button class="btn btn-secondary" id="btnClearData" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างตาราง</button>
+        
       </div>
     </div>
 
@@ -2872,13 +2872,7 @@
   }
 
 
-  function clearLocalSubmissions() {
-    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลการส่งงานทั้งหมดในเครื่องนี้? (การล้างนี้ไม่สามารถย้อนคืนได้)')) {
-      inMemorySubmissions = [];
-      renderAdminTable();
-      alert('ล้างข้อมูลเรียบร้อยแล้ว');
-    }
-  }
+
 
   // Initialize
   const restored = loadG1State();
