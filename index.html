@@ -1012,117 +1012,117 @@
       desc: `
         <div style="background:#fff; border-left:4px solid #2563eb; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
           💬 <b>Product Owner:</b> <i>"We need 4 features merged and live on production before midnight, or Saturday's campaign will fail!"</i><br>
-          💬 <b>Senior Dev:</b> <i>"Everyone finished their tasks locally. Time to merge into main branch... What's our strategy?"</i>
+          💬 <b>Senior Dev:</b> <i>"Everyone finished their tasks on isolated feature branches all week... What's our merge strategy?"</i>
         </div>
-        4 developers kept their code unmerged on local machines all week. How will you handle this?
+        4 developers kept large, unmerged feature branches all week. How will your team coordinate this merge?
       `,
       options: [
         {
           badge: "Option A",
-          txt: "Merge everything on Friday evening and manually resolve all conflicting code line by line",
-          time: 180, stab: -30, morale: -25, isDevops: false,
-          fb: "❌ <b>Merge Hell! [Missing L - Lean & CI]</b> Spent 3 painful hours manually resolving conflicts. Accidentally deleted teammates' code, introducing multiple critical bugs!"
+          txt: "Freeze all feature development, zip the branches, and assign the Tech Lead to manually resolve and review all code line-by-line",
+          time: 240, stab: -15, morale: -30, isDevops: false,
+          fb: "🐢 <b>Single Point of Failure! [Missing L - Lean Flow]</b> The Tech Lead becomes a massive bottleneck. The team sits idle for hours, and human fatigue still misses subtle logic conflicts."
         },
         {
           badge: "Option B",
-          txt: "Lock the Git repository to freeze all changes, zip the code, and have the Tech Lead inspect every line",
-          time: 300, stab: -10, morale: -35, isDevops: false,
-          fb: "🐢 <b>Massive Bottleneck! [Missing L - Lean]</b> The Tech Lead is overwhelmed. Everyone waits idle for hours. Release delayed by 5 hours, team burnout!"
+          txt: "Merge all 4 long-lived feature branches into main simultaneously on Friday evening and resolve collision conflicts manually",
+          time: 180, stab: -35, morale: -25, isDevops: false,
+          fb: "❌ <b>Big-Bang Merge Hell! [Missing L - Lean & CI]</b> Merging massive code batches at once causes catastrophic collisions. Overwritten lines introduce silent runtime regressions!"
         },
         {
           badge: "Option C",
-          txt: "Adopt Trunk-Based Development with small batch commits and Automated CI Testing throughout the week",
+          txt: "Adopt Trunk-Based Development with small daily batch commits and continuous Automated CI regression testing",
           time: 10, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>Smooth & Reliable! [L - Lean & Automation]</b> CI test bots caught and isolated regressions by afternoon. Merged in 10 minutes, code ready for release at 5 PM!"
+          fb: "✅ <b>Lean Flow! [L - Lean & Automation]</b> Frequent small commits eliminated large collisions. CI test suites verified integrations within minutes—ready for release at 5 PM!"
         }
       ]
     },
     {
-      title: "Stage 2: 7:30 PM - Handoff to Operations for Production Deployment",
+      title: "Stage 2: 7:30 PM - Production Environment Deployment",
       desc: `
         <div style="background:#fff; border-left:4px solid #d97706; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>Exhausted Ops Engineer:</b> <i>"The code works on your laptop, but the production server has a different OS version! How are we going to deploy this?"</i><br>
-          💬 <b>Senior Dev:</b> <i>"It works on my machine! Please get it up quickly, I have dinner plans!"</i>
+          💬 <b>Ops Engineer:</b> <i>"The software runs on your developer machine, but our production servers have differing kernel and dependency libraries! How do we deploy?"</i><br>
+          💬 <b>Senior Dev:</b> <i>"It works on my machine! Can we just deploy it quickly?"</i>
         </div>
-        How do you deploy the software to Production?
+        How do you handle deployment and environment consistency?
       `,
       options: [
         {
           badge: "Option A",
-          txt: "Zip the project files, email them with a 10-page manual setup guide for Ops to execute commands manually",
-          time: 150, stab: -35, morale: -30, isDevops: false,
-          fb: "🔥 <b>Classic 'Works on My Machine'! [Missing A - Automation]</b> Ops missed one command line parameter. The system crashed, leading to hours of finger-pointing between Dev and Ops."
+          txt: "Clone a Virtual Machine (VM) snapshot matching Dev specs and have Ops execute manual setup shell commands on production",
+          time: 160, stab: -30, morale: -25, isDevops: false,
+          fb: "⚠️ <b>Configuration Drift Trap! [Missing IaC & Immutability]</b> Even with VM clones, manual shell adjustments lead to subtle library mismatches and untracked environment drift."
         },
         {
           badge: "Option B",
-          txt: "SSH directly into the Production Server to edit files and tweak configurations live",
+          txt: "SSH directly into the Production Server to hotpatch configuration files and environment variables on the fly",
           time: 240, stab: -45, morale: -40, isDevops: false,
-          fb: "💥 <b>Cardinal Sin of Ops! [Missing Infrastructure as Code]</b> Ten minutes of relief followed by total cluster failure. No version history of what was changed on production!"
+          fb: "💥 <b>Cowboy Anti-Pattern! [Missing Version Control for Infra]</b> Quick live edits on production leave zero audit trail. A subsequent restart causes a cluster-wide outage!"
         },
         {
           badge: "Option C",
-          txt: "Package app and environment into Docker Containers and trigger an automated Continuous Deployment (CD) pipeline",
+          txt: "Package runtime and dependencies into Immutable Containers (Docker) and deploy via an Automated CD Pipeline",
           time: 5, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>100% Deterministic! [A - Automation & CD]</b> Identical runtime environments across dev, staging, and production. Deployed smoothly in 5 minutes with zero configuration drift!"
+          fb: "✅ <b>Immutable Infrastructure! [A - Automation & CD]</b> Complete environment parity across staging and production. Deployed reliably in 5 minutes with zero manual drift!"
         }
       ]
     },
     {
-      title: "Stage 3: 9:00 PM Emergency - Checkout Service Down!",
+      title: "Stage 3: 9:00 PM Emergency - Checkout Service Incident!",
       desc: `
         <div style="background:#fff; border-left:4px solid #dc2626; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>Product Owner Calling:</b> <i>"Customers are complaining on social media that checkout is frozen after charging their cards! Fix this immediately!!"</i><br>
-          💬 <b>Ops:</b> <i>"Millions of lines of raw server logs, we have no idea what failed!"</i>
+          💬 <b>Product Owner Calling:</b> <i>"Checkout transactions are timing out after charging customer credit cards! What is happening?"</i><br>
+          💬 <b>Ops:</b> <i>"There are gigabytes of unformatted log files across 8 servers, we cannot locate the error source!"</i>
         </div>
-        How does your team respond to this critical incident?
+        How does your team diagnose and recover from this production outage?
       `,
       options: [
         {
           badge: "Option A",
-          txt: "Shut down the payment gateway temporarily and wait until Saturday morning to dig through logs across servers",
-          time: 360, stab: -45, morale: -35, isDevops: false,
-          fb: "🚨 <b>Extended Outage! [Missing M - Measurement]</b> Massive revenue loss and customer churn. Spent 6 full hours locating the root cause without centralized telemetry."
+          txt: "Configure a scheduled Cron Job to automatically reboot the payment service every 15 minutes while waiting until Monday to inspect logs",
+          time: 300, stab: -40, morale: -35, isDevops: false,
+          fb: "🚨 <b>Dangerous Band-Aid! [Missing M - Measurement]</b> Reboot loops drop active customer sessions and mask memory leak symptoms. Customer trust plummets!"
         },
         {
           badge: "Option B",
-          txt: "Instruct developers to guess potential bugs, hastily patch the code, and push directly to production",
-          time: 210, stab: -35, morale: -30, isDevops: false,
-          fb: "😰 <b>Domino Effect! [Missing Observability]</b> Rushed hotfixes broke authentication service as well. Compounding failures kept the team trapped all night."
+          txt: "Push a hasty speculative code hotfix directly to production based on customer error screenshots without automated verification",
+          time: 210, stab: -45, morale: -30, isDevops: false,
+          fb: "😰 <b>Secondary Domino Outage! [Missing Observability]</b> Guessing root causes introduced an unhandled database lock, crashing authentication as well!"
         },
         {
           badge: "Option C",
-          txt: "Automated Telemetry alerts root cause instantly; team executes 1-Click Rollback to previous stable release in 3 minutes",
+          txt: "Use Real-time Distributed Tracing & Observability to isolate the failing microservice, then trigger a 1-Click Rollback to the previous stable release",
           time: 5, stab: -5, morale: 10, isDevops: true,
-          fb: "🛡️ <b>Swift Recovery! [M - Measurement & Telemetry]</b> Service restored within 5 minutes. Customers unaffected. Team calmly debugs using distributed traces on the dashboard."
+          fb: "🛡️ <b>Observability & MTTR! [M - Measurement & Telemetry]</b> Mean Time to Recovery (MTTR) under 5 minutes. Live telemetry pinpointed the database index bottleneck for calm remediation."
         }
       ]
     },
     {
-      title: "Stage 4: Monday 9:00 AM - Blameless Post-Mortem & Culture",
+      title: "Stage 4: Monday 9:00 AM - Post-Incident Governance & Culture",
       desc: `
         <div style="background:#fff; border-left:4px solid #7c3aed; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>Boss in Monday All-Hands:</b> <i>"We narrowly avoided disaster Friday night. How do we address this as an organization moving forward?"</i>
+          💬 <b>Leadership in Monday Debrief:</b> <i>"Friday's incident threatened business continuity. How do we establish organizational governance to prevent recurrence?"</i>
         </div>
-        What cultural and procedural direction do you establish?
+        What systemic and cultural framework do you institute?
       `,
       options: [
         {
           badge: "Option A",
-          txt: "Run Git Blame to find who committed the faulty code, deduct their salary, and issue disciplinary penalties",
-          time: 240, stab: -10, morale: -45, isDevops: false,
-          fb: "😱 <b>Toxic Culture! [Missing C - Culture & Psychological Safety]</b> Team members fear making changes, hide defects, and delivery slows to a crawl."
+          txt: "Establish a punitive review: identify the engineer via Git Blame and require their future code commits to be signed off by 3 senior peers",
+          time: 220, stab: -15, morale: -45, isDevops: false,
+          fb: "😱 <b>Pathological Culture! [Missing C - Psychological Safety]</b> Punitive blaming drives engineers to hide defects, resist refactoring, and slows deployment cadence."
         },
         {
           badge: "Option B",
-          txt: "Institute a 15-page change request form requiring sign-offs from 5 department heads before any release",
-          time: 300, stab: -5, morale: -30, isDevops: false,
-          fb: "🐢 <b>Bureaucracy Paralysis! [Missing Lean Governance]</b> Delivery delayed by 3 weeks, lost market opportunities, yet human-reviewed code still leaked bugs."
+          txt: "Implement a formal Change Advisory Board (CAB) requiring a 15-page justification document and 5 manager approvals for every production release",
+          time: 300, stab: -10, morale: -30, isDevops: false,
+          fb: "🐢 <b>Bureaucracy Anti-Pattern! [Missing Lean Governance]</b> Lead times inflate from hours to weeks, creating massive release batches that actually increase incident risk!"
         },
         {
           badge: "Option C",
-          txt: "Hold a Blameless Post-Mortem focusing on systemic improvements and write Automated Regression Tests to prevent recurrence",
+          txt: "Conduct a Blameless Post-Mortem analyzing systemic flaws and incorporate Automated Regression and Chaos Tests into the CI pipeline",
           time: 15, stab: 15, morale: 20, isDevops: true,
-          fb: "🌟 <b>Strong Generative Culture! [C - Culture & S - Sharing]</b> Open knowledge sharing, resilient system design, and automated safety nets ensure this bug will never happen again!"
+          fb: "🌟 <b>Generative Organization! [C - Culture & S - Sharing]</b> Treating incidents as learning opportunities hardens automated guardrails, ensuring systemic resilience without slowing delivery."
         }
       ]
     }
@@ -1131,117 +1131,117 @@
   const g2ProblemsEN = [
     {
       stageNum: 1,
-      title: "💥 Stage 1 Crash: Massive Merge Conflict",
-      desc: "4 developers kept code isolated on their laptops for a week. Merging on Friday created catastrophic conflicts. Build failed!",
+      title: "💥 Stage 1 Crash: Massive Merge Conflict & Integration Hell",
+      desc: "4 developers kept separate feature branches isolated on their laptops for a week. Merging on Friday created catastrophic conflicts. Build failed!",
       calmsBadge: "Lean (Small Batches)",
       options: [
         {
           label: "Option A",
           icon: "🔒",
-          text: "Freeze the Git repository for 1 week and have only the Team Lead merge all code alone",
+          text: "Institute long-lived Feature Branches and schedule a team-wide 'Merge Week' every sprint where all coding stops to resolve conflicts",
           isCorrect: false,
-          why: "❌ <b>Worse Bottleneck!</b> Entire team is blocked waiting on one person. Features delayed 2 weeks and doesn't solve large batch sizes."
+          why: "❌ <b>Anti-Pattern: Merge Debt!</b> Halting development for a merge freeze destroys velocity and masks the root cause of giant, unintegrated batch sizes."
         },
         {
           label: "Option B",
-          icon: "💸",
-          text: "Hire overnight contractors every Friday night to resolve merge conflicts manually",
+          icon: "📋",
+          text: "Lock the shared repository and require the Tech Lead to manually cherry-pick and reconcile each developer's commits line-by-line",
           isCorrect: false,
-          why: "❌ <b>Costly and High-Risk!</b> External contractors lack codebase domain knowledge, risking accidental deletion of core logic."
+          why: "❌ <b>Anti-Pattern: Lead Bottleneck!</b> Relying on a single human approver causes massive idle wait times and still results in accidental regression drops under fatigue."
         },
         {
           label: "Option C",
           icon: "⚡",
-          text: "Apply Lean Thinking: Slice work into small increments (Trunk-based) and merge continuously every day",
+          text: "Adopt Trunk-Based Development: break work into small daily batches and integrate continuously to the main branch",
           isCorrect: true,
-          why: "🎉 <b>Spot on! (Unlocked CALMS: Lean)</b> With small batches, merges take seconds and team avoids massive painful code collisions!"
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Lean Flow)</b> Frequent small integrations eliminate massive code collisions, keeping main buildable and healthy at all times!"
         }
       ]
     },
     {
       stageNum: 2,
-      title: "💥 Stage 2 Crash: Testing Bottleneck & Bug Leakage",
-      desc: "Code merged, but manual screen testing takes 5 full days. Fatigue leads to missed critical bugs in production!",
+      title: "💥 Stage 2 Crash: Testing Bottleneck & Delayed Feedback",
+      desc: "Code compiled, but manual verification of every user workflow takes 5 full business days. Fatigue leads to missed critical regressions in production!",
       calmsBadge: "CI (Automated Testing)",
       options: [
         {
           label: "Option A",
-          icon: "🚀",
-          text: "Skip the testing phase entirely to release features faster and meet the deadline!",
+          icon: "⏱️",
+          text: "Perform manual Smoke Tests on top core workflows and defer exhaustive regression testing to a post-release maintenance patch (Deferred Testing)",
           isCorrect: false,
-          why: "❌ <b>Immediate Disaster!</b> Release is faster, but system blows up on production immediately upon customer load. Brand ruined."
+          why: "❌ <b>Anti-Pattern: Deferred Technical Debt!</b> Deferring testing pushes defects directly to customers. Fixing bugs post-release is 10x more expensive and destroys brand reputation."
         },
         {
           label: "Option B",
-          icon: "👀",
-          text: "Mobilize all developers to manually click every button on mobile and web all weekend long",
+          icon: "👥",
+          text: "Scale up a dedicated manual QA team to test every permutation and checklist by hand before each production deployment",
           isCorrect: false,
-          why: "❌ <b>Team Burnout!</b> Humans are bad at repetitive regression checks. The more tired they get, the more bugs leak through."
+          why: "❌ <b>Anti-Pattern: Linear QA Scaling!</b> Manual testing checklists grow exponentially with software features. Human manual regression cannot keep pace with continuous delivery."
         },
         {
           label: "Option C",
           icon: "🤖",
-          text: "Build an Automated CI Test Suite running regression checks on every commit automatically",
+          text: "Implement an Automated CI Regression Test Suite running unit, integration, and security checks on every commit automatically",
           isCorrect: true,
-          why: "🎉 <b>Spot on! (Unlocked CALMS: Automation & CI)</b> Test bots provide instant feedback in seconds with 100% repeatability!"
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Automation & CI)</b> Test automation delivers deterministic feedback in minutes, empowering engineers to refactor with complete confidence!"
         }
       ]
     },
     {
       stageNum: 3,
-      title: "💥 Stage 3 Crash: Environment Drift (Works on My Machine)",
-      desc: "Tests passed, but failed on production server due to mismatching database and Node.js runtime versions!",
+      title: "💥 Stage 3 Crash: Environment Drift & Dependency Mismatch",
+      desc: "Automated tests passed, but the application crashed on production due to subtle discrepancies in OS kernel libraries and runtime versions!",
       calmsBadge: "CD & Containerization",
       options: [
         {
           label: "Option A",
-          icon: "💻",
-          text: "Physically place the developer's laptop into the Data Center rack as the production server!",
+          icon: "🖥️",
+          text: "Clone a Virtual Machine (VM) snapshot matching developer laptop specs and have Ops execute manual setup shell commands on production",
           isCorrect: false,
-          why: "❌ <b>A Famous Meme, Not Production Engineering!</b> Laptops lack redundancy, scalability, and someone might trip on the power cord!"
+          why: "❌ <b>Anti-Pattern: Snowflake Server & Drift!</b> Even on cloned VMs, imperative manual shell modifications lead to untracked configuration drift that breaks across patch updates."
         },
         {
           label: "Option B",
           icon: "📄",
-          text: "Write a 50-page manual install guide and send it to Ops to type commands line-by-line",
+          text: "Author an exhaustive 30-page manual Runbook document with step-by-step screenshots for Ops engineers to follow verbatim",
           isCorrect: false,
-          why: "❌ <b>Prone to Human Error!</b> A single missing semicolon breaks the server, igniting another Dev vs Ops blame game."
+          why: "❌ <b>Anti-Pattern: Documented Manual Fragility!</b> Manual runbooks inevitably become outdated. A single human typo during a late-night release produces cluster downtime."
         },
         {
           label: "Option C",
-          icon: "🐳",
-          text: "Package application & environment into Containers (Docker) and use CD scripts to deploy reliably",
+          icon: "📦",
+          text: "Package runtime, binaries, and dependencies into Immutable Containers (Docker) and provision through an Automated CD Pipeline",
           isCorrect: true,
-          why: "🎉 <b>Spot on! (Unlocked CALMS: Container & CD)</b> Parity across all environments from Dev to Prod. Single-click zero-downtime deployment!"
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Automation & CD)</b> Immutable infrastructure guarantees 100% environment parity between local dev and live production clusters!"
         }
       ]
     },
     {
       stageNum: 4,
-      title: "💥 Stage 4 Crash: Late Night Outage & Finger Pointing",
-      desc: "Production payment crashed at 9:00 PM. No alerts fired, team was unaware until Saturday morning, and started blaming each other!",
+      title: "💥 Stage 4 Crash: Blind Outages & Punitive Investigation",
+      desc: "Payment processing failed at 9:00 PM, but the team had no visibility until customer complaints flooded social media. Hours were wasted assigning blame!",
       calmsBadge: "Measurement & Sharing Culture",
       options: [
         {
           label: "Option A",
-          icon: "🔌",
-          text: "Shut down servers and tell customers that their internet provider had a regional power failure",
+          icon: "🔄",
+          text: "Schedule an automated Cron Job to restart application services every 30 minutes to mitigate memory leak symptoms while deferring log analysis",
           isCorrect: false,
-          why: "❌ <b>Total Loss of Trust!</b> Customers leave for competitors immediately, causing permanent reputational damage."
+          why: "❌ <b>Anti-Pattern: Superficially Masking Defects!</b> Periodic service restarts terminate active customer sessions mid-transaction and mask root-cause architectural bottlenecks."
         },
         {
           label: "Option B",
           icon: "⚖️",
-          text: "Form an disciplinary committee to hunt down the developer who introduced the bug and penalize them",
+          text: "Establish an executive review panel to interrogate git commit authors and institute mandatory 3-manager approval gates for subsequent deployments",
           isCorrect: false,
-          why: "❌ <b>Creates a Toxic Culture!</b> People hide mistakes, stop shipping new features, and the system never becomes resilient."
+          why: "❌ <b>Anti-Pattern: Bureaucratic Gatekeeping!</b> Adding approval layers inflates batch sizes and delays releases, while punitive cultures incentivize engineers to conceal defects."
         },
         {
           label: "Option C",
           icon: "📈",
-          text: "Deploy Real-Time Monitoring & Observability + 1-Click Rollback + Blameless Post-Mortem",
+          text: "Instrument Distributed Telemetry & Real-time Alerts, enable 1-Click Rollback capabilities, and conduct a Blameless Post-Mortem",
           isCorrect: true,
-          why: "🎉 <b>Spot on! (Unlocked CALMS: Measurement & Sharing)</b> Detect issues before customers notice, restore service in 5 minutes, and learn together!"
+          why: "🎉 <b>Spot on! (Unlocked CALMS: Measurement & Sharing)</b> Real-time observability drastically cuts MTTR, while blameless culture drives continuous systemic resilience!"
         }
       ]
     }
@@ -1457,117 +1457,117 @@
       desc: `
         <div style="background:#fff; border-left:4px solid #2563eb; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
           💬 <b>บอส (Product Owner):</b> <i>"คืนนี้ต้องรวม 4 ฟีเจอร์ขึ้นเซิร์ฟเวอร์ให้ทันเที่ยงคืนนะ ไม่งั้นแคมเปญวันเสาร์เจ๊งแน่!"</i><br>
-          💬 <b>พี่เดฟ Senior:</b> <i>"ต่างคนต่างเขียนเสร็จในเครื่องตัวเองแล้ว ถึงเวลารวมโค้ดเข้า Branch กลาง... เอาไงดีน้อง?"</i>
+          💬 <b>พี่เดฟ Senior:</b> <i>"ทุกคนแยกทำ Feature Branch ของตัวเองมาทั้งสัปดาห์... ถึงเวลารวมเข้า Main จะใช้กลยุทธ์ไหนดี?"</i>
         </div>
-        นักพัฒนา 4 คนดองโค้ดไว้ในเครื่องตัวเองทั้งสัปดาห์ คุณจะเลือกแนวทางจัดการอย่างไร?
+        นักพัฒนา 4 คนแยกทำ Feature Branch ขนาดใหญ่มาตลอดสัปดาห์ คุณจะเลือกกลยุทธ์รวมโค้ดอย่างไร?
       `,
       options: [
         {
           badge: "ทางเลือก ก",
-          txt: "รวมโค้ดทั้งหมดตอนเย็นวันศุกร์ แล้วนั่งแก้โค้ดที่ทับกัน (Conflict) ด้วยมือทีละบรรทัด",
-          time: 180, stab: -30, morale: -25, isDevops: false,
-          fb: "❌ <b>โค้ดตีกันเละเทะ! [ขาด L - Lean & CI]</b> นั่งแก้งานมือหงิก 3 ชั่วโมง เผลอลบโค้ดเพื่อนทิ้งไปบางส่วนโดยไม่รู้ตัว เกิดบั๊กใหม่เพียบ!"
+          txt: "สั่งแช่แข็งโค้ด (Code Freeze) ห้ามทุกคนแตะ Git แล้วมอบหมายให้ Tech Lead เป็นผู้นั่งตรวจสอบและรวมโค้ดทั้งหมดคนเดียว",
+          time: 240, stab: -15, morale: -30, isDevops: false,
+          fb: "🐢 <b>คอขวดจุดเดียว (Single Point of Failure)! [ขาด L - Lean Flow]</b> Tech Lead กลายเป็นคอขวดใหญ่ ทุกคนต้องนั่งรอเปล่าประโยชน์ และความเหนื่อยล้ายังทำให้ตรวจหลุดบั๊กสำคัญอยู่ดี"
         },
         {
           badge: "ทางเลือก ข",
-          txt: "สั่งล็อกระบบ Git ห้ามใครแตะ แล้วส่งไฟล์ซิปให้หัวหน้าทีมไล่ตรวจทีละบรรทัด",
-          time: 300, stab: -10, morale: -35, isDevops: false,
-          fb: "🐢 <b>คอขวดมหาศาล! [ขาด L - Lean]</b> หัวหน้าตรวจงานไม่ทัน ทุกคนต้องนั่งรอตาค้าง ฟีเจอร์ปล่อยช้าไป 5 ชั่วโมง ทีมเซ็งหมดไฟ!"
+          txt: "รวมทั้ง 4 Feature Branch เข้าสู่ Main พร้อมกันในเย็นวันศุกร์ (Big-bang Merge) แล้วให้โปรแกรมเมอร์ทุกคนช่วยกันแก้ Conflict สดๆ",
+          time: 180, stab: -35, morale: -25, isDevops: false,
+          fb: "❌ <b>มหันตภัย Merge Hell! [ขาด L - Lean & CI]</b> การดองงานก้อนใหญ่ไว้รวมพร้อมกันทำให้โค้ดตีกันอย่างรุนแรง การรีบแก้มือทำให้เผลอลบโค้ดของเพื่อน เกิดข้อผิดพลาดเงียบในระบบ!"
         },
         {
           badge: "ทางเลือก ค",
-          txt: "ใช้ Trunk-based ซอยงานเล็ก และให้ Automated CI Test ตรวจจับจุดพังอัตโนมัติตลอดสัปดาห์",
+          txt: "ปรับใช้แนวทาง Trunk-Based Development ทยอยรวมโค้ดชิ้นเล็กทุกวัน และให้ระบบ Automated CI ตรวจสอบ Regression ตลอดสัปดาห์",
           time: 10, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>ราบรื่นยอดเยี่ยม! [L - Lean & Automation]</b> บอทเทสต์ตรวจเจอจุดพังตั้งแต่บ่ายและแก้จบใน 10 นาที 5 โมงเย็นโค้ดพร้อมปล่อยได้ทันที!"
+          fb: "✅ <b>Lean Flow ไร้รอยต่อ! [L - Lean & Automation]</b> การรวมโค้ดชิ้นเล็กบ่อยๆ ตัดปัญหา Conflict ก้อนใหญ่ CI Bot ตรวจสอบผ่านในไม่กี่นาที โค้ดพร้อมปล่อยตอน 5 โมงเย็นทันที!"
         }
       ]
     },
     {
-      title: "ด่านที่ 2: ส่งมอบให้ทีม Ops นำขึ้นเซิร์ฟเวอร์จริง (19:30 น.)",
+      title: "ด่านที่ 2: ส่งมอบให้ทีม Ops นำขึ้น Production (19:30 น.)",
       desc: `
         <div style="background:#fff; border-left:4px solid #d97706; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>พี่ Ops ตาดำคล้ำ:</b> <i>"ไอ้น้อง โค้ดเอ็งรันบนเครื่อง Dev ผ่าน แต่ Server จริงเป็น Ubuntu คนละเวอร์ชันกับเครื่องเอ็งนะ! จะเอามันขึ้นยังไง?"</i><br>
-          💬 <b>พี่เดฟ Senior:</b> <i>"ก็เครื่องผมมันรันได้อะพี่! รีบเอาขึ้นหน่อย ผมจะไปกินหมูกระทะแล้ว!"</i>
+          💬 <b>พี่ Ops ตาดำคล้ำ:</b> <i>"โค้ดรันบนเครื่อง Dev ผ่าน แต่ Server จริงเป็น OS และ Library คนละเวอร์ชันนะ! จะจัดการ Environment ยังไง?"</i><br>
+          💬 <b>พี่เดฟ Senior:</b> <i>"ก็เครื่องผมรันผ่านฉลุยนะพี่! รีบเอาขึ้นหน่อยได้ไหม?"</i>
         </div>
-        คุณจะเลือกแนวทางนำระบบขึ้น Production อย่างไร?
+        คุณจะเลือกแนวทางบริหารจัดการ Environment และติดตั้งขึ้น Production อย่างไร?
       `,
       options: [
         {
           badge: "ทางเลือก ก",
-          txt: "ซิปไฟล์ส่งอีเมลพร้อมเขียนคู่มือติดตั้ง 10 หน้าให้ Ops ไปนั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
-          time: 150, stab: -35, morale: -30, isDevops: false,
-          fb: "🔥 <b>Works on my machine ในตำนาน! [ขาด A - Automation]</b> Ops พิมพ์คำสั่งตกหล่นไปบรรทัดเดียว ระบบพัง Dev กับ Ops ยืนเถียงกันข้ามคืน 2 ชั่วโมงเต็ม"
+          txt: "โคลน Virtual Machine (VM) สเปกเดียวกับเครื่อง Dev ขึ้นบน Server แล้วเขียน Shell Script ให้ Ops ไปรันติดตั้งคำสั่งสดหน้างาน",
+          time: 160, stab: -30, morale: -25, isDevops: false,
+          fb: "⚠️ <b>ติดกับดัก Configuration Drift! [ขาด IaC & Immutability]</b> ถึงจะเป็น VM สเปกเดียวกัน แต่การรันสคริปต์ปรับแต่งด้วยมือทำให้ Dependency เวอร์ชันย่อยคลาดเคลื่อน ระบบยังคงรันไม่ขึ้นเหมือนเดิม"
         },
         {
           badge: "ทางเลือก ข",
-          txt: "SSH รีโมตเข้าไปแก้โค้ดและพิมพ์คำสั่งสดๆ บน Production Server เพื่อความรวดเร็ว",
+          txt: "SSH รีโมตเข้าไปแก้ไขไฟล์ Config และแกะบรรทัดโค้ดบน Production Server สดๆ เพื่อแก้ปัญหาเฉพาะหน้าให้ระบบเปิดได้ก่อน",
           time: 240, stab: -45, morale: -40, isDevops: false,
-          fb: "💥 <b>บาปสูงสุดของระบบ! [ขาด Infrastructure as Code]</b> สบายใจได้แค่ 10 นาที เซิร์ฟเวอร์หลักพังทั้งคลัสเตอร์ ไม่มีใครรู้ว่าแก้บรรทัดไหนไปบ้าง กู้คืนยากมาก!"
+          fb: "💥 <b>Cowboy Anti-Pattern! [ขาด Version Control สำหรับ Infra]</b> การแก้สดบน Production ทำให้ไม่มีประวัติบันทึกใน Git พอเครื่องรีสตาร์ท ค่าคอนฟิกหลุดหาย เซิร์ฟเวอร์ล่มทั้งระบบ!"
         },
         {
           badge: "ทางเลือก ค",
-          txt: "แพ็กสภาพแวดล้อมใส่ Container (Docker) และกดรัน CD Pipeline อัตโนมัติ",
+          txt: "แพ็กแอปพลิเคชันและสภาพแวดล้อมทั้งหมดลงใน Immutable Container (Docker) และรันติดตั้งผ่านระบบ Continuous Deployment (CD) อัตโนมัติ",
           time: 5, stab: 0, morale: 15, isDevops: true,
-          fb: "✅ <b>แม่นยำ 100%! [A - Automation & CD]</b> สภาพแวดล้อมเหมือนกันทุกระดับ รันคำสั่งเดียวระบบติดตั้งเสร็จใน 5 นาที ไร้ข้อผิดพลาด!"
+          fb: "✅ <b>Immutable Infrastructure! [A - Automation & CD]</b> สภาพแวดล้อมบน Staging และ Production ตรงกัน 100% ไร้ปัญหา Works on My Machine ติดตั้งเสร็จใน 5 นาทีแบบไร้ข้อผิดพลาด!"
         }
       ]
     },
     {
-      title: "ด่านที่ 3: เหตุฉุกเฉินตอน 21:00 น. หน้าจ่ายเงินพัง!",
+      title: "ด่านที่ 3: วิกฤตฉุกเฉินตอน 21:00 น. หน้าชำระเงินพัง!",
       desc: `
         <div style="background:#fff; border-left:4px solid #dc2626; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>บอสโทรมาสายไหม้:</b> <i>"ระบบขึ้นไปแล้ว แต่ลูกค้าโวยวายเต็มเพจว่ากดจ่ายเงินแล้วเงินตัด แต่หน้าเว็บค้าง!! ด่วนเลย!!"</i><br>
-          💬 <b>พี่ Ops:</b> <i>"ล็อกไฟล์มหาศาลเป็นล้านบรรทัด ไม่รู้พังที่จุดไหนเลยเว้ย!!"</i>
+          💬 <b>บอสโทรมาสายไหม้:</b> <i>"ลูกค้าตัดเงินผ่านบัตรได้ แต่หน้าจอหมุนติ้วไม่ยืนยันออเดอร์ ลูกค้าโวยเต็มโซเชียล รีบแก้ด่วน!!"</i><br>
+          💬 <b>พี่ Ops:</b> <i>"ล็อกไฟล์มหาศาลกระจัดกระจายอยู่ใน Server 8 เครื่อง ไม่รู้ฟังก์ชันไหนจุดพังเลยเว้ย!!"</i>
         </div>
-        ทีมของคุณจะรับมือกับสถานการณ์วิกฤตนี้อย่างไร?
+        ทีมของคุณจะกู้วิกฤตและรับมือกับเหตุการณ์ไม่คาดฝันนี้อย่างไร?
       `,
       options: [
         {
           badge: "ทางเลือก ก",
-          txt: "ปิดหน้าชำระเงินชั่วคราว รอเช้าวันเสาร์ค่อยให้ทุกคนมาช่วยกันเปิดหาไฟล์ Log ทีละเครื่อง",
-          time: 360, stab: -45, morale: -35, isDevops: false,
-          fb: "🚨 <b>ระบบล่มยาวข้ามคืน! [ขาด M - Measurement]</b> ลูกค้าหนีหาย เสียรายได้หลายแสน กว่าจะหาจุดพังเจอก็เสียเวลาไป 6 ชั่วโมงเต็ม"
+          txt: "ตั้งเวลา Cron Job สั่งรีสตาร์ท Service ชำระเงินทุกๆ 15 นาทีเพื่อล้างหน่วยความจำชั่วคราว แล้วค่อยนัดประชุมไล่เปิดไฟล์ Log วันจันทร์",
+          time: 300, stab: -40, morale: -35, isDevops: false,
+          fb: "🚨 <b>พลาสเตอร์ยาแก้ขัดสุดอันตราย! [ขาด M - Measurement]</b> การรีสตาร์ทตัดการเชื่อมต่อของลูกค้าที่กำลังจ่ายเงิน ยิ่งสูญเสียความน่าเชื่อถือ และไม่ได้แก้ที่สาเหตุรากเหง้าของ Memory Leak"
         },
         {
           badge: "ทางเลือก ข",
-          txt: "ให้โปรแกรมเมอร์ทุกคนเปิดโค้ดแล้วเดาสุ่มจุดผิด รีบแก้แล้วส่งทับขึ้นไปใหม่ทันที",
-          time: 210, stab: -35, morale: -30, isDevops: false,
-          fb: "😰 <b>ไฟลามทุ่ง! [ขาด Observability]</b> ยิ่งแก้รีบยิ่งสร้างบั๊กใหม่ คราวนี้ระบบล็อกอินพังตามไปด้วย ต้องนั่งแก้ลูกโซ่ข้ามคืนจนสว่าง"
+          txt: "ส่ง Patch โค้ดด่วน (Hotfix) ขึ้น Production ทันที โดยให้โปรแกรมเมอร์คาดเดาจุดบกพร่องจากภาพ Error ที่ลูกค้าแคปมา",
+          time: 210, stab: -45, morale: -30, isDevops: false,
+          fb: "😰 <b>แกว่งเท้าหาเสี้ยน (Domino Effect)! [ขาด Observability]</b> การเดาจุดผิดแบบไร้ข้อมูลมาตรวัด ทำให้ Hotfix ไปล็อก Database จนระบบล็อกอินหลักพังลามไปด้วยอีกระบบ!"
         },
         {
           badge: "ทางเลือก ค",
-          txt: "ระบบ Monitoring แจ้งเตือนจุดพังทันที และกดปุ่ม 1-Click Rollback ย้อนเวอร์ชันเดิมใน 3 นาที",
+          txt: "ใช้ระบบ Distributed Tracing & Real-time Observability ชี้เป้า Service ที่ค้าง จากนั้นกด 1-Click Rollback ย้อนเวอร์ชันเดิมใน 3 นาที",
           time: 5, stab: -5, morale: 10, isDevops: true,
-          fb: "🛡️ <b>กู้ชีพทันเวลา! [M - Measurement & Telemetry]</b> ระบบย้อนกลับสู่เวอร์ชันปลอดภัยใน 5 นาที ลูกค้าไม่สะดุด ทีมค่อยๆ วิเคราะห์ปัญหาจาก Dashboard อย่างสงบ"
+          fb: "🛡️ <b>Observability & MTTR! [M - Measurement & Telemetry]</b> กู้คืนระบบกลับสู่สภาวะปกติ (MTTR) ใน 5 นาที ลูกค้าใช้งานต่อได้ จากนั้นทีมเปิดกราฟ Telemetry วิเคราะห์จุดคอขวดของ Database อย่างเป็นระบบ"
         }
       ]
     },
     {
-      title: "ด่านที่ 4: การสรุปบทเรียนเช้าวันจันทร์ (Post-Mortem Culture)",
+      title: "ด่านที่ 4: การสรุปบทเรียนเช้าวันจันทร์ (Post-Incident Culture)",
       desc: `
         <div style="background:#fff; border-left:4px solid #7c3aed; padding:10px 14px; border-radius:6px; margin-bottom:10px; font-size:14px;">
-          💬 <b>บอสเรียกประชุม 9 โมงเช้า:</b> <i>"จากเหตุการณ์คืนวันศุกร์ บริษัทเราเกือบเสียหายหนัก เช้าวันนี้เราจะต้องจัดการเรื่องนี้ยังไงดี?"</i>
+          💬 <b>ผู้บริหารเรียกประชุม 9 โมงเช้า:</b> <i>"เหตุการณ์วิกฤตคืนวันศุกร์เกือบทำให้ธุรกิจเสียหาย เราจะวางมาตรการธรรมาภิบาลอย่างไรไม่ให้เกิดซ้ำอีก?"</i>
         </div>
-        คุณจะเลือกแนวทางจัดการปัญหาและวัฒนธรรมองค์กรอย่างไร?
+        คุณจะเลือกกำหนดทิศทางเชิงวัฒนธรรมและกระบวนการทำงานอย่างไร?
       `,
       options: [
         {
           badge: "ทางเลือก ก",
-          txt: "เปิด Git Blame หาตัวคนเขียนโค้ดบรรทัดที่พังมาตัดเงินเดือน และออกกฎลงโทษทางวินัย",
-          time: 240, stab: -10, morale: -45, isDevops: false,
-          fb: "😱 <b>วัฒนธรรมเป็นพิษ! [ขาด C - Culture & Psychological Safety]</b> ทุกคนกลัวความผิด ไม่กล้าแตะโค้ดใหม่ ปกปิดบั๊ก และการส่งงานครั้งต่อไปช้าลงเป็นเต่าคลาน"
+          txt: "ตั้งกระบวนการสอบสวนลงโทษ: เช็กประวัติ Git Blame หาตัวโปรแกรมเมอร์ที่เขียนบั๊กบรรทัดนี้ และบังคับให้โค้ดของเขาต้องผ่านการเซ็นรับรองจาก Senior 3 คนเสมอ",
+          time: 220, stab: -15, morale: -45, isDevops: false,
+          fb: "😱 <b>วัฒนธรรม Pathological เป็นพิษ! [ขาด C - Psychological Safety]</b> การกล่าวโทษรายบุคคลทำลายความปลอดภัยทางจิตใจ ทีมเริ่มหวาดกลัว ปิดบังข้อผิดพลาด และการปล่อยงานช้าลงจนเป็นอัมพาต"
         },
         {
           badge: "ทางเลือก ข",
-          txt: "ออกกฎว่าต่อไปนี้จะปล่อยงาน ต้องพิมพ์เอกสาร 15 หน้า ให้ผู้บริหาร 5 ฝ่ายเซ็นอนุมัติ",
-          time: 300, stab: -5, morale: -30, isDevops: false,
-          fb: "🐢 <b>องค์กรเป็นอัมพาต! [ขาด Lean Governance]</b> งานล่าช้าไป 3 สัปดาห์ เสียโอกาสทางธุรกิจ แต่สุดท้ายก็ยังมีบั๊กหลุดรอดได้เหมือนเดิม"
+          txt: "จัดตั้งคณะกรรมการอนุมัติการเปลี่ยนแปลง (Change Advisory Board - CAB) โดยต้องทำเอกสารคำขอ 15 หน้าและผ่านการอนุมัติจากผู้จัดการ 5 ฝ่ายก่อนปล่อยงานทุกครั้ง",
+          time: 300, stab: -10, morale: -30, isDevops: false,
+          fb: "🐢 <b>กับดักระเบียบราชการ (Bureaucracy Trap)! [ขาด Lean Governance]</b> Lead Time ยืดจากไม่กี่ชั่วโมงเป็นหลายสัปดาห์ การดองงานเป็นก้อนใหญ่ทำให้การปล่อยแต่ละครั้งมีความเสี่ยงพังสูงกว่าเดิมเสียอีก!"
         },
         {
           badge: "ทางเลือก ค",
-          txt: "ประชุมแบบไม่หาคนผิด (Blameless Post-Mortem) และช่วยกันเขียน Automated Regression Test ดักจับ",
+          txt: "จัดประชุมถอดบทเรียนแบบไม่หาคนผิด (Blameless Post-Mortem) วิเคราะห์ข้อบกพร่องเชิงระบบ และนำ Automated Regression Test ดักจับใน CI Pipeline ทันที",
           time: 15, stab: 15, morale: 20, isDevops: true,
-          fb: "🌟 <b>วัฒนธรรมแข็งแกร่ง! [C - Culture & S - Sharing]</b> ทุกคนกล้าแชร์ปัญหาจริง ระบบฉลาดขึ้น ได้ชุดทดสอบดักบั๊กเพิ่ม และบั๊กเดิมจะไม่หลุดรอดอีก!"
+          fb: "🌟 <b>วัฒนธรรมแบบ Generative แข็งแกร่ง! [C - Culture & S - Sharing]</b> การมองความผิดพลาดเป็นโอกาสเรียนรู้ช่วยให้ระบบวางรั้วกั้นอัตโนมัติ (Automated Guardrails) ที่รัดกุม ป้องกันบั๊กซ้ำเดิมโดยไม่ลดทอนความเร็วในการส่งมอบ!"
         }
       ]
     }
@@ -1768,117 +1768,117 @@
   const g2ProblemsTH = [
     {
       stageNum: 1,
-      title: "💥 ด่านที่ 1 พังยับ: โค้ดชนกันเละเทะ (Merge Conflict)",
-      desc: "ทีมพัฒนา 4 คน ต่างคนต่างดองโค้ดไว้ในเครื่องตัวเองเป็นสัปดาห์ พอจะเอามารวมกันวันศุกร์ โค้ดทับกันเละเทะ ระบบคอมไพล์ไม่ผ่าน!",
+      title: "💥 ด่านที่ 1 พังยับ: โค้ดชนกันวินาศสันติโร (Integration Hell)",
+      desc: "ทีมพัฒนา 4 คนแยกทำ Feature Branch ของตัวเองมาทั้งสัปดาห์ พอจะนำมารวมเข้า Main Branch พร้อมกันวันศุกร์ โค้ดทับกันเละเทะ ระบบคอมไพล์ไม่ผ่าน!",
       calmsBadge: "Lean (ซอยงานเล็ก)",
       options: [
         {
           label: "ทางเลือก ก",
           icon: "🔒",
-          text: "ออกกฎล็อกระบบ Git ห้ามใครแตะโค้ด 1 สัปดาห์ และให้หัวหน้าทีมเป็นคนรวมโค้ดคนเดียว",
+          text: "กำหนดให้ทุกคนหยุดเขียนโค้ดฟีเจอร์ใหม่ 1 สัปดาห์เต็ม แล้วช่วยกันนั่งเคลียร์ Conflict ร่วมกัน (Merge Freeze)",
           isCorrect: false,
-          why: "❌ <b>คอขวดหนักกว่าเดิม!</b> ทั้งทีมต้องหยุดงานรอหัวหน้า ฟีเจอร์ส่งช้าไปอีก 2 สัปดาห์ และไม่ได้แก้ที่ต้นเหตุของการดองงานก้อนใหญ่"
+          why: "❌ <b>Anti-Pattern: สะสมหนี้ทางเทคนิค!</b> การหยุดพัฒนาฟีเจอร์ทำให้งานล่าช้าไปอีก 2 สัปดาห์ และไม่ได้แก้ที่ต้นเหตุของ 'การดองงานก้อนใหญ่' ในรอบถัดไป"
         },
         {
           label: "ทางเลือก ข",
-          icon: "💸",
-          text: "จ้างฟรีแลนซ์มาช่วยนั่งแก้โค้ดที่ทับกันด้วยมือทุกคืนวันศุกร์ข้ามคืน",
+          icon: "👤",
+          text: "ล็อก Git ห้ามทุกคนส่งงาน แล้วให้ Tech Lead เพียงคนเดียวเป็นผู้นั่งตรวจสอบและเลือกรวมโค้ดทีละบรรทัด",
           isCorrect: false,
-          why: "❌ <b>สิ้นเปลืองและเสี่ยงสูง!</b> คนนอกไม่เข้าใจโค้ด เผลอลบโค้ดสำคัญทิ้ง เกิดบั๊กใหม่บน Production เพียบ"
+          why: "❌ <b>Anti-Pattern: คอขวดที่ตัวบุคคล!</b> การพึ่งพาคนเดียวทำให้ทุกคนต้องนั่งรอเปล่าประโยชน์ และความเหนื่อยล้ายังทำให้ตรวจหลุดข้อผิดพลาดเงียบอยู่ดี"
         },
         {
           label: "ทางเลือก ค",
           icon: "⚡",
-          text: "ปรับวิธีทำงานแบบ Lean: ซอยงานเป็นชิ้นเล็ก (Trunk-based) แล้วทยอยรวมโค้ดบ่อยๆ ทุกวัน",
+          text: "ปรับใช้แนวคิด Lean: ซอยงานเป็นชิ้นเล็กและรวมโค้ดเข้า Main ทุกวัน (Trunk-based Development)",
           isCorrect: true,
-          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Lean)</b> เมื่อโค้ดเป็นชิ้นเล็ก การรวมโค้ดจะใช้เวลาแค่ไม่กี่วินาที ไม่เกิดการดองงานก้อนใหญ่ให้ตีกันอีกต่อไป!"
+          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Lean Flow)</b> การรวมงานชิ้นเล็กสม่ำเสมอตัดปัญหา Conflict ก้อนใหญ่ ทำให้ Main Branch รันผ่านและพร้อมส่งมอบตลอดเวลา!"
         }
       ]
     },
     {
       stageNum: 2,
-      title: "💥 ด่านที่ 2 พังยับ: บั๊กหลุดรอดและเทสต์ช้าเกินไป (Testing Bottleneck)",
-      desc: "โค้ดรวมกันได้แล้ว แต่พอให้คนมานั่งคลิกตรวจหน้าจอทีละเมนู ใช้เวลา 5 วันเต็ม แถมคนตรวจตาลาย ปล่อยบั๊กหลุดรอดไป!",
+      title: "💥 ด่านที่ 2 พังยับ: คอขวดการทดสอบและบั๊กหลุดรอด (Testing Bottleneck)",
+      desc: "โค้ดรวมกันได้แล้ว แต่การให้คนมานั่งคลิกทดสอบหน้าจอทีละเมนูแบบ Manual ใช้เวลาถึง 5 วันเต็ม แถมความเมื่อยล้าทำให้ตรวจหลุดบั๊กขึ้น Production!",
       calmsBadge: "CI (Automated Test)",
       options: [
         {
           label: "ทางเลือก ก",
-          icon: "🚀",
-          text: "ตัดขั้นตอนการทดสอบทิ้งทั้งหมดไปเลย เพื่อจะได้ปล่อยฟีเจอร์ได้เร็วตามเป้าหมาย!",
+          icon: "⏱️",
+          text: "ทำ Smoke Test ตรวจเฉพาะเมนูหลักก่อนปล่อย ส่วนเมนูย่อยอื่นๆ ให้ปล่อยขึ้น Production ไปก่อนแล้วค่อยตามแก้ทีหลัง (Deferred Testing)",
           isCorrect: false,
-          why: "❌ <b>หายนะครั้งใหญ่!</b> ส่งงานเร็วขึ้นจริง แต่ระบบระเบิดบน Production ทันทีที่ลูกค้าเข้าใช้งาน ยอดขายพังยับเยิน"
+          why: "❌ <b>Anti-Pattern: โยนบาปให้ลูกค้าเป็นคนเทสต์!</b> การผัดผ่อนการทดสอบทำให้บั๊กหลุดไปถึงลูกค้า ค่าใช้จ่ายในการตามแก้บน Production สูงกว่าถึง 10 เท่า และทำลายชื่อเสียงองค์กร"
         },
         {
           label: "ทางเลือก ข",
-          icon: "👀",
-          text: "เกณฑ์โปรแกรมเมอร์ทุกคนมาช่วยกันคลิกทดสอบหน้าจอมือถือและเว็บทีละปุ่มตลอดสุดสัปดาห์",
+          icon: "👥",
+          text: "จ้างทีม Outsourced QA เพิ่มอีกเท่าตัว เพื่อช่วยกันคลิกตรวจเช็กลิสต์หน้าจอแบบ Manual ให้ครอบคลุมทุกปุ่มก่อนปล่อย",
           isCorrect: false,
-          why: "❌ <b>ทีมหมดไฟ (Burnout)!</b> คนไม่ใช่หุ่นยนต์ ยิ่งเมื่อยยิ่งตรวจหลุด เสียเวลาทำฟีเจอร์ใหม่ไปฟรีๆ"
+          why: "❌ <b>Anti-Pattern: การเพิ่มแรงงานคนเชิงเส้น!</b> ซอฟต์แวร์ฟีเจอร์เพิ่มขึ้นตลอดเวลา แรงงานคนไม่มีทางตรวจซ้ำได้ทันการส่งมอบที่รวดเร็ว และยังคงเกิดข้อผิดพลาดจากมนุษย์อยู่ดี"
         },
         {
           label: "ทางเลือก ค",
           icon: "🤖",
-          text: "สร้างระบบทดสอบอัตโนมัติ (Automated CI Test) รันตรวจสอบโค้ดทันทีทุกครั้งที่มีคน Commit",
+          text: "สร้างชุดทดสอบอัตโนมัติ (Automated CI Test Suite) รันตรวจจับ Regression ครบทุกมิติอัตโนมัติทุกครั้งที่มีการ Commit โค้ด",
           isCorrect: true,
-          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Automation & CI)</b> บอทเทสต์ทำงานแทนคนในไม่กี่วินาที แม่นยำ 100% ตรวจเจอจุดพังทันทีที่เขียนโค้ดเสร็จ!"
+          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Automation & CI)</b> บอทเทสต์ให้ผลตรวจย้อนกลับในไม่กี่นาที แม่นยำ 100% นักพัฒนาจึง Refactor โค้ดได้อย่างมั่นใจไร้กังวล!"
         }
       ]
     },
     {
       stageNum: 3,
-      title: "💥 ด่านที่ 3 พังยับ: สภาพแวดล้อมไม่ตรงกัน (Works on my machine)",
-      desc: "โค้ดผ่านการทดสอบแล้ว แต่พอนำไปติดตั้งบน Server จริง กลับรันไม่ขึ้น เพราะเวอร์ชันของฐานข้อมูลและ Node.js บน Server ไม่เหมือนเครื่อง Dev!",
+      title: "💥 ด่านที่ 3 พังยับ: สภาพแวดล้อมไม่ตรงกัน (Configuration Drift)",
+      desc: "โค้ดผ่านการทดสอบแล้ว แต่พอนำไปรันบน Server จริงกลับพังไม่เป็นท่า เพราะเวอร์ชันของฐานข้อมูลและ Library บน Production ต่างจากเครื่อง Dev!",
       calmsBadge: "CD & Containerization",
       options: [
         {
           label: "ทางเลือก ก",
-          icon: "💻",
-          text: "ยกโน้ตบุ๊กของ Dev เครื่องที่รันผ่าน ไปวางเป็น Server ในห้อง Data Center ซะเลย!",
+          icon: "🖥️",
+          text: "โคลน Virtual Machine (VM) สเปกเดียวกับเครื่อง Dev แล้วให้ Ops รัน Shell Script ติดตั้งแพ็กเกจด้วยมือทีละขั้นตอน",
           isCorrect: false,
-          why: "❌ <b>มุกในตำนานแต่ใช้จริงไม่ได้!</b> โน้ตบุ๊กไม่มีระบบ Redundancy สเกลรับโหลดลูกค้าไม่ได้ และเสี่ยงโดนเดินเตะปลั๊กหลุด!"
+          why: "❌ <b>Anti-Pattern: กับดักความคลาดเคลื่อน (Drift)!</b> แม้จะใช้ VM สเปกเดียวกัน แต่การติดตั้งแพ็กเกจด้วยคำสั่งมือจะมีความต่างของ Dependency เวอร์ชันย่อยที่มองไม่เห็น ทำให้ระบบล่มได้อยู่ดี"
         },
         {
           label: "ทางเลือก ข",
           icon: "📄",
-          text: "เขียนคู่มือขั้นตอนติดตั้งยาว 50 หน้า ส่งให้ทีม Ops นั่งพิมพ์คำสั่งติดตั้งเองทีละบรรทัด",
+          text: "เขียนเอกสารคู่มือ Runbook อย่างละเอียด 30 หน้า พร้อมสกรีนช็อตทุกขั้นตอน เพื่อให้ Ops ทำตามอย่างเคร่งครัดทีละบรรทัด",
           isCorrect: false,
-          why: "❌ <b>เกิด Human Error เพียบ!</b> แค่พิมพ์คำสั่งผิดหรือตกบรรทัดเดียวระบบก็พัง Dev กับ Ops ต้องมาเปิดศึกเถียงกันข้ามคืน"
+          why: "❌ <b>Anti-Pattern: คู่มือกระดาษล้าสมัย!</b> เอกสารคู่มือมนุษย์มักล้าหลังกว่าโค้ดจริงเสมอ และการพิมพ์คำสั่งยาวๆ ยามดึกย่อมเกิดความผิดพลาดจากมนุษย์ (Human Error) ได้ง่ายมาก"
         },
         {
           label: "ทางเลือก ค",
-          icon: "🐳",
-          text: "แพ็กแอปพร้อมสภาพแวดล้อมใส่ Container (Docker) และใช้ CD Script สั่ง Deploy อัตโนมัติ",
+          icon: "📦",
+          text: "แพ็กเกจแอปพลิเคชันและ Runtime ทั้งหมดลงใน Immutable Container (Docker) และติดตั้งผ่านระบบ CD Pipeline อัตโนมัติ",
           isCorrect: true,
-          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Container & CD)</b> สภาพแวดล้อมเหมือนกันทุกที่ตั้งแต่เครื่อง Dev จนถึง Production ติดตั้งเสร็จในคลิกเดียว!"
+          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Automation & CD)</b> สภาพแวดล้อมการทำงานเหมือนกันทุกระดับ (100% Parity) กำจัดปัญหา Works on My Machine ติดตั้งเสร็จใน 5 นาทีแบบไร้ข้อผิดพลาด!"
         }
       ]
     },
     {
       stageNum: 4,
-      title: "💥 ด่านที่ 4 พังยับ: ระบบล่มตอนดึก ไม่มีใครรู้เรื่อง แถมมัวแต่หาคนผิด (Incident & Culture)",
+      title: "💥 ด่านที่ 4 พังยับ: ระบบล่มตอนดึกแบบไร้การเฝ้าระวัง (Incident & Blame)",
       desc: "ระบบเปิดใช้งานจริงตอน 21:00 น. เกิดข้อผิดพลาดทำให้ชำระเงินไม่ได้ แต่ทีมไม่รู้ตัวจนเช้าวันเสาร์ แถมพอมารวมตัวกันก็มัวแต่ชี้หน้าโทษกัน!",
       calmsBadge: "Measurement & Sharing Culture",
       options: [
         {
           label: "ทางเลือก ก",
-          icon: "🔌",
-          text: "ปิดเซิร์ฟเวอร์หนี แล้วบอกลูกค้าว่าเน็ตของลูกค้ามีปัญหา หรือไฟดับทั้งจังหวัด",
+          icon: "🔄",
+          text: "ตั้งเวลา Cron Job สั่งรีสตาร์ท Service ชำระเงินอัตโนมัติทุกๆ 30 นาทีเพื่อล้างบั๊กชั่วคราว แล้วค่อยวิเคราะห์ปัญหาช่วงวันจันทร์",
           isCorrect: false,
-          why: "❌ <b>สูญเสียความน่าเชื่อถือทันที!</b> ลูกค้าเลิกใช้บริการและหนีไปหาคู่แข่ง ธุรกิจเสียหายมหาศาล"
+          why: "❌ <b>Anti-Pattern: กลบเกลื่อนปัญหาใต้พรม!</b> การสั่งรีสตาร์ทวนไปเรื่อยๆ จะตัดการเชื่อมต่อของลูกค้าที่กำลังทำรายการเงิน และบดบังต้นเหตุที่แท้จริงของข้อผิดพลาดในระบบ"
         },
         {
           label: "ทางเลือก ข",
           icon: "⚖️",
-          text: "ตั้งคณะกรรมการสอบสวนหาตัวโปรแกรมเมอร์ที่เขียนบั๊กบรรทัดนี้มาลงโทษทางวินัย",
+          text: "ตั้งคณะกรรมการไต่สวนหาตัวโปรแกรมเมอร์ที่เขียนโค้ดบรรทัดนี้ และออกกฎให้โค้ดหลังจากนี้ต้องผ่านการเซ็นอนุมัติจากผู้จัดการ 3 ฝ่าย",
           isCorrect: false,
-          why: "❌ <b>สร้างวัฒนธรรม Toxic!</b> ทุกคนจะเริ่มปกปิดความผิดพลาด ไม่กล้าเขียนโค้ดใหม่ และระบบจะไม่มีวันได้รับการปรับปรุง"
+          why: "❌ <b>Anti-Pattern: ธรรมาภิบาลแบบลงโทษ!</b> การสร้างขั้นตอนอนุมัติซ้ำซ้อนทำให้รอบการส่งมอบช้าลงเป็นสัปดาห์ และสร้างวัฒนธรรมหวาดกลัวจนทุกคนพยายามปกปิดข้อผิดพลาด"
         },
         {
           label: "ทางเลือก ค",
           icon: "📈",
-          text: "ติดตั้งระบบ Monitoring เฝ้าระวังเรียลไทม์ + เตรียมปุ่ม 1-Click Rollback + ประชุมถอดบทเรียนแบบไม่หาคนผิด (Blameless)",
+          text: "ติดตั้งระบบ Real-time Observability & Alerts แจ้งเตือนทันที + เตรียมระบบ 1-Click Rollback + ประชุมถอดบทเรียนแบบไม่หาคนผิด (Blameless)",
           isCorrect: true,
-          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Measurement & Sharing)</b> รู้ปัญหาก่อนลูกค้าโทรมา กู้คืนระบบได้ใน 5 นาที และทีมช่วยกันอัปเกรดระบบให้แกร่งขึ้น!"
+          why: "🎉 <b>ถูกต้องตรงจุด! (ปลดล็อก CALMS: Measurement & Sharing)</b> ตรวจพบปัญหาเร็วก่อนลูกค้าโทรมา กู้คืนระบบได้ในไม่กี่นาที และทีมร่วมมือกันสร้างรั้วกั้นอัตโนมัติให้ระบบแข็งแกร่งขึ้น!"
         }
       ]
     }
