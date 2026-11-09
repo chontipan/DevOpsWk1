@@ -9,9 +9,10 @@
  * - GET  /api/clear           : Clear records (PIN: 227302)
  * - GET  /                    : API status and health check
  * 
- * Supported Bindings:
- * - Cloudflare KV: env.DEVOPS_KV (Recommended - 1-click setup)
- * - Cloudflare D1: env.DB
+ * Supported Storage Bindings:
+ * - Cloudflare D1: env.DB (Automatic table creation)
+ * - Cloudflare KV: env.DEVOPS_KV
+ * - In-Memory Fallback
  */
 
 const ADMIN_PIN = "227302";
@@ -46,12 +47,36 @@ export default {
 
         // Save to KV if bound
         if (env && env.DEVOPS_KV) {
-          await env.DEVOPS_KV.put(key, JSON.stringify(data));
+          try {
+            await env.DEVOPS_KV.put(key, JSON.stringify(data));
+          } catch (kvErr) {
+            console.error("KV put error:", kvErr);
+          }
         }
 
-        // Save to D1 if bound
+        // Save to D1 if bound (Auto create table if not exists)
         if (env && env.DB) {
           try {
+            await env.DB.prepare(`
+              CREATE TABLE IF NOT EXISTS telemetry (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT,
+                student_id TEXT,
+                student_name TEXT,
+                total_score INTEGER,
+                rank_grade TEXT,
+                g1_score INTEGER,
+                g1_time INTEGER,
+                g1_stability INTEGER,
+                g1_morale INTEGER,
+                g2_score INTEGER,
+                g2_errors INTEGER,
+                duration_sec INTEGER,
+                verify_hash TEXT,
+                raw_json TEXT
+              )
+            `).run();
+
             await env.DB.prepare(`
               INSERT INTO telemetry (
                 timestamp, student_id, student_name, total_score, rank_grade,
@@ -158,6 +183,11 @@ export default {
           await env.DEVOPS_KV.delete(k.name);
         }
       }
+      if (env && env.DB) {
+        try {
+          await env.DB.prepare("DELETE FROM telemetry").run();
+        } catch(e) {}
+      }
 
       return new Response(JSON.stringify({ status: "success", message: "All records cleared" }), {
         headers: { ...CORS_HEADERS, "Content-Type": "application/json" }
@@ -168,7 +198,7 @@ export default {
     return new Response(JSON.stringify({
       name: "DevOps Interactive Learning Lab - Cloudflare Telemetry API",
       status: "operational",
-      version: "1.0.0",
+      version: "1.1.0",
       endpoints: {
         submit: "POST /api/submit",
         viewSubmissions: "GET /api/submissions?pin=227302",
@@ -186,24 +216,29 @@ export default {
  * Fetch all submissions from KV, D1, or Memory
  */
 async function getAllSubmissions(env) {
-  if (env && env.DEVOPS_KV) {
-    const list = await env.DEVOPS_KV.list({ prefix: "sub_" });
-    const records = [];
-    for (const key of list.keys) {
-      const val = await env.DEVOPS_KV.get(key.name, "json");
-      if (val) records.push(val);
-    }
-    // Sort newest first
-    records.sort((a, b) => new Date(b.receivedAt || b.time) - new Date(a.receivedAt || a.time));
-    return records;
-  }
-
   if (env && env.DB) {
     try {
       const { results } = await env.DB.prepare("SELECT raw_json FROM telemetry ORDER BY id DESC").all();
-      return results.map(r => JSON.parse(r.raw_json));
+      if (results && results.length > 0) {
+        return results.map(r => JSON.parse(r.raw_json));
+      }
     } catch (e) {
-      console.error(e);
+      console.error("D1 fetch error:", e);
+    }
+  }
+
+  if (env && env.DEVOPS_KV) {
+    try {
+      const list = await env.DEVOPS_KV.list({ prefix: "sub_" });
+      const records = [];
+      for (const key of list.keys) {
+        const val = await env.DEVOPS_KV.get(key.name, "json");
+        if (val) records.push(val);
+      }
+      records.sort((a, b) => new Date(b.receivedAt || b.time) - new Date(a.receivedAt || a.time));
+      if (records.length > 0) return records;
+    } catch (e) {
+      console.error("KV fetch error:", e);
     }
   }
 

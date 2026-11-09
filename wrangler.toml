@@ -1,7 +1,3 @@
 name = "devopswk1"
 main = "worker.js"
 compatibility_date = "2024-01-01"
-
-[[kv_namespaces]]
-binding = "DEVOPS_KV"
-id = "b94e5c17-6880-49f1-bb2f-21f448c04410"
