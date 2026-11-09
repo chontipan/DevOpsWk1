@@ -11,10 +11,30 @@ export default async function handler(req, res) {
 
   try {
     const d = req.body;
+    const cleanStdId = String(d.stdId || "unknown").trim().toUpperCase();
+    const cleanHash = String(d.verifyHash || `UP-SE-${Date.now()}`).trim();
     
+    // Check if this submission was already recorded to prevent duplicate counting
+    try {
+      const checkResp = await fetch(`${SUPABASE_URL}/rest/v1/telemetry?verify_hash=eq.${encodeURIComponent(cleanHash)}&select=id`, {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      if (checkResp.ok) {
+        const existing = await checkResp.json();
+        if (existing && existing.length > 0) {
+          return res.status(200).json({ status: "success", message: "Record already exists", verifyHash: cleanHash, duplicate: true });
+        }
+      }
+    } catch(checkErr) {
+      console.warn("Duplicate check error:", checkErr);
+    }
+
     const row = {
-      student_id: String(d.stdId || "unknown"),
-      student_name: String(d.stdName || "unknown"),
+      student_id: cleanStdId,
+      student_name: String(d.stdName || "unknown").trim(),
       total_score: Number(d.totalScore) || 0,
       rank_grade: String(d.rankGrade || "Rank C"),
       g1_score: Number(d.g1Score) || 0,
@@ -35,7 +55,7 @@ export default async function handler(req, res) {
       duration_sec: Number(d.durationSec) || 0,
       lang_used: String(d.langUsed || "TH"),
       device_type: String(d.deviceType || "Desktop"),
-      verify_hash: String(d.verifyHash || `UP-SE-${Date.now()}`),
+      verify_hash: cleanHash,
       raw_json: d
     };
 

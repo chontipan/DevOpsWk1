@@ -289,32 +289,7 @@
 </head>
 <body>
 
-<!-- Netlify Form Detection (Stores submissions automatically in Netlify without server or Google Sheets) -->
-<form name="devops-scores" netlify netlify-honeypot="bot-field" hidden>
-  <input type="text" name="stdId" />
-  <input type="text" name="stdName" />
-  <input type="number" name="totalScore" />
-  <input type="text" name="rankGrade" />
-  <input type="number" name="g1Score" />
-  <input type="number" name="g1BestChoices" />
-  <input type="number" name="g1TimeVal" />
-  <input type="number" name="g1Stability" />
-  <input type="number" name="g1Morale" />
-  <input type="text" name="g1_s1" />
-  <input type="text" name="g1_s2" />
-  <input type="text" name="g1_s3" />
-  <input type="text" name="g1_s4" />
-  <input type="number" name="g2Score" />
-  <input type="number" name="g2Errors" />
-  <input type="number" name="g2_s1_err" />
-  <input type="number" name="g2_s2_err" />
-  <input type="number" name="g2_s3_err" />
-  <input type="number" name="g2_s4_err" />
-  <input type="number" name="durationSec" />
-  <input type="text" name="langUsed" />
-  <input type="text" name="deviceType" />
-  <input type="text" name="verifyHash" />
-</form>
+
 
 <!-- Top Navigation Bar -->
 <nav class="navbar">
@@ -693,12 +668,9 @@
   } catch(e) {
     console.warn("Supabase client init:", e);
   }
-  // 📌 Cloudflare Worker Telemetry Endpoint
   // 📌 Vercel + Supabase Endpoints
   const API_SUBMIT_URL = "/api/submit";
   const API_FETCH_URL = "/api/submissions";
-  // 📌 นำลิงก์ Web App URL ที่ได้จาก Google Apps Script มาวางที่นี่ (ถ้าเว้นว่าง "" จะเป็นโหมดบันทึกแบบ Offline)
-  const GOOGLE_SCRIPT_URL = "";
 
   // ==================== AUDIO FX (SYNTHESIZED WEB AUDIO API) ====================
   let soundEnabled = true;
@@ -2403,91 +2375,17 @@
       }
     });
 
-    // Send to Netlify Forms (automatic background collection on Netlify)
-    try {
-      const netlifyParams = new URLSearchParams();
-      netlifyParams.append('form-name', 'devops-scores');
-      netlifyParams.append('stdId', stdId);
-      netlifyParams.append('stdName', stdName);
-      netlifyParams.append('totalScore', totalScore);
-      netlifyParams.append('rankGrade', rankGrade);
-      netlifyParams.append('g1Score', g1Score);
-      netlifyParams.append('g1BestChoices', g1BestChoices);
-      netlifyParams.append('g1TimeVal', g1TimeVal);
-      netlifyParams.append('g1Stability', g1StabVal);
-      netlifyParams.append('g1Morale', g1MoraleVal);
-      netlifyParams.append('g1_s1', g1_s1);
-      netlifyParams.append('g1_s2', g1_s2);
-      netlifyParams.append('g1_s3', g1_s3);
-      netlifyParams.append('g1_s4', g1_s4);
-      netlifyParams.append('g2Score', g2Score);
-      netlifyParams.append('g2Errors', g2Errors);
-      netlifyParams.append('g2_s1_err', g2StageErrors[0] || 0);
-      netlifyParams.append('g2_s2_err', g2StageErrors[1] || 0);
-      netlifyParams.append('g2_s3_err', g2StageErrors[2] || 0);
-      netlifyParams.append('g2_s4_err', g2StageErrors[3] || 0);
-      netlifyParams.append('durationSec', realDurationSec);
-      netlifyParams.append('langUsed', langUsed);
-      netlifyParams.append('deviceType', deviceType);
-      netlifyParams.append('verifyHash', cleanHash);
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: netlifyParams.toString()
-      }).catch(() => {});
-    } catch (e) {}
+    // Lock inputs & disable button to prevent double submissions
+    isSubmitted = true;
+    document.getElementById('stdId').disabled = true;
+    document.getElementById('stdName').disabled = true;
 
     const btn = document.getElementById('btnSubmitCard');
-    if (typeof GOOGLE_SCRIPT_URL === 'string' && GOOGLE_SCRIPT_URL.startsWith('http') && !isSubmitted) {
+    if (btn) {
       btn.disabled = true;
-      btn.innerText = '⏳ กำลังบันทึกคะแนนเข้า Google Sheets...';
-
-      const payload = {
-        stdId: stdId,
-        stdName: stdName,
-        totalScore: totalScore,
-        rankGrade: rankGrade,
-        g1Score: g1Score,
-        g1BestChoices: g1BestChoices,
-        g1TimeVal: g1TimeVal,
-        g1Stability: g1StabVal,
-        g1Morale: g1MoraleVal,
-        g1_s1: g1_s1,
-        g1_s2: g1_s2,
-        g1_s3: g1_s3,
-        g1_s4: g1_s4,
-        g2Score: g2Score,
-        g2Errors: g2Errors,
-        g2_s1_err: g2StageErrors[0] || 0,
-        g2_s2_err: g2StageErrors[1] || 0,
-        g2_s3_err: g2StageErrors[2] || 0,
-        g2_s4_err: g2StageErrors[3] || 0,
-        durationSec: realDurationSec,
-        langUsed: langUsed,
-        deviceType: deviceType,
-        verifyHash: cleanHash
-      };
-
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        isSubmitted = true;
-        document.getElementById('stdId').disabled = true;
-        document.getElementById('stdName').disabled = true;
-        badgeEl.innerText += ' (บันทึกเข้า Sheets แล้ว ☁️)';
-      } catch (err) {
-        console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', err);
-        btn.disabled = false;
-        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets กรุณาตรวจสอบลิงก์ URL หรือใช้วิธีแคปภาพการ์ดด้านล่างครับ');
-      }
-    } else {
-      isSubmitted = true;
-      document.getElementById('stdId').disabled = true;
-      document.getElementById('stdName').disabled = true;
+      btn.innerText = (currentLang === 'en') ? '✅ Score Submitted & Verified' : '✅ บันทึกคะแนนและส่งงานเรียบร้อยแล้ว';
+      btn.style.backgroundColor = 'var(--success)';
+      btn.style.cursor = 'default';
     }
 
     updateG1LockUI();

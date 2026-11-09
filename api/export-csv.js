@@ -9,7 +9,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const resp = await fetch(`${SUPABASE_URL}/rest/v1/telemetry?select=*&order=id.desc`, {
+    // Sort by student_id ascending for seamless classroom grade reporting
+    const resp = await fetch(`${SUPABASE_URL}/rest/v1/telemetry?select=*&order=student_id.asc`, {
       headers: {
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
 
     const dateStr = new Date().toISOString().slice(0, 10);
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", `attachment; filename="DevOps_Supabase_Scores_${dateStr}.csv"`);
+    res.setHeader("Content-Disposition", `attachment; filename="DevOps_Class_Scores_${dateStr}.csv"`);
     return res.status(200).send(csv);
   } catch (err) {
     return res.status(500).send(err.message);
