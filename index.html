@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DevOps Interactive Learning Lab - คาบที่ 1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --bg: #f8fafc;
@@ -596,10 +597,13 @@
         <h2 style="color:var(--text);" id="adminTitle">🔐 แผงควบคุมผู้สอน (Admin Dashboard)</h2>
         <p id="adminSub">ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที</p>
       </div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-purple" id="btnSyncCloudflare" onclick="syncFromSupabase()">⚡ ดึงข้อมูลรวมจาก Supabase</button>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div id="wsLiveBadge" style="display:inline-flex; align-items:center; gap:8px; font-size:13px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:7px 16px; border-radius:24px; font-weight:700;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+          <span id="wsLiveText">⚡ Realtime WebSocket Live (อัปเดตอัตโนมัติไม่ต้องกดปุ่ม)</span>
+        </div>
         <button class="btn btn-success" id="btnExportExcel" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
-        <button class="btn btn-secondary" id="btnClearData" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างข้อมูล</button>
+        <button class="btn btn-secondary" id="btnClearData" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างตาราง</button>
       </div>
     </div>
 
@@ -670,7 +674,25 @@
 </div>
 
 <script>
+  // 🧹 เคลียร์ค่าทั้งหมดเมื่อเปิดหรือรีเฟรชหน้าเว็บ ไม่เก็บค้างใน LocalStorage / SessionStorage
+  try {
+    sessionStorage.clear();
+    inMemorySubmissions = [];
+    localStorage.removeItem('devops_g1_state');
+    localStorage.removeItem('devops_g1_locked');
+  } catch(e) {}
+
   const sessionStartTime = Date.now();
+  const SUPABASE_URL = "https://lmvfsnxvuezkfztvrexj.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_yP3jkyIUNB5eX6Oc1JQ_pg_Bhg_qvuA";
+  let supabaseClient = null;
+  try {
+    if (window.supabase) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  } catch(e) {
+    console.warn("Supabase client init:", e);
+  }
   // 📌 Cloudflare Worker Telemetry Endpoint
   // 📌 Vercel + Supabase Endpoints
   const API_SUBMIT_URL = "/api/submit";
@@ -1366,7 +1388,8 @@
         g1Hist: g1Hist,
         isFinished: (g1Hist.length === 4)
       };
-      sessionStorage.setItem('devops_g1_state', JSON.stringify(state));
+      // State kept strictly in memory for this session (cleared on refresh)
+      window._g1State = state;
     } catch(e) {}
   }
 
@@ -1404,7 +1427,7 @@
 
   function loadG1State() {
     try {
-      const saved = sessionStorage.getItem('devops_g1_state');
+      const saved = window._g1State ? JSON.stringify(window._g1State) : null;
       if (saved) {
         const state = JSON.parse(saved);
         if (state && Array.isArray(state.g1Hist) && state.g1Hist.length > 0) {
@@ -2545,23 +2568,19 @@
   let isAdminLoggedIn = false;
   const ADMIN_DEFAULT_PIN = "227302";
 
+  let inMemorySubmissions = [];
+
   function getStoredSubmissions() {
-    try {
-      return JSON.parse(localStorage.getItem('devops_submissions') || '[]');
-    } catch(e) {
-      return [];
-    }
+    return inMemorySubmissions;
   }
 
   function saveSubmissions(list) {
-    localStorage.setItem('devops_submissions', JSON.stringify(list));
+    inMemorySubmissions = list;
   }
 
   function saveSubmissionLocally(record) {
-    const list = getStoredSubmissions();
-    if (!list.some(item => item.verifyHash === record.verifyHash)) {
-      list.unshift(record);
-      localStorage.setItem('devops_submissions', JSON.stringify(list));
+    if (!inMemorySubmissions.some(item => item.verifyHash === record.verifyHash)) {
+      inMemorySubmissions.unshift(record);
     }
   }
 
@@ -2574,6 +2593,7 @@
       document.getElementById('adminDataBox').style.display = 'block';
       err.style.display = 'none';
       renderAdminTable();
+      startRealtimeAdminDashboard();
     } else {
       err.style.display = 'block';
     }
@@ -2752,51 +2772,109 @@
   }
 
   
-  async function syncFromSupabase() {
-    if (!isAdminLoggedIn) {
-      alert("กรุณาเข้าสู่ระบบผู้สอนก่อนครับ");
-      return;
-    }
 
-    const btn = document.getElementById("btnSyncCloudflare");
-    const origText = btn.innerText;
-    btn.innerText = "⏳ กำลังดึงข้อมูลจาก Supabase...";
-    btn.disabled = true;
+  // ==================== REALTIME WEBSOCKET (SUPABASE) ====================
+  let realtimeChannel = null;
+  let realtimePollTimer = null;
 
-    try {
-      const res = await fetch(`/api/submissions?pin=${ADMIN_DEFAULT_PIN}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data.status === "success" && Array.isArray(data.submissions)) {
-        if (data.submissions.length === 0) {
-          alert("ℹ️ เชื่อมต่อ Supabase สำเร็จ แต่ยังไม่มีข้อมูลนิสิตส่งเข้ามาครับ");
-        } else {
-          const localList = getStoredSubmissions();
-          const existingHashes = new Set(localList.map(item => item.verifyHash));
-          let newCount = 0;
-          data.submissions.forEach(item => {
-            if (item.verifyHash && !existingHashes.has(item.verifyHash)) {
-              localList.unshift(item);
-              existingHashes.add(item.verifyHash);
-              newCount++;
+  function startRealtimeAdminDashboard() {
+    // 1. Initial instant load from Supabase
+    fetchSubmissionsDirectly(false);
+
+    // 2. Connect Supabase Realtime WebSocket
+    if (supabaseClient) {
+      try {
+        if (realtimeChannel) {
+          supabaseClient.removeChannel(realtimeChannel);
+        }
+        realtimeChannel = supabaseClient
+          .channel('public:telemetry')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'telemetry' }, (payload) => {
+            console.log('⚡ WebSocket Event Received:', payload);
+            if (payload.eventType === 'INSERT' && payload.new) {
+              handleNewSubmissionRecord(payload.new);
+            } else {
+              fetchSubmissionsDirectly(true);
+            }
+          })
+          .subscribe((status) => {
+            console.log('⚡ Supabase WebSocket Status:', status);
+            const liveText = document.getElementById('wsLiveText');
+            if (liveText && status === 'SUBSCRIBED') {
+              liveText.innerHTML = '⚡ Realtime WebSocket Live (เชื่อมต่อสดพร้อมรับข้อมูลอัตโนมัติ)';
             }
           });
-          saveSubmissions(localList); localStorage.setItem('devops_submissions', JSON.stringify(localList));
-          renderAdminTable();
-          alert(`✅ ดึงข้อมูลจาก Supabase สำเร็จ!\n• ข้อมูลบน Supabase: ${data.submissions.length} รายการ\n• นำเข้าใหม่สู่เครื่องนี้: ${newCount} รายการ`);
+      } catch(e) {
+        console.warn('Realtime subscription error:', e);
+      }
+    }
+
+    // 3. Fallback smart poll every 4 seconds (zero-click real-time assurance)
+    if (realtimePollTimer) clearInterval(realtimePollTimer);
+    realtimePollTimer = setInterval(() => {
+      if (isAdminLoggedIn) {
+        fetchSubmissionsDirectly(true);
+      }
+    }, 4000);
+  }
+
+  async function fetchSubmissionsDirectly(silent = false) {
+    try {
+      const res = await fetch(`/api/submissions?pin=${ADMIN_DEFAULT_PIN}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.status === 'success' && Array.isArray(data.submissions)) {
+        const prevLength = inMemorySubmissions.length;
+        inMemorySubmissions = data.submissions;
+        renderAdminTable();
+        if (data.submissions.length > prevLength && prevLength > 0) {
+          playSound('success');
         }
       }
-    } catch (err) {
-      alert(`⚠️ ไม่สามารถดึงข้อมูลจาก Supabase ได้: ${err.message}`);
-    } finally {
-      btn.innerText = origText;
-      btn.disabled = false;
+    } catch(err) {
+      if (!silent) console.warn('Fetch submissions error:', err);
     }
   }
 
+  function handleNewSubmissionRecord(r) {
+    const item = {
+      time: new Date(r.created_at || Date.now()).toLocaleString('th-TH'),
+      stdId: r.student_id,
+      stdName: r.student_name,
+      totalScore: r.total_score,
+      rankGrade: r.rank_grade,
+      g1Score: r.g1_score,
+      g1BestChoices: r.g1_devops_count,
+      g1TimeVal: r.g1_time_mins,
+      g1Stability: r.g1_stability,
+      g1Morale: r.g1_morale,
+      g1_s1: r.g1_s1,
+      g1_s2: r.g1_s2,
+      g1_s3: r.g1_s3,
+      g1_s4: r.g1_s4,
+      g2Score: r.g2_score,
+      g2Errors: r.g2_errors,
+      g2_s1_err: r.g2_s1_err,
+      g2_s2_err: r.g2_s2_err,
+      g2_s3_err: r.g2_s3_err,
+      g2_s4_err: r.g2_s4_err,
+      durationSec: r.duration_sec,
+      langUsed: r.lang_used,
+      deviceType: r.device_type,
+      verifyHash: r.verify_hash
+    };
+
+    if (!inMemorySubmissions.some(x => x.verifyHash === item.verifyHash)) {
+      inMemorySubmissions.unshift(item);
+      playSound('success');
+      renderAdminTable();
+    }
+  }
+
+
   function clearLocalSubmissions() {
     if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลการส่งงานทั้งหมดในเครื่องนี้? (การล้างนี้ไม่สามารถย้อนคืนได้)')) {
-      localStorage.removeItem('devops_submissions');
+      inMemorySubmissions = [];
       renderAdminTable();
       alert('ล้างข้อมูลเรียบร้อยแล้ว');
     }
