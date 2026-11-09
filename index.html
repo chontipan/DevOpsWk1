@@ -2022,7 +2022,7 @@
         <div style="background:var(--danger-light); border:1.5px solid var(--danger); padding:14px; border-radius:10px;">
           <div style="font-size:14.5px; color:#7f1d1d;">${opt.why}</div>
           <div style="margin-top:8px; font-size:13px; font-weight:700; color:var(--muted);">
-            ${(currentLang === 'en') ? '👉 Re-analyze the root cause and select another remedy card above.' : '👉 ลองวิเคราะห์ใหม่อีกครั้ง แล้วคลิกเลือกการ์ดใบอื่นด้านบนได้เลยครับ'}
+            ${(currentLang === 'en') ? '👉 Re-analyze the root cause and select another remedy card above (-5 pts for each incorrect attempt).' : '👉 ลองวิเคราะห์ใหม่อีกครั้ง แล้วคลิกเลือกการ์ดใบอื่นด้านบนได้เลยครับ (ตอบผิดหักครั้งละ 5 คะแนน)'}
           </div>
         </div>
       `;
@@ -2090,7 +2090,7 @@
           ${isEn ? '🏆 Mission Accomplished! Pipeline Fully Optimized' : '🏆 ภารกิจสำเร็จ! สายพานการส่งมอบงานมีประสิทธิภาพสูงสุด'}
         </h3>
         <p style="margin:0 0 14px; color:var(--text); font-size:14.5px;">
-          ${isEn ? 'You transformed the delivery workflow from <b>14 days</b> down to minutes with high stability and instant rollback resilience!' : 'คุณได้ปรับปรุงกระบวนการทำงานจากเดิมที่ใช้เวลา <b>14 วัน</b> ให้สามารถส่งมอบงานได้รวดเร็วและปลอดภัย พร้อมกู้คืนระบบได้อย่างรวดเร็ว!'}
+          ${isEn ? `You transformed the delivery workflow from <b>14 days</b> down to minutes with high stability and instant rollback resilience!<br><span style="display:inline-block; margin-top:6px; font-weight:700; color:var(--primary);">🎯 Incident Doctor Score: ${Math.max(20, 50 - (g2Errors * 5))} / 50 pts (Errors: ${g2Errors})</span>` : `คุณได้ปรับปรุงกระบวนการทำงานจากเดิมที่ใช้เวลา <b>14 วัน</b> ให้สามารถส่งมอบงานได้รวดเร็วและปลอดภัย พร้อมกู้คืนระบบได้อย่างรวดเร็ว!<br><span style="display:inline-block; margin-top:6px; font-weight:700; color:var(--primary);">🎯 คะแนนภารกิจกู้วิกฤต (Game 2): ${Math.max(20, 50 - (g2Errors * 5))} / 50 คะแนน (ลองผิดลองถูก: ${g2Errors} ครั้ง)</span>`}
         </p>
 
         <!-- DORA Metrics Comparison Card -->
@@ -2230,7 +2230,7 @@
 
     const g1BestChoices = g1Hist.filter(h => h.isDevops).length;
     const g1Score = 10 + (g1BestChoices * 10);
-    const g2Score = 50;
+    const g2Score = Math.max(20, 50 - (g2Errors * 5));
     const totalScore = g1Score + g2Score;
 
     // Calculate Rank Badge
@@ -2280,7 +2280,7 @@
       document.getElementById('outG2Detail').innerHTML =
         `• Pipeline Stages Fully Unlocked: <b>4 / 4 stages</b><br>` +
         `• Diagnostic Errors / Attempts: <b>${g2Errors} times</b><br>` +
-        `• Pipeline Operational (Lead Time reduced to 10 mins) | Score: <b>50 / 50 points</b>`;
+        `• Pipeline Operational (Lead Time reduced to 10 mins) | Score: <b>${g2Score} / 50 points</b>`;
     } else {
       document.getElementById('outG1Detail').innerHTML =
         `• วิเคราะห์เลือกแนวทางที่เหมาะสม: <b>${g1BestChoices} / 4 ด่าน</b><br>` +
@@ -2290,7 +2290,7 @@
       document.getElementById('outG2Detail').innerHTML =
         `• ปลดล็อกกระบวนการทำงานครบ: <b>4 / 4 ขั้นตอน</b><br>` +
         `• ข้อผิดพลาด/ลองผิดลองถูก: <b>${g2Errors} ครั้ง</b><br>` +
-        `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที) | คะแนน: <b>50 / 50</b>`;
+        `• เดินเครื่อง Pipeline สำเร็จ (Lead Time เหลือ 10 นาที) | คะแนน: <b>${g2Score} / 50 คะแนน</b>`;
     }
 
     const now = new Date();
