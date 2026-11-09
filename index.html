@@ -574,7 +574,7 @@
           <button type="button" class="btn btn-secondary no-print" onclick="copyVerificationHash()" id="copyHashBtn" style="font-size:12px; padding:3px 9px;">📋 คัดลอกรหัส</button>
         </div>
         <div id="cloudSyncBadge" style="margin-top:8px; font-size:12.5px; color:var(--muted); text-align:center;" class="no-print">
-          ☁️ <span id="cloudSyncText">กำลังเชื่อมต่อกับ Cloudflare...</span>
+          ☁️ <span id="cloudSyncText">กำลังบันทึกข้อมูลเข้าสู่ระบบ Supabase...</span>
         </div>
       </div>
 
@@ -597,7 +597,7 @@
         <p id="adminSub">ตรวจสอบรายชื่อนิสิตที่ส่งงาน คะแนนที่ได้รับ และ Export ข้อมูลออกเป็นไฟล์ Excel ได้ทันที</p>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-purple" id="btnSyncCloudflare" onclick="syncFromCloudflare()">☁️ ดึงข้อมูลรวมจาก Cloudflare</button>
+        <button class="btn btn-purple" id="btnSyncCloudflare" onclick="syncFromSupabase()">⚡ ดึงข้อมูลรวมจาก Supabase</button>
         <button class="btn btn-success" id="btnExportExcel" onclick="exportToExcel()">📥 Export to Excel (.csv)</button>
         <button class="btn btn-secondary" id="btnClearData" onclick="clearLocalSubmissions()" style="color:var(--danger); border-color:#fecaca;">🗑️ ล้างข้อมูล</button>
       </div>
@@ -672,7 +672,9 @@
 <script>
   const sessionStartTime = Date.now();
   // 📌 Cloudflare Worker Telemetry Endpoint
-  const CLOUDFLARE_WORKER_URL = "https://devopswk1.chontipan.workers.dev";
+  // 📌 Vercel + Supabase Endpoints
+  const API_SUBMIT_URL = "/api/submit";
+  const API_FETCH_URL = "/api/submissions";
   // 📌 นำลิงก์ Web App URL ที่ได้จาก Google Apps Script มาวางที่นี่ (ถ้าเว้นว่าง "" จะเป็นโหมดบันทึกแบบ Offline)
   const GOOGLE_SCRIPT_URL = "";
 
@@ -2353,28 +2355,30 @@
     };
     saveSubmissionLocally(submissionRecord);
 
-    // ☁️ Send Telemetry to Cloudflare Worker
-    if (typeof CLOUDFLARE_WORKER_URL === "string" && CLOUDFLARE_WORKER_URL.startsWith("http")) {
-      const syncBadgeText = document.getElementById("cloudSyncText");
-      if (syncBadgeText) syncBadgeText.innerHTML = "⏳ กำลังส่งข้อมูลขึ้น Cloudflare...";
-      fetch(`${CLOUDFLARE_WORKER_URL}/api/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submissionRecord)
-      })
-      .then(res => res.json())
-      .then(data => {
+    // 🚀 Send Telemetry to Supabase via Vercel API
+    const syncBadgeText = document.getElementById("cloudSyncText");
+    if (syncBadgeText) syncBadgeText.innerHTML = "⏳ กำลังส่งข้อมูลขึ้น Supabase...";
+    fetch("/api/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(submissionRecord)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
         if (syncBadgeText) {
-          syncBadgeText.innerHTML = '<span style="color:var(--success); font-weight:700;">✅ บันทึกขึ้น Cloudflare สำเร็จ (Realtime Edge Sync)</span>';
+          syncBadgeText.innerHTML = '<span style="color:var(--success); font-weight:700;">✅ บันทึกขึ้น Supabase เรียบร้อย (Realtime Database)</span>';
         }
-      })
-      .catch(err => {
-        console.warn("Cloudflare Sync:", err);
-        if (syncBadgeText) {
-          syncBadgeText.innerHTML = '<span style="color:var(--warning); font-weight:600;">💾 บันทึกในเครื่องเรียบร้อย (ระบบออฟไลน์)</span>';
-        }
-      });
-    }
+      } else {
+        throw new Error(data.error || "Save error");
+      }
+    })
+    .catch(err => {
+      console.warn("Supabase Sync Fallback:", err);
+      if (syncBadgeText) {
+        syncBadgeText.innerHTML = '<span style="color:var(--warning); font-weight:600;">💾 บันทึกในเครื่องเรียบร้อย (ระบบออฟไลน์)</span>';
+      }
+    });
 
     // Send to Netlify Forms (automatic background collection on Netlify)
     try {
@@ -2744,7 +2748,7 @@
   }
 
   
-  async function syncFromCloudflare() {
+  async function syncFromSupabase() {
     if (!isAdminLoggedIn) {
       alert("กรุณาเข้าสู่ระบบผู้สอนก่อนครับ");
       return;
@@ -2752,34 +2756,34 @@
 
     const btn = document.getElementById("btnSyncCloudflare");
     const origText = btn.innerText;
-    btn.innerText = "⏳ กำลังดึงข้อมูล...";
+    btn.innerText = "⏳ กำลังดึงข้อมูลจาก Supabase...";
     btn.disabled = true;
 
     try {
-      const res = await fetch(`${CLOUDFLARE_WORKER_URL}/api/submissions?pin=${ADMIN_DEFAULT_PIN}`);
+      const res = await fetch(`/api/submissions?pin=${ADMIN_DEFAULT_PIN}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (data.status === "success" && Array.isArray(data.submissions)) {
         if (data.submissions.length === 0) {
-          alert("ℹ️ เชื่อมต่อ Cloudflare สำเร็จ แต่ยังไม่มีข้อมูลนิสิตส่งเข้ามาครับ");
+          alert("ℹ️ เชื่อมต่อ Supabase สำเร็จ แต่ยังไม่มีข้อมูลนิสิตส่งเข้ามาครับ");
         } else {
           const localList = getStoredSubmissions();
           const existingHashes = new Set(localList.map(item => item.verifyHash));
           let newCount = 0;
-          data.submissions.forEach(cfItem => {
-            if (cfItem.verifyHash && !existingHashes.has(cfItem.verifyHash)) {
-              localList.unshift(cfItem);
-              existingHashes.add(cfItem.verifyHash);
+          data.submissions.forEach(item => {
+            if (item.verifyHash && !existingHashes.has(item.verifyHash)) {
+              localList.unshift(item);
+              existingHashes.add(item.verifyHash);
               newCount++;
             }
           });
           saveSubmissions(localList);
           renderAdminTable();
-          alert(`✅ ดึงข้อมูลจาก Cloudflare สำเร็จ!\n• ข้อมูลบน Cloudflare: ${data.submissions.length} รายการ\n• นำเข้าใหม่สู่เครื่องนี้: ${newCount} รายการ`);
+          alert(`✅ ดึงข้อมูลจาก Supabase สำเร็จ!\n• ข้อมูลบน Supabase: ${data.submissions.length} รายการ\n• นำเข้าใหม่สู่เครื่องนี้: ${newCount} รายการ`);
         }
       }
     } catch (err) {
-      alert(`⚠️ ไม่สามารถดึงข้อมูลจาก Cloudflare ได้: ${err.message}\n(กรุณาตรวจสอบว่าได้ตั้งค่า Worker ตามคู่มือแล้ว)`);
+      alert(`⚠️ ไม่สามารถดึงข้อมูลจาก Supabase ได้: ${err.message}`);
     } finally {
       btn.innerText = origText;
       btn.disabled = false;
