@@ -2553,6 +2553,10 @@
     }
   }
 
+  function saveSubmissions(list) {
+    localStorage.setItem('devops_submissions', JSON.stringify(list));
+  }
+
   function saveSubmissionLocally(record) {
     const list = getStoredSubmissions();
     if (!list.some(item => item.verifyHash === record.verifyHash)) {
@@ -2777,7 +2781,7 @@
               newCount++;
             }
           });
-          saveSubmissions(localList);
+          saveSubmissions(localList); localStorage.setItem('devops_submissions', JSON.stringify(localList));
           renderAdminTable();
           alert(`✅ ดึงข้อมูลจาก Supabase สำเร็จ!\n• ข้อมูลบน Supabase: ${data.submissions.length} รายการ\n• นำเข้าใหม่สู่เครื่องนี้: ${newCount} รายการ`);
         }
