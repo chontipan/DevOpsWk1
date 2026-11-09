@@ -45,15 +45,6 @@ export default {
         const stdId = data.stdId || "unknown";
         const key = `sub_${Date.now()}_${stdId}`;
 
-        // Save to KV if bound
-        if (env && env.DEVOPS_KV) {
-          try {
-            await env.DEVOPS_KV.put(key, JSON.stringify(data));
-          } catch (kvErr) {
-            console.error("KV put error:", kvErr);
-          }
-        }
-
         // Save to D1 if bound (Auto create table if not exists)
         if (env && env.DB) {
           try {
@@ -101,6 +92,15 @@ export default {
             ).run();
           } catch (d1Err) {
             console.error("D1 Insert error:", d1Err);
+          }
+        }
+
+        // Save to KV if bound
+        if (env && env.DEVOPS_KV) {
+          try {
+            await env.DEVOPS_KV.put(key, JSON.stringify(data));
+          } catch (kvErr) {
+            console.error("KV put error:", kvErr);
           }
         }
 
@@ -177,16 +177,22 @@ export default {
       }
 
       memoryStore = [];
-      if (env && env.DEVOPS_KV) {
-        const list = await env.DEVOPS_KV.list({ prefix: "sub_" });
-        for (const k of list.keys) {
-          await env.DEVOPS_KV.delete(k.name);
-        }
-      }
       if (env && env.DB) {
         try {
           await env.DB.prepare("DELETE FROM telemetry").run();
-        } catch(e) {}
+        } catch(e) {
+          console.error("D1 clear error:", e);
+        }
+      }
+      if (env && env.DEVOPS_KV) {
+        try {
+          const list = await env.DEVOPS_KV.list({ prefix: "sub_" });
+          for (const k of list.keys) {
+            await env.DEVOPS_KV.delete(k.name);
+          }
+        } catch(e) {
+          console.error("KV clear error:", e);
+        }
       }
 
       return new Response(JSON.stringify({ status: "success", message: "All records cleared" }), {
@@ -198,7 +204,7 @@ export default {
     return new Response(JSON.stringify({
       name: "DevOps Interactive Learning Lab - Cloudflare Telemetry API",
       status: "operational",
-      version: "1.1.0",
+      version: "1.2.0",
       endpoints: {
         submit: "POST /api/submit",
         viewSubmissions: "GET /api/submissions?pin=227302",
@@ -213,13 +219,13 @@ export default {
 };
 
 /**
- * Fetch all submissions from KV, D1, or Memory
+ * Fetch all submissions from D1, KV, or Memory
  */
 async function getAllSubmissions(env) {
   if (env && env.DB) {
     try {
       const { results } = await env.DB.prepare("SELECT raw_json FROM telemetry ORDER BY id DESC").all();
-      if (results && results.length > 0) {
+      if (results) {
         return results.map(r => JSON.parse(r.raw_json));
       }
     } catch (e) {
@@ -236,7 +242,7 @@ async function getAllSubmissions(env) {
         if (val) records.push(val);
       }
       records.sort((a, b) => new Date(b.receivedAt || b.time) - new Date(a.receivedAt || a.time));
-      if (records.length > 0) return records;
+      return records;
     } catch (e) {
       console.error("KV fetch error:", e);
     }
